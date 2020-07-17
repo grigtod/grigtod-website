@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<title>Somnai</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+<body>
+    <div id="navbar"></div>
+
+    <div class="w3-content w3-padding" style="max-width:1564px">
+        <div class="w3-container w3-padding-32" id="about">
+            <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Somnai</h3>
+            <p>This is a freelance project for <a href="https://dotdot.london/" target="_blank">dotdot.london</a>.&nbsp;<a href="http://www.aleksandrovich.co.uk/" target="_blank">Angelina Aleksandrovich</a>&nbsp;and <a href="http://guyenette.com/" target="_blank">Carl Guyenette</a>&nbsp;invited me to take a part in this project and they've been awesome to work with.<br>I worked on the Unity application for the Fantasy VR experience.&nbsp;In this experience groups of 6 people put on VR backpacks and delve in multiple fantasy scenes. </p>
+            <div class="w3-display-container">
+                <div class="video-container">
+                    <iframe width="500" height="294" src="https://www.youtube.com/embed/qZ8tNYX_nuA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+            <p> If you ever find yourself in London please consider going through the Somnai experience. The Fantasy VR experience I worked on is only a small part of it. Somnai is truly unique. Many people compare it to a version of "Black Mirror" or "Westworld" you live through.</p>
+            <p>Fantasy VR is a networked experience.&nbsp;Users can interact with each other and the world. It's a multi-sensory experience.&nbsp;Smell, wind and heat devices are used to provide multiple layers of immersion.&nbsp;It's an experience designed to work in conjunction with many other experiences before and after it and achieve the vision of the wonderful <a href="https://www.linkedin.com/in/conniejharrison/" target="_blank">Connie Harrison</a>.&nbsp;&nbsp;<br><br>- Hardware:<br>We used multiple (38+) OptiTrack cameras and OptiTrack HMD trackers provided by <a href="https://target3d.co.uk/" target="_blank">Target3D</a>. For user interactions we used Leap Motion attached in front of each headset. The avatars are driven by FinalIK working in conjunction with Leap Motion and the OptiTrack tracking data.</p>
+            <br>
+            <p>• Somnai:<br>The 6 users are guided by an actor. In the virtual world the actor is represented by a glowy sphere called "Somnai". The sphere is controlled by an OptiTrack active tracker.</p>
+            <p>• Networking:<br>For networking we used UNET. Working with 6 backpacks can be daunting at times and therefore I set up a remote connection system. The backpacks are running a Client application that automatically discovers and connects to a server. The server is running on the same machine that's connected to the motion capture switch and runs the OptiTrack software.</p>
+            <p>• Faces:<br>At one point in the experience the users can see their faces reflected in a puddle. The users are given biometrics bracelets, patient number bracelets and are scanned at the start of the Somani experience. The Fantasy experience loads their faces and displays them for the puddle reflection.</p>
+            <p>• Scents, wind and heat:<br>The amazing Grace Boyle from <a href="https://www.thefeelies.io/" target="_blank">The Feelies</a> created these. It adds another layer of immersion.</p>
+            <p>• Sensory:<br>A wooden bridge, multiple props and different floor surfaces are used through the experience to provide a sense of presence to the users.</p>
+            <p>I'd like to share a few behind the scenes pictures:</p>
+
+            <div class="gallery-container">
+              <div class="gallery-numbertext" id="gallery-numbertext"></div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-1.jpg"  alt="First test. The volunteers formed a chain by holding each other."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-2.jpg"  alt="Going through a virtual cave tunnel"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-3.jpg"  alt="First test with 6 people. Only 5 backpacks worked that day. The Oculus software on the last backpack was not working properly."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-4.jpg"  alt="Rehearsals and training. Here you can see Somnai guiding the users through the bridge."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-5.jpg"  alt="Chilling in the Fantasy Forest scene"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-6.jpg"  alt="It all started with an empty warehouse... The whole Somnai experience takes place in a 20,000 square feet warehouse.&nbsp;"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-7.jpg"  alt="OptiTrack cameras. The fantasy experience uses 38+ OptiTrack cameras!"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-8.jpg"  alt="OptiTrack active puck. An active tracking puck was used for the Somnai sphere."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-9.jpg"  alt="Oculus, OptiTrack and Leap Motion. Oculus HMD was used with an OptiTrack active tracking clip and a Leap Motion tracker for user interactions."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-10.jpg" alt="6 backpacks. My temporary labelling system was a disaster and after the first test most of these labels fell off."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-11.jpg" alt="Preparing the backpacks for the first test. It was a daunting task to keep 6 backpacks working. I set up remote access to all backpacks. I also implemented a battery level UI in the Server app to make it easier to detect when a backpack battery needs changing."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-12.jpg" alt="Scent machine. Scent, heat and wind machines were used through the experience.&nbsp;"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-13.jpg" alt="Batteries. The backpacks require regular battery swaps. The experience is very heavy on the machines and the battery drains really fast. I impemented optimisations to increase the battery life while the application is not active.&nbsp;"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-14.jpg" alt="Server application. Backpack clients connect with the server automatically via network discovery. The server is used to configure the backpacks and the world. It also has a few features to make the life of IT technicians easier, such as callibration tools, battery life indicator, saving values between sessions etc."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-15.jpg" alt="Huge Mushroom prop. A giant mushroom prop that's soft on touch. This prop is alligned with a virtual mushroom with the same shape."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-16.jpg" alt="Wooden Bridge. The first thing the users have to do is go through a wooden bridge. The bridge has an exact representation in VR."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-17.jpg" alt="Floor. Different floors were used for different scenes to provide another layer of immersion."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-18.jpg" alt="Another prop. This prop has squashy balls the user can interact with."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-19.jpg" alt="More props"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-20.jpg" alt="More props. 6 mushroom props in total were used in the experience."> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/somnai/somnai-gallery-21.jpg" alt="Backpack harness. These made it easier and faster for users to get in and out of the backpacks."> </div>
+              <a class="gallery-prev" onclick="plusSlides(-1)"> <div class = "gallery-arrowLeft"> ❮ </div></a>
+              <a class="gallery-next" onclick="plusSlides(1)"> <div class = "gallery-arrowRight"> ❯ </div></a>
+              <div class="gallery-caption-container">
+                  <p id="caption"></p>
+              </div>
+          </div>
+          <script type="text/javascript" src="code/gallery.js"></script>
+          <br>
+          <div class="w3-row-padding">
+              <div class="w3-col l6 m6 w3-margin-bottom">
+                  <div class="w3-display-container">
+                      <div class="video-container">
+                          <img src="/images/work/somnai/theVoid.jpg" style="width:100%">
+                      </div>
+                      <div class = "imageDescription">
+                          <p>First we visited The Void... </p>
+                      </div>
+                  </div>
+              </div>
+              <div class="w3-col l6 m6 w3-margin-bottom">
+                  <div class="video-container">
+                      <img src="/images/work/somnai/fantasy.jpg" style="width:100%">
+                  </div>
+                  <div class = "imageDescription">
+                      <p>...and then we created our own!</p>
+                  </div>
+              </div>
+          </div>
+          <div class="w3-display-container">
+              <div class="video-container">
+                  <iframe src="https://www.youtube.com/embed/cxkjLyGrfj4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div id="footer"></div>
+</body>
+<script type="text/javascript" src="code/jquery.min.js"></script>
+<script type="text/javascript" src="code/reuseElements.js"></script>
+</html>

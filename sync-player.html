@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<title>Sync Player</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+<body>
+    <div id="navbar"></div>
+
+    <div class="w3-content w3-padding" style="max-width:1564px">
+        <div class="w3-container w3-padding-32" id="about">
+            <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Sync Player</h3>
+            This was a custom built Sync Player for the <a href="https://www.philharmonia.co.uk/" target="_blank">Philharmonia Orchestra</a>&nbsp;in partnership with <a href="http://www.mixedimmersion.com/" target="_blank">Mixed Immersion</a> and Google. They partnered up to create an immersive 360 video and audio experience and needed a player. This project allowed them to demonstrate the 360 video to thousands of people as it offered a synced player as well as support for triggering external sounds and projectors via OSC. 6 Daydream HMDs with Pixel XL phones as well as an Igloo projection system were used for the SXSW experience. Support for GearVR was also implemented.
+            <p>This project consists of three apps that work in conjunction:<br>- Server app that runs on a PC and controls the experience.<br>- Client phone app installed on all phones that receives signal from the server and plays the appropriate video.&nbsp;<br>- Remote phone app that connects to the server and can be used to control the server (to trigger video playback remotely).&nbsp;<br><br>The videos to be played can easily be updated without the need to rebuild the app. The server loads a configuration file that's editable to provide a lot of flexibility.&nbsp;<br>The system offers three modes of operation which are configured per video:<br>- External audio - mutes the audio playback of the phones and plays an external audio via OSC command to a sound system.<br>- Ambisonic mode - pays ambisonic sound files with the videos through headphones connected to the Pixel phones.<br>- Internal audio - plays the videos with their built in stereo audio via headphones.&nbsp;</p>
+            <div class="gallery-container">
+              <div class="gallery-numbertext" id="gallery-numbertext"></div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-1.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-2.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-3.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-4.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-5.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-6.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-7.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-8.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-9.jpg" > </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-10.jpg"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-11.jpg"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-12.jpg"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-13.jpg"> </div>
+              <div class="gallery-Slides"> <img class="gallery-element" src="images/work/sync-player/sync-player-gallery-14.jpg"> </div>
+              <a class="gallery-prev" onclick="plusSlides(-1)"> <div class = "gallery-arrowLeft"> ❮ </div></a>
+              <a class="gallery-next" onclick="plusSlides(1)"> <div class = "gallery-arrowRight"> ❯ </div></a>
+          </div>
+          <script type="text/javascript" src="code/gallery.js"></script>
+          <p>A later modification of the player allowed Lenovo Mirage Solo support for further exhibitions.</p>
+          <div class="w3-row-padding">
+              <div class="w3-col l3 m6 w3-margin-bottom"> <div class="w3-display-container">
+                  <img src="images/work/sync-player/sync-player-lenovo-gallery-1.jpg" style="width:100%;">
+              </div> </div>
+              <div class="w3-col l3 m6 w3-margin-bottom"> <div class="w3-display-container">
+                  <img src="images/work/sync-player/sync-player-lenovo-gallery-2.jpg" style="width:100%;">
+              </div> </div>
+              <div class="w3-col l3 m6 w3-margin-bottom"> <div class="w3-display-container">
+                  <img src="images/work/sync-player/sync-player-lenovo-gallery-3.jpg" style="width:100%;">
+              </div> </div>
+              <div class="w3-col l3 m6 w3-margin-bottom"> <div class="w3-display-container">
+                      <img src="images/work/sync-player/sync-player-lenovo-gallery-4.jpg" style="width:100%;">
+                  </div>
+              </div>
+          </div>
+          <p>This player was also demonstrated to Prince William, Duke of Cambridge:</p>
+          <div class="video-container">
+              <iframe src="https://www.youtube.com/embed/frUB4JURcpA?start=52" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div> 
+        </div>
+    </div>
+
+    <div id="footer"></div>
+</body>
+<script type="text/javascript" src="code/jquery.min.js"></script>
+<script type="text/javascript" src="code/reuseElements.js"></script>
+</html>
