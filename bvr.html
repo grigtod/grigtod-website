@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<title>The Blue Violet River</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+<body>
+
+    <div id="navbar"></div>
+
+    <div class="w3-content w3-padding" style="max-width:1564px">
+        <div class="w3-container w3-padding-32" id="about">
+            <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">The Blue Violet River</h3>
+            <p> An interactive installation for the <a href="https://www.andfestival.org.uk/events/the-blue-violet-river/" target="_blank">Abandon Normal Devices Festival 2021</a>. It took place on the Mersey Ferry, augmenting the riverbank and landmarks of Liverpool. Eight custom-built tablet-based viewfinders positioned through the ferry allowed users to explore a fantasy world of creatures and sculptures scattered through the banks of River Mersey. </p>
+            <br>
+            <div class="w3-row-padding">
+                <div class="w3-col l6 m6 w3-margin-bottom">
+                    <div class="w3-display-container">
+                        <div class="video-container">
+                            <iframe width="500" height="294" src="https://www.youtube.com/embed/M_XHD8fgVRg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <div class = "imageDescription">
+                            <p>Trailer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w3-col l6 m6 w3-margin-bottom">
+                    <div class="video-container">
+                        <iframe width="500" height="294" src="https://www.youtube.com/embed/dWut6KNQvdU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class = "imageDescription">
+                        <p>Walkthrough</p>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <p>The installation took place between 24th-27th June 2021. It was a very complicated setup, but I’ll attempt to explain is as simple as possible.</p>
+            
+            
+            <p> 
+                The experience consists of the following systems: <br>
+                <ul>
+                <li> Ship tracking: Two Trimble Catalyst antennas positioned at the front (bow) and back (stern) of the ship. Each antenna connects to a phone and is powered by a power-bank. The front phone receives antenna data and transmits if via UDP to the local network. The back phone receive the data from the back antenna and also listens to the data from the front phone. The two antenna locations are used to calculate ferry location and heading. The location is the middle point between the two locations. The heading is the vector between the two locations. This data is used to calculate position and rotation for the Unity scene, which is displayed on all tablets. </li>
+                <li> 8 tablets are attached via plinths to the ship: 4 starboard side and 4 port side. Each plinth contain a wireless Arduino connected to the local network. When a user rotates the tablet, a metal rod connected to the tablet’s stand rotates and provides data to a rotary encoder connected to the Arduino. The rotation data is transmitted over the network and used via each tablet in conjunction with GNSS antennas data to render the world from an accurate virtual camera with precise rotation and position.  </li>
+                <li> 3D printed tablet housing: each tablet is placed in a custom-built 3D printed housing. </li>
+                <li> Networking: 4G router attached to the middle of the ship that allows all devices to communicate with one another as well as connect to the Internet. The GNSS antennas require Internet connection to receive high-accuracy RTX correction signal from ground transmitters and when that’s used in conjunction with GNSS satellite data a precise location precision of up to 1 cm accuracy can be achieved.  <</li>
+                <li> Control system: Due to the difference of route taken between each ferry run we couldn’t rely on a timer or GNSS triggers for different sections of the experience. Instead, we had to manually control the experience sections with a UDP message transmitted by a laptop. Tablets listen to the message and change the AR content accordingly.  </li>
+                <li> Audio: Due to an existing audio experience onboard, we couldn’t use the existing speakers for our own audio. The users were given headphones with built-in receivers, and a radio transmitter onboard was used to play audio. </li>
+                <li> Performance: There was a live dance performance happening during each ferry trip. </li>
+                <li> Accessibility: All 8 tablets were positioned on the upper deck of the ferry. For accessibility, we installed a large TV screen to play a recording of the experience on the main deck of the ferry. </li>
+                <li> AR placement: A highly-detailed photogrammetry map of Liverpool was used for AR content placement and occlusion. Due to inability to achieve perfect alignment, the occlusion feature was disabled for the duration of the installation. The ability to place 3D content in relation to real-life landmarks was very important for the development process and testing. Due to restrictions of gatherings in order to test the experience, a testing system was implemented. The testing system uses simulated ferry path and photogrammetry data to emulate a walkthrough. </li>
+                <li> Configuration systems:</li>
+                    <ul>
+                        <li> River Mersey has the second-highest tidal range in the UK of up to 10 meters. To offset the tidal effects, a special configuration variable was implemented that allowed for an update of the tidal height offset for the duration of the experience. </li>
+                        <li> Each tablet receives position and rotation of the ferry. An offset system is used to move and rotate the virtual camera relative to the central point of the ship. Since each tablet stays in place relative to the ferry, no local positional tracking is necessary. </li>
+                        <li> All Arduinos transmit UDP messages of their rotary encoder data to use as a rotation offset from each tablet. Each tablet can listen to any of the rotary encoders, and UI buttons in the configuration panel are used to switch between data streams.</li>
+                        <li> Tablets also use their internal gyro for quicker response to rotation. The Arduino rotation stream is only used for gradual correction relative to the ship. </li>
+                    </ul>
+                <li> Overseer phone app: Another app was developed that’s capable of listening to all UDP signals and provide warnings when a device stop operating properly. Thankfully, all devices behaved as expected for the duration of the festival, with the occasional need to recalibrate for tides every few hours.  The antenna had 100% online time, and we’ve never had a moment with less than 7 of the 8 devices operational (one being calibrated at a time). </li>
+                <li> Network optimizations: </li>
+                <ul>
+                    <li> The 4G router used as a main network did not create a WiFi network large enough to encompass the whole 46-meter length of the <a href="https://en.wikipedia.org/wiki/MV_Snowdrop" target="_blank">MV Snowdrop</a>. A WiFi repeater was used to extend the WiFi network and enable both phones (connected to the GNSS antennas) to access both the local internet network as well as the Internet (which was very important to receive RTX ground signal for higher accuracy) </li>
+                    <li> UDP messaging: At first this was not an issue, but when 8 tablets, 8 Arduinos, 3 phones and a controller laptop all connected to the tiny 4G router a significant network latency was introduced. To fix this, UDP messaging rates were reduced and transmitted only when required (the data has changed from the last message). An alive ping message was sent every few seconds, just to keep connections open.  </li>
+                </ul>
+                <br>
+                Other notes:
+                <br>
+                <ul>
+                    <li>
+                        Why use two GNSS antennas instead of just one and a compass? <br>
+                        &emsp; At first, I tried a compass, but magnetic compasses are not very accurate and occasionally show wrong north direction when situated closed to a large iron ore deposit or when used inside large metal objects. Because of these reasons, most large ships use a device called gyrocompass. The way it works is fascinating, and I hope you go over to Wikipedia to read more about these amazing devices! Sadly, gyrocompasses are very expensive equipment. <br>
+                        &emsp; I ended up using two GNSS antennas positioned at the front and back of the ship. I can use the vector between the two points to calculate the relative rotation angle of the ship from true north. This only works for very large ships and thankfully Mersey Ferry ship was 46 meters long. Smaller ships (or other vehicles) would require more accurate GNSS antenna setups.  
+                    </li>
+                    <li>
+                        Why not use the delta of the GNSS antenna to calculate heading? <br>
+                        &emsp;The Ferry rotates rapidly pre-mooring. Depending on tides it could rotate 180 degrees in a matter of minutes to moor on a more favourable side. I’m not entirely sure why it would rotate 180 degrees during low tides, if you know, please email me: grigtod[-at-]gmail[-dot-]com. 
+                    </li>
+                    <li>
+                        Why not use a mobile phone GNSS antenna and instead use more expensive dedicated antennas?<br>
+                        &emsp;Mobile phone GPS/GNSS can’t use ground correction signal and due to atmospheric and other interferences it can usually achieve a very bad precision. Even if the two antennas are positioned 40 meters apart at a precision of 4-5 meters, one can get very inaccurate results for the calculated forward vector. 
+                    </li>
+
+                </ul>
+            </ul>
+            </p>
+            <br>
+            
+            <div class="gallery-container">
+                <div class="gallery-numbertext" id="gallery-numbertext"></div>
+                <div class="gallery-Slides"> <img class="gallery-element" src="https://theline.imgix.net/rgm_beats_2_stills_16.9_005-min.jpeg"> </div>
+                <div class="gallery-Slides"> <img class="gallery-element" src="https://theline.imgix.net/rgm_beats_2_stills_16.9_003-min.jpeg"> </div>
+                <div class="gallery-Slides"> <img class="gallery-element" src="https://theline.imgix.net/rgm_beats_2_stills_16.9_014-min.jpeg"> </div>
+                <div class="gallery-Slides"> <img class="gallery-element" src="https://theline.imgix.net/rgm_beats_2_stills_16.9_012-min.jpeg"> </div>
+                <div class="gallery-Slides"> <img class="gallery-element" src="https://theline.imgix.net/rgm_beats_2_stills_16.9_016-min.jpeg"> </div>
+                <a class="gallery-prev" onclick="plusSlides(-1)"> <div class = "gallery-arrowLeft"> ❮ </div></a>
+                <a class="gallery-next" onclick="plusSlides(1)"> <div class = "gallery-arrowRight"> ❯ </div></a>
+            </div>
+            <script type="text/javascript" src="code/gallery.js"></script>
+           
+            
+        </div>
+    </div>
+
+    <div id="footer"></div>
+</body>
+<script type="text/javascript" src="code/jquery.min.js"></script>
+<script type="text/javascript" src="code/reuseElements.js"></script>
+</html>
