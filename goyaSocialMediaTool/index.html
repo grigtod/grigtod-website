@@ -1,0 +1,860 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Goya Campaign Data Prototype</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+
+	
+		<style>
+			/* This css is for the tabs in Insights */ 
+			/* Style the tab */
+			.tab {
+			  overflow: hidden;
+			  border: 1px solid #ccc;
+			  background-color: #f1f1f1;
+			}
+			
+			/* Style the buttons inside the tab */
+			.tab button {
+			  background-color: inherit;
+			  /*float: left; this pushes them to the left side*/
+			  border: none;
+			  outline: none;
+			  cursor: pointer;
+			  padding: 0px 0px;
+			  transition: 0.3s;
+			  font-size: 17px;
+			}
+			
+			/* Change background color of buttons on hover */
+			.tab button:hover {
+			  background-color: #ddd;
+			}
+			
+			/* Create an active/current tablink class */
+			.tab button.active {
+			  background-color: #ccc;
+			}
+			
+			/* Style the tab content */
+			.tabcontent {
+			  display: none;
+			  padding: 6px 12px;
+			  border: 1px solid #ccc;
+			  border-top: none;
+			}
+
+
+
+			/* This css is for the accordion for graphapi */ 
+			.accordion {
+				background-color: #eee;
+				color: #444;
+				cursor: pointer;
+				padding: 12px;
+				width: 100%;
+				border: none;
+				text-align: left;
+				outline: none;
+				font-size: 15px;
+				transition: 0.4s; 
+			}
+
+			.active, .accordion:hover {
+			
+			}
+
+			.accordion:after {
+				content: '\002B';
+				color: #777;
+				font-weight: bold;
+				float: right;
+				margin-left: 5px;
+			}
+
+			.active:after {
+				content: "\2212";
+			}
+
+			.panel {
+				padding: 0 11px;
+				background-color: white;
+				max-height: 0;
+				overflow: hidden;
+				text-align: left;
+				transition: max-height 0.2s ease-out;
+			}
+
+			table {
+			font-size: 0.5em;
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+			}
+
+			td, th {
+				font-size: 0.8em;
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 1px;
+			}
+
+			tr:nth-child(even) {
+			background-color: #dddddd;
+			}
+			</style>
+
+
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header" class="alt">
+						<!--span class="logo"><img src="images/goyaLogoTiny.png" alt="" /></span-->
+						<h1>Goya Campaign Data Prototype</h1>
+						<p>Track your campaigns and explore insights like never before<br /> 
+					</header>
+
+				<!-- Nav -->
+					<!--nav id="nav">
+						<ul>
+							<li><a href="#intro" class="active">Info</a></li>
+							<li><a href="#first">Connect</a></li>
+							<li><a href="#second">Insights</a></li> 
+						</ul>
+					</nav-->
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Introduction -->
+							<section id="intro" class="main">
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Info</h2>
+										</header>
+										<p>This prototype allows you to track social media metrics over time.</p>
+										<p>We will save your data to a database and allow you to access insights. <br> To keep track of your data we will need an <b>access key</b> for each social media.</p>
+										
+										<p> To use this service you will need to give us your username.
+											<div style = "display:flex;">
+												<h4 id="uname_label" style ="display:none;"></h4>
+												<input type="text" id="uname" name="uname" style="width: 40%;" onKeyUp="onUsernameInput()"> 
+												<a id="uname_applyButton" style ="display:none;" onclick="GetTokenDataFromDB()" class="button primary">Apply</a> <br>
+											</div> 
+										</p>
+										 
+										<!--ul class="actions">
+											<li><a href="generic.html" class="button">Learn More</a></li>
+										</ul-->
+									</div>
+									<span class="image"><img src="images/pic01.jpg" alt="" /></span>
+								</div>
+							</section>
+
+						<!-- First Section -->
+							<section id="first" class="main special">
+								<header class="major">
+									<h2>Connect</h2>
+									<h3 id = "warning_ConnectTab">PLEASE COMPLETE INFO SECTION TO SEE THIS</h3>
+								</header>
+								<div id = "content_ConnectTab"> 
+								<ul class="features"> 
+									<li>
+										<span class="image"><img src="images/giphyLogo.png" alt="" /></span> 
+										<h3>Giphy</h3>
+										<p>Configured only for username: grigtod</p>
+									</li>
+									<li style="overflow: hidden;text-overflow: '...';">
+										<span class="image"><img src="images/instagramLogo.png" alt="" /></span> 
+										
+										<h3>Instagram - Basic API</h3> 
+										<div style="line-height:30px;">
+											<h6 id = "instagram_basicAPIKeyLabel">Current key:</h6>
+											<h6 id = "instagram_basicAPIAccessKey" style = "white-space: nowrap;overflow: clip;text-overflow: '...';font-size: 12px;">[None]</h6>
+											<br>
+										</div>
+										<div id="instagram_basicAPISetDiv">
+											Set via Instagram: <br>
+											<a href="https://api.instagram.com/oauth/authorize?client_id=5589449261106354&redirect_uri=https://notelos.co/goyaSocialMediaTool&scope=user_profile,user_media&response_type=code" class="button primary">Set Key</a> <br>
+											<br> 
+										</div>
+										<!--button type="submit" onclick="SendTokenToDB()">Send Token to Database</button-->
+									</li>
+									<li style="overflow: hidden;text-overflow: '...';">
+										<span class="image"><img src="images/instagramLogo.png" alt="" /></span> 
+										<h3>Instagram - Graph API</h3>  
+										<div style="line-height:30px;">
+											<h6 id = "instagram_graphAPIKeyLabel">Current:</h6>
+											<h6 id = "instagram_graphAPIToken" style = "white-space: nowrap;overflow: clip;text-overflow: '...';font-size: 12px;">[None]</h6>
+											<h6 id = "instagram_graphAPIID" style = "white-space: nowrap;overflow: clip;text-overflow: '...';font-size: 12px;">[None]</h6>
+											<br>
+										</div>
+
+										<div id="instagram_graphAPISetDiv"> 
+											Set manually: <br> 
+
+											<h6>Token:</h6>
+												<input type="text" id="instagramGraphAPITokenInput" name="graphAPIAccessKeyInputName">  
+
+											<h6>ID:</h6>
+											<input type="text" id="instagramGraphAPIIDInput" name="graphAPIAccessKeyInputName">  
+											<br>
+											<div> 
+												<a onclick="SendInstaGraphAPIKeyToDB()" class="button small primary">Apply</a>  &nbsp; 
+											</div> 
+										</div>
+  
+										<!--h6>Access Key <b>NOT</b> sent to database yet! </h6--> 
+										<!--button type="submit" onclick="SendTokenToDB()">Send Token to Database</button-->
+									</li> 
+								</ul> 
+							</div> 
+
+							</section>
+
+						<!-- Second Section -->
+							<section id="second" class="main special">
+								<header class="major">
+									<h2>Insights</h2>
+									<h3 id = "warning_InsightsTab">PLEASE COMPLETE INFO SECTION TO SEE THIS</h3>
+									<!--a onclick="RefreshAllInsights()" class="button primary">Refresh</a-->  
+								</header>
+								<div id = "content_InsightsTab">  
+									<div class="tab">
+										<button class="tablinks" onclick="openTab(event, 'Giphy')" id="defaultOpen">Giphy</button>
+										<button class="tablinks" onclick="openTab(event, 'BasicAPI')">BasicAPI</button>
+										<button class="tablinks" onclick="openTab(event, 'GraphAPI')">GraphAPI</button> 
+									  </div>
+									  
+									  <div id="BasicAPI" class="tabcontent">
+										<h3>Instagram Basic API</h3>
+										<div id = "instagramBasicAPIContent" style = "text-align: left;">
+											<p>No Data Yet</p>
+										</div>
+									  </div>
+									  
+									  <div id="GraphAPI" class="tabcontent">
+										<h3>Instagram Graph API</h3> 
+										<div id = "instagramGraphAPIContent_userStats" style = "text-align: left;">
+											<p>No Data Yet</p>
+										</div>
+
+										<div id = "instagramGraphAPIContent_posts" style = "text-align: left;"> 
+										</div>
+
+										<!--	<b><h4>User Stats:</h4></b>
+
+											<b>Followers Count:</b> Null
+											<br>
+											<b>Follows Count: </b>  Null
+											<br><br>
+											<b><h4>All Stories:</b> <br> NONE</h4> 
+											<b></b><h4>All Posts:</h3></b>
+											<b><h4>All Stories:</b> <br> NONE</h4> -->
+											<!--h3 class="accordion">Media Name</h3>
+											<div class="panel">
+											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+											</div>
+
+											<h3 class="accordion">Media Name</h3>
+											<div class="panel">
+											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+											</div>
+
+											<h3 class="accordion">Media Name</h3>
+											<div class="panel">
+											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+											</div>
+
+											<h3 class="accordion">Media Name</h3>
+											<div class="panel">
+											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+											</div-->
+										
+										
+
+										
+
+									  </div>
+									  
+									  <div id="Giphy" class="tabcontent">
+										<h3>Giphy</h3>
+										<div id = "giphyContent_userStats" style = "text-align: left;">
+											<p>No Data Yet</p>
+										</div> 
+									  </div>
+									  
+									  <script>
+									  function openTab(evt, tabName) {
+										var i, tabcontent, tablinks;
+										tabcontent = document.getElementsByClassName("tabcontent");
+										for (i = 0; i < tabcontent.length; i++) {
+										  tabcontent[i].style.display = "none";
+										}
+										tablinks = document.getElementsByClassName("tablinks");
+										for (i = 0; i < tablinks.length; i++) {
+										  tablinks[i].className = tablinks[i].className.replace(" active", ""); 
+										  tablinks[i].style.background = (tablinks[i].innerHTML === tabName)? '#c4c4c4':'white';
+										}
+										document.getElementById(tabName).style.display = "block";
+										evt.currentTarget.className += " active";
+									  }
+									  
+									  // Get the element with id="defaultOpen" and click on it
+									  document.getElementById("defaultOpen").click();
+									  </script>
+										 
+
+								<!--ul class="statistics">
+									<li class="style1">
+										<span class="icon solid fa-code-branch"></span>
+										<strong>0</strong> Connections
+									</li>
+									<li class="style2">
+										<span class="icon fa-folder-open"></span>
+										<strong>0</strong> Folders
+									</li>
+									<li class="style3">
+										<span class="icon solid fa-signal"></span>
+										<strong>0</strong> Scales
+									</li>
+									<li class="style4">
+										<span class="icon solid fa-laptop"></span>
+										<strong>0</strong> Integrations
+									</li>
+									<li class="style5">
+										<span class="icon fa-heart"></span>
+										<strong>0</strong> Likes
+									</li>
+								</ul-->
+								</div>
+							</section>
+							<br>
+							<p></p>
+
+						<!-- Get Started -->
+							<!--section id="cta" class="main special">
+								<header class="major">
+									<h2>Congue imperdiet</h2>
+									<p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br />
+									posuere. Nulla massa urna, fermentum eget quam aliquet.</p>
+								</header>
+								<footer class="major">
+									<ul class="actions special">
+										<li><a href="generic.html" class="button primary">Get Started</a></li>
+										<li><a href="generic.html" class="button">Learn More</a></li>
+									</ul>
+								</footer>
+							</section-->
+
+					</div>
+
+				<!-- Footer -->
+					<!--footer id="footer">
+						<section>
+							<h2>Aliquam sed mauris</h2>
+							<p>Sed lorem ipsum dolor sit amet et nullam consequat feugiat consequat magna adipiscing tempus etiam dolore veroeros. eget dapibus mauris. Cras aliquet, nisl ut viverra sollicitudin, ligula erat egestas velit, vitae tincidunt odio.</p>
+							<ul class="actions">
+								<li><a href="generic.html" class="button">Learn More</a></li>
+							</ul>
+						</section>
+						<section>
+							<h2>Etiam feugiat</h2>
+							<dl class="alt">
+								<dt>Address</dt>
+								<dd>1234 Somewhere Road &bull; Nashville, TN 00000 &bull; USA</dd>
+								<dt>Phone</dt>
+								<dd>(000) 000-0000 x 0000</dd>
+								<dt>Email</dt>
+								<dd><a href="#">information@untitled.tld</a></dd>
+							</dl>
+							<ul class="icons">
+								<li><a href="#" class="icon brands fa-twitter alt"><span class="label">Twitter</span></a></li>
+								<li><a href="#" class="icon brands fa-facebook-f alt"><span class="label">Facebook</span></a></li>
+								<li><a href="#" class="icon brands fa-instagram alt"><span class="label">Instagram</span></a></li>
+								<li><a href="#" class="icon brands fa-github alt"><span class="label">GitHub</span></a></li>
+								<li><a href="#" class="icon brands fa-dribbble alt"><span class="label">Dribbble</span></a></li>
+							</ul>
+						</section> 
+					</footer-->
+
+			</div>
+
+		<!-- Scripts -->
+
+			<script>
+				//This script makes the accordion feature work: 
+
+				function SetAllAccordions()
+				{
+					var acc = document.getElementsByClassName("accordion");
+					var i;
+
+					for (i = 0; i < acc.length; i++) {
+					acc[i].addEventListener("click", function() {
+						console.log("Accordion event triggered!");
+						this.classList.toggle("active");
+						var panel = this.nextElementSibling;
+						if (panel.style.maxHeight) {
+						panel.style.maxHeight = null;
+						} else {
+						panel.style.maxHeight = panel.scrollHeight + "px";
+						} 
+					});
+					}
+				}
+				
+			</script>
+			<script>
+				//Cookies related only:
+				
+				//try to access existing cookie after the page loads:
+				let devMode = false;
+				let databaseURL = "https://goya1-bc87.restdb.io/";
+				let databaseK = "62eec7c6efe26c66934b7924";   
+				let savedUsername;
+				let savedAccessKey; 
+
+				window.addEventListener('load',() => {
+					savedUsername = getCookie("username");  
+
+					if(savedUsername === undefined)
+					{
+						document.getElementById("uname").value = ""; 
+						savedUsername = "";
+					}
+					
+					if(savedUsername !== "") {
+						console.log("Username cookie loaded: " + savedUsername);
+						document.getElementById("uname").value = savedUsername;  
+					} 
+					toggleUnameApplyButton();
+					toggleUsernameDependantFeatures(false);
+
+					tryGetInstagramAccessKey();
+
+					if(devMode)
+					{
+						savedUsername = "devMode";
+						GetTokenDataFromDB();
+					}
+				});
+				
+				function getCookie(c_name) {
+					var i,x,y,ARRcookies=document.cookie.split(";");
+
+					for (i=0;i<ARRcookies.length;i++)
+					{
+						x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+						y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+						x=x.replace(/^\s+|\s+$/g,"");
+						if (x==c_name)
+						{
+							return unescape(y);
+						}
+					}
+				}
+				
+				//save cookie when user inputs username
+				function onUsernameInput()
+				{
+					let unameVal = document.getElementById("uname").value;
+					console.log(">>>>>>>>>Username " + unameVal+ " Saved in Cookies!");
+					document.cookie = "username=" + unameVal + ";expires=Fri, 31 Dec 9999 23:59:59 GMT;path=/;SameSite=Lax"; 
+					savedUsername = unameVal;
+					toggleUnameApplyButton(); 
+				}
+
+
+			</script>
+			<script>
+				//useful references
+			 
+				//
+
+				function RefreshAllInsights()
+				{  
+					
+					//basic api:
+					let htmlData = "";
+					let dataObjects = GetDataFromCollection(savedUsername, "basicapi");
+					
+					if(dataObjects != null)
+					{
+						for(let i = 0; i < dataObjects.length; i++)
+						{  
+							accordionInternalElement =
+							    (dataObjects[i].instagram_thumbnail_url == ""?"": '<img style = "width:50%;height:auto;" src="' + dataObjects[i].instagram_thumbnail_url + '" alt="Image"><br>') +
+								"Caption: " + dataObjects[i].instagram_caption + "<br>" + 
+								"Timestamp: " + dataObjects[i].instagram_timestamp + "<br>" + 
+								"Media Type: " + dataObjects[i].instagram_media_type + "<br>" +  
+								"Permalink: " +  '<a href="'+ dataObjects[i].instagram_permalink + '"> link</a><br>' + 
+								"Thumbnail URL: "+  '<a href="' + dataObjects[i].instagram_thumbnail_url + '"> link</a><br>' + 
+								"Instagram ID: " + dataObjects[i].instagram_id;
+
+							let title = dataObjects[i].instagram_id + ' - ' + dataObjects[i].instagram_caption;
+							if(title.length > 139) title = title.substr(0, 137) + "...";
+						 
+							let newData =  '<h3 class="accordion">' + title + '</h3><div class="panel"><p>'+ accordionInternalElement +'</p></div>'; 
+
+							htmlData += newData; 
+						}
+
+						document.getElementById('instagramBasicAPIContent').innerHTML = htmlData;  
+					}
+					else
+					{
+						document.getElementById('instagramBasicAPIContent').innerHTML = "No data available for <b>" + savedUsername + "</b> yet! <br> <br>"; 
+					}
+ 
+					//graph api - user stats:
+ 
+					
+					let graphAPIUserInsightsHTMLData = "";
+					let dataObjectsUserInsights = GetDataFromCollection(savedUsername, "graphapi-userinsights");
+					if(dataObjectsUserInsights != null &&dataObjectsUserInsights.length > 0)
+					{
+						graphAPIUserInsightsHTMLData = '<b>Followers Count: </b>' + dataObjectsUserInsights[0].followers_count + '<br>' + '<b>Follows Count: </b>' + dataObjectsUserInsights[0].follows_count + '<br><br>'; 
+						document.getElementById('instagramGraphAPIContent_userStats').innerHTML = graphAPIUserInsightsHTMLData;  
+					}
+					else
+					{
+						document.getElementById('instagramGraphAPIContent_userStats').innerHTML = "No data available for <b>" + savedUsername + "</b> yet! <br> <br>"; 
+					} 
+ 
+					//graph api - posts
+					
+					let dataPostInsights = GetDataFromCollection("", "graphapi-mediainsights");
+					let graphAPIStoriesHTMLData = "";
+					let graphAPIPostsHTMLData = "";
+					let graphAPIMediaList = GetDataFromCollection(savedUsername, "graphapi-medialist");
+					if(graphAPIMediaList  != null && graphAPIMediaList.length > 0)
+					{
+						for(let i = 0; i < graphAPIMediaList.length; i++)
+						{  
+							let permalinkToSet = (graphAPIMediaList[i].permalink !="") ? ("Permalink: " +  '<a href="'+ graphAPIMediaList[i].permalink + '"> link</a><br>') : "";
+							let mediaURLToSet =  (graphAPIMediaList[i].media_url !="") ? ("Media URL: "+  '<a href="' + graphAPIMediaList[i].media_url + '"> link</a><br>') : "";
+							let accordionInternalElement = (graphAPIMediaList[i].media_url !="")?'<img style = "width:50%;height:auto;" src="' + graphAPIMediaList[i].media_url + '" alt="Image"><br>' : "";
+							accordionInternalElement +=
+								"Caption: " + graphAPIMediaList[i].caption + "<br>" + 
+								"Timestamp: " + graphAPIMediaList[i].timestamp + "<br>" + 
+								"Media Type: " + graphAPIMediaList[i].media_type + "<br>" +  
+								"Media Product Type: " + graphAPIMediaList[i].media_product_type + "<br>" +  
+								permalinkToSet + 
+								mediaURLToSet + 
+								"Media ID: " + graphAPIMediaList[i].media_id;
+
+							//now add insights to the bottom:
+							accordionInternalElement += "<br>---------------------<br>All Insight Queries:<br>"; 
+							accordionInternalElement += "<table>";
+								accordionInternalElement+= "<tr>";
+									accordionInternalElement+="<th>Timestamp</th>";
+									accordionInternalElement+="<th>Comments Count</th>";
+									accordionInternalElement+="<th>Likes Count</th>";
+									accordionInternalElement+="<th>Engagement</th>";
+									accordionInternalElement+="<th>Impressions</th>";
+									accordionInternalElement+="<th>Reach</th>";
+									accordionInternalElement+="<th>Saved</th>";
+									accordionInternalElement+="<th>Video Views</th>";
+									accordionInternalElement+="<th>Album Engagement</th>";
+									accordionInternalElement+="<th>Album Impressions</th>";
+									accordionInternalElement+="<th>Album Reach</th>";
+									accordionInternalElement+="<th>Album Saved</th>";
+									accordionInternalElement+="<th>Exits</th>";
+									accordionInternalElement+="<th>Replies</th>";
+									accordionInternalElement+="<th>Taps_forward</th>";
+									accordionInternalElement+="<th>Taps_back</th>";
+									accordionInternalElement += "</tr>";
+									
+							for(let j = 0; j < dataPostInsights.length; j++)
+							{  
+								if(dataPostInsights[j].media_id == graphAPIMediaList[i].media_id)
+								{
+									accordionInternalElement += "<tr>"+ 
+										"<td>" +dataPostInsights[j].query_timestamp + "</td>"+
+										"<td>" +dataPostInsights[j].comments_count + "</td>"+
+										"<td>" +dataPostInsights[j].like_count + "</td>"+
+										"<td>" +dataPostInsights[j].engagement + "</td>"+
+										"<td>" +dataPostInsights[j].impressions + "</td>"+
+										"<td>" +dataPostInsights[j].reach + "</td>"+
+										"<td>" +dataPostInsights[j].saved + "</td>"+
+										"<td>" +dataPostInsights[j].video_views + "</td>"+
+										"<td>" +dataPostInsights[j].carousel_album_engagement + "</td>"+
+										"<td>" +dataPostInsights[j].carousel_album_impressions + "</td>"+
+										"<td>" +dataPostInsights[j].carousel_album_reach + "</td>"+
+										"<td>" +dataPostInsights[j].carousel_album_saved + "</td>"+
+										"<td>" +dataPostInsights[j].exits + "</td>"+
+										"<td>" +dataPostInsights[j].replies + "</td>"+
+										"<td>" +dataPostInsights[j].taps_forward + "</td>"+
+										"<td>" +dataPostInsights[j].taps_back + "</td></tr>";
+								}
+							}
+							accordionInternalElement += "</table>"; 
+
+							let title = graphAPIMediaList[i].media_id + ' - ' + graphAPIMediaList[i].caption;
+							if(title.length > 139) title = title.substr(0, 137) + "...";
+						 
+							let newData =  '<h3 class="accordion">' + title + '</h3><div class="panel"><p>'+ accordionInternalElement +'</p></div>'; 
+
+							if(graphAPIMediaList[i].media_type == "STORY")
+							{
+								console.log("Story added to data!");
+								graphAPIStoriesHTMLData += newData; 
+							}
+							else graphAPIPostsHTMLData += newData; 
+						}
+						document.getElementById('instagramGraphAPIContent_posts').innerHTML = "<h3>Stories:</h3>" + graphAPIStoriesHTMLData + "<br><br><br><h3>Posts:</h3>"+ graphAPIPostsHTMLData;   
+					}
+					else
+					{
+						document.getElementById('instagramGraphAPIContent_posts').innerHTML = "No data available for <b>" + savedUsername + "</b> yet! <br> <br>"; 
+					}
+					
+					//giphy 
+					
+					let giphyData = ""
+					let giphyContentanalytics = GetDataFromCollection("", "giphy-contentanalytics"); 
+					let giphyContentList = GetDataFromCollection(savedUsername, "giphy-contentlist");
+
+					if(giphyContentList != null && giphyContentList.length > 0)
+					{
+						for(let i = 0; i < giphyContentList.length; i++)
+						{  
+							let contentURL = (giphyContentList[i].content_url !="") ? ("Content URL: " +  '<a target="_blank" href="'+ giphyContentList[i].content_url + '"> link</a><br>') : "";
+							let accordionInternalElement = 
+							    '<img style = "width:50%;height:auto;" src="https://i.giphy.com/media/' + giphyContentList[i].content_id + '/giphy.webp" alt="Italian Trulli"><br>' + 
+								"Content ID: " + giphyContentList[i].content_id + "<br>" + 
+								"Content Type: " + giphyContentList[i].content_type + "<br>" + 
+								contentURL;
+
+							if(giphyContentanalytics != null && giphyContentanalytics.length > 0)
+							{
+								accordionInternalElement += "<table>";
+								accordionInternalElement+= "<tr>";
+									accordionInternalElement+="<th>Timestamp</th>";
+									accordionInternalElement+="<th>Content ID</th>";
+									accordionInternalElement+="<th>View Count</th>"; 
+									accordionInternalElement+="<th>Engagement</th>";
+
+								for(let j = 0; j < giphyContentanalytics.length; j++)
+								{ 
+									if(giphyContentList[i].content_id == giphyContentanalytics[j].content_id)
+									{ 
+										accordionInternalElement += "<tr>"+ 
+											"<td>" +giphyContentanalytics[j].query_timestamp + "</td>"+
+											"<td>" +giphyContentanalytics[j].content_id + "</td>"+
+											"<td>" +giphyContentanalytics[j].view_count + "</td>"+ 
+											"<td>" +giphyContentanalytics[j].engagement + "</td></tr>";
+									}
+								}
+								accordionInternalElement += "</table>"; 
+							}
+							 
+
+							let title = giphyContentList[i].content_id + ' - ' + giphyContentList[i].content_type;
+							if(title.length > 139) title = title.substr(0, 137) + "...";
+							let newData =  '<h3 class="accordion">' + title + '</h3><div class="panel"><p>'+ accordionInternalElement +'</p></div>'; 
+
+							giphyData += newData;
+						} 
+
+						document.getElementById('giphyContent_userStats').innerHTML = giphyData;   
+					}
+					else
+					{
+						document.getElementById('giphyContent_userStats').innerHTML = "No data available for <b>" + savedUsername + "</b> yet! <br> <br>"; 
+					}
+					
+					SetAllAccordions(); 
+				}
+  
+				function GetTokenDataFromDB()
+				{ 
+					//get token data from user
+					GetTokensFromDB();
+					//if the username is not null or undefined...
+					toggleUsernameDependantFeatures(true);
+					document.getElementById('uname_applyButton').style.display = 'none'; 
+					document.getElementById('uname').style.display= 'none';
+					document.getElementById('uname_label').innerHTML = "Your username is: <b>" + savedUsername + "</b>";
+					document.getElementById('uname_label').style.display= 'block';
+
+					RefreshAllInsights();
+				}
+
+				//unlocks some sections if username has been inputted: 
+				function toggleUnameApplyButton()
+				{ 
+					document.getElementById('uname_applyButton').style.display=(savedUsername !== "")?'block':'none'; 
+				}
+
+				function toggleUsernameDependantFeatures (_newState) {
+				
+					document.getElementById('warning_ConnectTab').style.display=_newState?'none':'block';
+					document.getElementById('warning_InsightsTab').style.display=_newState?'none':'block';
+					document.getElementById('content_ConnectTab').style.display=_newState?'block':'none';
+					document.getElementById('content_InsightsTab').style.display=_newState?'block':'none'; 
+					document.getElementById('second').style.display=_newState?'block':'none'; 
+					document.getElementById('first').style.display=_newState?'block':'none'; 
+				}
+
+
+				//instagram access key related:
+
+				function tryGetInstagramAccessKey()
+				{
+					let accessKey = getInstagramAccessKeyFromURL(window.location.href);
+					
+					if(accessKey != "")
+					{
+						document.getElementById('instagram_basicAPIAccessKey').textContent = accessKey; 
+						document.getElementById('instagram_basicAPISetDiv').style.display= 'none';
+						savedAccessKey = accessKey; 
+						SendInstaBasicAccessKeyToDB(); 
+					} 
+					
+					//console.log(document.getElementById('instagram_accessKey').textContent);
+				}
+
+				function getInstagramAccessKeyFromURL(url) {
+					var urlSections=url.split("?code="); 
+					return urlSections.length > 1 ? urlSections[1].slice(0, -2) : ""; 
+				} 
+				
+				function GetTokensFromDB()
+				{
+					let xhttp = new XMLHttpRequest();
+					xhttp.open("GET", databaseURL + "rest/tokens", false); 
+					xhttp.setRequestHeader("Accept", "application/json");
+					xhttp.setRequestHeader("Content-type", "application/json");
+					xhttp.setRequestHeader("x-apikey", databaseK);
+					xhttp.send(null);
+					//console.log(xhttp.responseText);
+					const json = xhttp.responseText;
+					const obj = JSON.parse(json);
+					for(let i = 0; i < obj.length; i++)
+					{
+						if(obj[i].username === savedUsername) 
+						{ 
+							console.log(obj[i].username);
+							if(obj[i].type == "instagram_basicAPI")
+							{
+								//console.log(obj[i]);
+								document.getElementById('instagram_basicAPIAccessKey').textContent = obj[i].access_key; 
+								document.getElementById('instagram_basicAPISetDiv').style.display= 'none'; 
+								if(obj[i].token !== undefined)
+								{
+									document.getElementById('instagram_basicAPIKeyLabel').textContent = "Current token:";
+									document.getElementById('instagram_basicAPIAccessKey').textContent = obj[i].token; 
+								} 
+							} 
+							if(obj[i].type == "instagram_graphAPI")
+							{
+								document.getElementById('instagram_graphAPIToken').textContent = obj[i].token;  
+								document.getElementById('instagram_graphAPIID').textCOntent = obj[i].page_id;
+								document.getElementById('instagram_graphAPISetDiv').style.display= 'none';
+								if(obj[i].token !== undefined)
+								{
+									document.getElementById('instagram_graphAPIKeyLabel').textContent = "Current:";
+									document.getElementById('instagram_graphAPIToken').textContent = obj[i].token; 
+									document.getElementById('instagram_graphAPIID').textContent = obj[i].page_id;
+								} 
+							}
+						} 
+					}
+					
+					//return xmlHttpReq.responseText;
+				}
+
+				//send token to db via link
+				function SendInstaBasicAccessKeyToDB() {
+					console.log("Sending token to DB!"); 
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+							alert(this.responseText);
+						}
+					};
+					xhttp.open("POST", databaseURL + "rest/tokens", true);
+					xhttp.setRequestHeader("Content-type", "application/json");
+					xhttp.setRequestHeader("x-apikey", databaseK); 
+					xhttp.send('{"access_key":"' + savedAccessKey + '","username":"' + savedUsername + '","type":"instagram_basicAPI"}');
+
+					setTimeout(function(){
+						window.location.href = 'https://notelos.co/goyaSocialMediaTool/'; 
+					}, 2000);  
+				}
+
+				function SendInstaGraphAPIKeyToDB()
+				{  
+					let tokenToSend = document.getElementById('instagramGraphAPITokenInput').value;
+					let idToSend = document.getElementById('instagramGraphAPIIDInput').value;
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() {
+						if (this.readyState == 4 && this.status == 200) {
+							alert(this.responseText);
+						}
+					};
+					xhttp.open("POST", databaseURL + "rest/tokens", true);
+					xhttp.setRequestHeader("Content-type", "application/json");
+					xhttp.setRequestHeader("x-apikey", databaseK); 
+					xhttp.send('{"access_key":"' + "none" + '","token":"' + tokenToSend + '","page_id":"' + idToSend +'","username":"' + savedUsername + '","type":"instagram_graphAPI"}');  
+					document.getElementById('instagram_graphAPIToken').textContent = tokenToSend; 
+					document.getElementById('instagram_graphAPIID').textContent = idToSend; 
+					document.getElementById('instagram_graphAPISetDiv').style.display= 'none';  
+				}
+ 
+				function GetDataFromCollection(_username, _collectionName)
+				{
+					let xhttp = new XMLHttpRequest();
+					xhttp.open("GET", databaseURL + "rest/" + _collectionName, false);  
+					xhttp.setRequestHeader("Content-type", "application/json");
+					xhttp.setRequestHeader("x-apikey", databaseK);
+					xhttp.send(null); 
+					
+					const json = xhttp.responseText;  
+					const obj = JSON.parse(json);
+
+					let userData = [];
+					let index = 0;
+					for(let i = 0; i < obj.length; i++)
+					{
+						if(_username === "" || obj[i].username === savedUsername)
+						{
+							userData[index] = obj[i];//JSON.stringify(obj[i]);
+							index++;
+						}  
+					}
+ 
+					if(index == 0) 
+					{ 
+						return null; 
+					}
+					else 
+					{ 
+						return userData;
+					} 	
+				}
+
+														
+			</script> 
+			
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

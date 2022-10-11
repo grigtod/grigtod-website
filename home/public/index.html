@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<html>
+	<head>
+		<title>Housing - Notelos Limited</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1" />
+		<link rel="stylesheet" href="assets/css/main.css" /> 
+		<link rel="stylesheet" href="assets/css/layout.css">  
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>a
+	<![endif]-->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery.mixitup.min.js"></script>
+	
+	<script type="text/javascript">
+	$(function () {
+		
+		var filterList = {
+		
+			init: function () {
+			
+				// MixItUp plugin
+				// http://mixitup.io
+				$('#portfoliolist').mixItUp({
+  				selectors: {
+    			  target: '.portfolio',
+    			  filter: '.filter'	
+    		  },
+    		  load: {
+      		  filter: '.small, .normal, .big'  
+      		}     
+				});								
+			
+			}
+
+		};
+		
+		// Run the show!
+		filterList.init();
+		
+		
+	});	
+	</script> 
+	</head>
+	<body <!--class="is-preload"-->>
+		<div class="container" id="app">
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<a class="special" href=".">
+					<header id="header"> 
+						<div class="logo">
+						
+							<span class="icon fa-home"></span>
+							
+						</div></a>
+						<div class="content">
+							<div class="inner">
+								<h1>Home AR</h1> 
+								 
+				
+    <!--div class="row">    
+      <div class="col-md-4">   
+        <div class="well well-sm">  
+          <div>
+            <canvas id="arapp" class ="arapp" height=100></canvas>
+          </div>
+        </div> 
+      </div>
+    </div-->      
+		 
+								<p>Order a house and receive it within a month<br>  
+								</p>
+								
+							</div>
+						</div>
+						
+						<nav>  
+								  
+	<h4>
+		<ul id="filters" class="clearfix">
+		
+			<li><span class="filter" data-filter=".small, .normal, .big">All</span></li>
+			<li><span class="filter" data-filter=".small">Small</span></li> 
+			<li><span class="filter" data-filter=".normal">Normal</span></li>
+			<li><span class="filter" data-filter=".big">Big</span></li> 
+		
+		</ul></h4>
+ 
+									</ul>		
+							</ul>
+						</nav> 
+					</header>
+
+				<!-- Main -->
+				 
+				<div class="container">
+
+		<div id="portfoliolist">
+			
+			<a href="20x8HousingUnit1.html"> 	
+				<div class="portfolio small" data-cat="small">
+				<div class="portfolio-wrapper">				
+					<img src="images/20x8.jpg" alt="" />
+					<div class="label">
+						<div class="label-text">
+							<a class="text-title">Container office</a>
+							<span class="text-category">£15,000</span> 
+						</div>
+						<div class="label-bg"></div>
+					</div>
+				</div> 
+			</div>	 
+			</a>	 
+			
+			<a href="30x10AccommodationUnit2.html"> 	
+				<div class="portfolio normal" data-cat="normal">
+				<div class="portfolio-wrapper">				
+					<img src="images/30x10.jpg" alt="" />
+					<div class="label">
+						<div class="label-text">
+							<a class="text-title">1 bedroom prefab house</a>
+							<span class="text-category">£22,000</span> 
+						</div>
+						<div class="label-bg"></div>
+					</div>
+				</div> 
+			</div>	 
+			</a>	  	 
+			
+			<a href="BeachHousePrefab.html"> 	
+				<div class="portfolio big" data-cat="big">
+				<div class="portfolio-wrapper">				
+					<img src="images/BeachHousePref.jpg" alt="" />
+					<div class="label">
+						<div class="label-text">
+							<a class="text-title">Beach house prefab</a>
+							<span class="text-category">£34,000</span> 
+						</div>
+						<div class="label-bg"></div>
+					</div>
+				</div> 
+			</div>	 
+			</a> 
+			 
+			<a href="40x123BedroomHouse1.html"> 	
+				<div class="portfolio big" data-cat="big">
+				<div class="portfolio-wrapper">				
+					<img src="images/40x12.jpg" alt="" />
+					<div class="label">
+						<div class="label-text">
+							<a class="text-title">3 bedrooms prefab house</a>
+							<span class="text-category">£38,000</span> 
+						</div>
+						<div class="label-bg"></div>
+					</div>
+				</div> 
+			</div>	 
+			</a> 
+			
+		</div>
+		
+	</div><!-- container -->
+	 
+				<!-- Footer --> 
+					<footer id="footer">
+						<p class="copyright">AR Prototype by <a href="https://notelos.co" target=”_blank”>NOTELOS LIMITED</a></p> <br>
+						<ul class="icons"> 
+						
+					</footer> 
+			</div>
+
+
+		<!-- BG -->
+			<div id="bg"></div>
+
+		<!-- Scripts --> 
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			
+			<script src="../third_party/three.js/three.min.js"></script>
+			<script src="../third_party/three.ar.js/three.ar.min.js"></script>
+			<script src="../third_party/three.js/VRControls.js "></script>
+			<script src="../third_party/three.js/MTLLoader.js"></script>
+			<script src="js/index.min.js "></script>
+</div>  
+	</body>
+</html>

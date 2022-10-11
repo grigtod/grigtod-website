@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<title>AR R&D</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../css/style.css">
+<body>
+    <div id="navbar"></div>
+
+    <div class="w3-content w3-padding" style="max-width:1564px">
+        <div class="w3-container w3-padding-32" id="about">
+            <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">AR R&D</h3>
+            <div class="w3-row-padding">
+                <div class="w3-col l6 m6 w3-margin-bottom">
+                    <div class="w3-display-container">
+                        <div class="video-container">
+                            <iframe width="500" height="294" src="https://www.youtube.com/embed/djhRES-szL0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+                <div class="w3-col l6 m6 w3-margin-bottom">
+                    <div class="w3-display-container">
+                        This project aims to push the boundaries of what's possible in AR. To  make augmented reality truly immersive it needs to feel connected to  the real world, but looking into existing AR applications the virtual  objects seem very disconnected. That’s why I came up with this  framework!
+                        <p>At first GPS data is used to figure if the user is inside  or outside. Weather effects and sun shadows are not applied to the  object if it’s inside a building.</p>
+                        <p>Then the user location, weather data (API call with  location) and time of day is used to simulate a virtual sun and create  realistic lightning and shadows for the object. Weather data is also  used for simulating clouds(no sun shadows), rain, snow and even wind  force and direction.</p>
+                        <p>Another separate system takes care of the reflections. In  this framework there are two types of reflections. The first time is the  reflections from the object. Video feed is used to approximate these.  The second type is the ground reflection. Currently ground reflections  happen only when water is detected below the object. The rain data is  used to enable ground reflections, but to make sure the floor is wet a  machine learning service is used to determine if there’s water.</p>
+                        <p>The machine learning system returns data regarding the floor below the virtual object and in the example here I use it to change the sound of the floor depending of it’s material.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+</body>
+<script type="text/javascript" src="../code/jquery.min.js"></script>
+<script type="text/javascript" src="../code/reuseElements.js"></script>
+</html>
