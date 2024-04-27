@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body> 
+	<div id="Info">
+		<h1>Unofficial VR Luma Viewer</h1>  
+		<h3>How to use:</h3>  
+		1. Find cool capture from here: <a href="https://lumalabs.ai/featured" target="_blank">https://lumalabs.ai/featured</a> <br>
+		&emsp;* Alternatively click on one of the pre-selected captures below and continue from step 4. <br>
+		2. Copy the ID of the capture URL: https://lumalabs.ai/capture/<font color="#FF0000"><u>7f763b07-15bc-430e-84bf-9825f8e0c89e</u></font> <br>
+		3. Paste it in the "Content ID" input field below <br>
+		4. Press the "Load Content" button, wait for the capture to load and press the "Enter VR" button <br>
+		5. Navigation in VR: W,A,S,D,Q,E <br> 
+		If you don't see the "Enter VR" button you'll need to enable XR flags in your browser: Chrome: chrome://flags, Firefox: about:config
+	</div>
+	<div id="loadUI"> 
+		<h3>Content Loader:</h3>  
+		<button onclick="SetInput('a7eb44c9-cba1-4fed-b0e2-26f6399549ba')">Boat on ice</button> 
+		<button onclick="SetInput('7f763b07-15bc-430e-84bf-9825f8e0c89e')">Robot dog</button> 
+		<button onclick="SetInput('1cc529c0-e811-4cb3-8160-62055d20b37d')">Tank</button> 
+		<button onclick="SetInput('36783a60-d040-442d-80f3-b8bca256e225')">Production stage</button> 
+		<button onclick="SetInput('76bbf4fa-3f13-4edd-a00d-3e381c4c632d')">Car</button> 
+		<button onclick="SetInput('14e491bd-4cce-4564-92ff-bb797ffa31ea')">Castle</button> 
+		
+		<br><br>
+		Use Fog: <input type="checkbox" id="fogToggle">
+		<br><br>
+		<label for="contentID">Content ID:</label>
+		<input type="text" id="contentID" name="contentID"> 
+		<button id="loadContentBtn">Load Content</button>  
+	</div>
+	
+	<script>
+		//disable button if input is empty:
+		let inputElt = document.getElementById('contentID');
+		let btn = document.getElementById('loadContentBtn');
+		btn.disabled = true;
+		
+		inputElt.addEventListener("input", function(){
+		  UpdateButtonStatus();
+		})
+		
+		function SetInput(_val) { 
+			inputElt.value = _val; 
+			UpdateButtonStatus();
+		}
+		
+		function UpdateButtonStatus() {
+			btn.disabled = (inputElt.value === '');
+		}
+	</script>
+
+	<script type="importmap">
+	{
+		"imports": {
+			"three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+			"three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/",
+			"@lumaai/luma-web": "https://unpkg.com/@lumaai/luma-web@0.2.0/dist/library/luma-web.module.js"
+		}
+	}
+	</script>
+	
+	 
+	<script type="module">
+	import { WebGLRenderer, PerspectiveCamera, Scene } from 'three'; 
+	import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+	import { VRButton } from 'three/addons/webxr/VRButton.js'; 
+	import { LumaSplatsThree } from '@lumaai/luma-web'; 
+	import { Color, FogExp2 } from "three";
+	
+	
+	document.getElementById("loadContentBtn").addEventListener("click", LoadSplat);
+
+	function LoadSplat() { 
+	
+		let contentID = document.getElementById("contentID").value;
+		let toggleFog = document.getElementById("fogToggle").checked; 
+		
+		document.getElementById("loadUI").remove();
+	   
+		let renderer = new WebGLRenderer({ antialias: false });
+		renderer.xr.enabled = true;
+		
+		renderer.domElement.style.position = 'absolute';
+		renderer.domElement.style.width = '100%';
+		renderer.domElement.style.height = '100%';
+
+		// add canvas to DOM
+		document.body.appendChild(renderer.domElement);
+		let vrButton = VRButton.createButton(renderer);
+		document.body.appendChild(vrButton);
+		
+		let camera = new PerspectiveCamera(75, 1, 0.1, 1000);
+		camera.position.z = 1;   
+		 
+		let controls = new OrbitControls(camera, renderer.domElement);
+		controls.enableDamping = true;
+
+		let scene = new Scene();
+ 
+		let splat = new LumaSplatsThree({ 
+			source: 'https://lumalabs.ai/capture/' + contentID,
+			//enableThreeShaderIntegration: false,
+			//particleRevealEnabled: true,
+		});
+		  
+		if(toggleFog)
+		{
+			scene.fog = new FogExp2(new Color(0xe0e1ff).convertLinearToSRGB(), 0.10);
+			scene.background = scene.fog.color;
+		}
+		
+		//splat.position.y = 2;
+		splat.position.z = -4;
+		splat.position.x = 1; 
+		scene.add(splat); 
+		
+		
+		function frameLoop() {
+			let canvas = renderer.domElement;
+			let width = canvas.clientWidth;
+			let height = canvas.clientHeight;
+
+			if (canvas.width !== width || canvas.height !== height) {
+				camera.aspect = width / height;
+				camera.updateProjectionMatrix(); 
+				renderer.setSize(width, height, false);
+			}
+
+			controls.update();
+
+			renderer.render(scene, camera);
+		}
+		
+		var speed = 0.1; 
+
+		document.addEventListener("keydown", onDocumentKeyDown, false);
+		function onDocumentKeyDown(event) { 
+			var keyCode = event.which;
+			if (keyCode == 87) { //W 
+				splat.position.x += speed;
+			} else if (keyCode == 83) { //S
+				splat.position.x -= speed;
+			}else if (keyCode == 81) { //Q
+				splat.position.y -= speed;
+			}else if (keyCode == 69) { //E
+				splat.position.y += speed;
+			}else if (keyCode == 65) { //A
+				splat.position.z -= speed;
+			} else if (keyCode == 68) { //D
+				splat.position.z += speed;
+			} else if (keyCode == 82) { //R
+				splat.position.set(1, 0, -4);
+			}
+		};
+
+		renderer.setAnimationLoop(frameLoop); 
+		 
+	}
+	 
+	</script>
+	 
+
+</body>
+</html>
