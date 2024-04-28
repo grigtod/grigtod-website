@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en"> 
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="splats\css\annotations.css"> 
+	</head>
+	<body> 
+		<div class="resolutionScalingSlider">
+		  <p>Resolution Scaling:</p>
+		  <input type="range" min="10" max="200" value="100" id = "resolutionScalingSlider"> 
+		</div>
+
+		<div class="credits">
+			<h3><a href="https://grigtod.com/" target = "_blank" >GRIGTOD.COM</a></h3>
+		</div>
+
+		<div class="annotation"> 
+			<h2 id ="annotationTitle"><strong>Title</strong></h3>  
+			<p id = "annotationContent">Content</p> 
+		</div> 
+	 
+		<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/",
+				"@lumaai/luma-web": "https://unpkg.com/@lumaai/luma-web@0.2.0/dist/library/luma-web.module.js"
+			}
+		} 
+		</script>
+		<script type="module"> 
+			//Imports
+			import * as THREE from 'three'; 
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { LumaSplatsThree } from '@lumaai/luma-web';   
+			
+			//Content configuration:
+			let lumaContentID = "7f763b07-15bc-430e-84bf-9825f8e0c89e"; 
+			let toggleFog = true;
+			let particleReveal = false;
+			 
+			let hotspotSpriteScale_full = 0.1;
+			let hotspotSpriteScale_shrunk = 0.06;
+			let hotspotOpacity_visible = 1;
+			let hotspotOpacity_hidden = 0.3;
+			
+			let hotspotsCount = 5; //To add mode hotspots just edit the count and make sure to update all arrays below
+			let hotspotsGroups = [hotspotsCount];
+			let hotspotsSpriteRef = [hotspotsCount];
+			let hotspotsVisibility = [hotspotsCount];
+			let hotspotsPositions = [new THREE.Vector3(0.05,0.2,1.1),new THREE.Vector3(0,0.4,0),new THREE.Vector3(0.35,0.2,0),new THREE.Vector3(0.4,0.2,-0.7),new THREE.Vector3(-0.4,-0.6,0.7)]; 
+			
+			let markersTexture = ["/splats/sprites/eye.png", 
+								  "/splats/sprites/brain.png", 
+								  "/splats/sprites/battery.png", 
+								  "/splats/sprites/leg.png", 
+								  "/splats/sprites/paw.png"];
+			
+			let markersTitle = ["Cameras and Ultrasonic sensors", 
+							    "Brain", "Swappable Battery", 
+								"Flexible Adaptive Joints", 
+								"Foot force sensor"];
+								
+			let markersData = ["• 5 sets, 10 fish-eye cameras<br> • 150*170 Single depth camera lens angle <br> • Human Recognition", 
+							   "• Ubuntu-ROS OS <br> • ARM based architecture <br> • C++, C or Python programming  <br>• 16 core CPU+ GPU（384Core,1.5TFLOPS）", 
+							   "• 4 hours battery life <br> • LED power display and charging status <br> • Type C charaging port", 
+							   "• 3.7m/s (13km/h) running speed <br> • 5kg load capacity <br> • -40~+40° Lateral hip swing joint <br> • 218~+45° Anterior hip swing joint <br> • +24~+132° Knee joint", 
+							   "• 5g resolution ratio <br> "];
+		
+			
+			//Webpage references:
+			const annotationTitle = document.getElementById("annotationTitle");
+			const annotationContent = document.getElementById("annotationContent");
+			const annotation = document.querySelector(".annotation"); 
+			
+			//THREE configuration: 
+			let renderer = new THREE.WebGLRenderer({ antialias: false }); 
+			let pixelRatio = 1.0;
+			renderer.setPixelRatio( pixelRatio );     
+			renderer.domElement.style.position = 'absolute';
+			renderer.domElement.style.width = '100%';
+			renderer.domElement.style.height = '100%'; 
+			document.body.appendChild(renderer.domElement);
+			
+			let camera = new THREE.PerspectiveCamera(75, 1, 0.1, 10); 
+			camera.position.set(1.6,0,1.6); 
+			
+			let controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableDamping = true;
+			controls.dampingFactor = 0.05;
+			controls.screenSpacePanning = false;
+			controls.enablePan = false;
+			controls.minDistance = 1.3;
+			controls.maxDistance = 3;
+			controls.maxPolarAngle = Math.PI / 1.7;
+
+			let scene = new THREE.Scene();
+			let resolutionScalingSlider = document.getElementById('resolutionScalingSlider'); 
+			
+			if(toggleFog)
+			{
+				scene.fog = new THREE.FogExp2(new THREE.Color(0x888888).convertLinearToSRGB(), 0.2);
+				scene.background = scene.fog.color; 
+			}
+			 
+			let splat = new LumaSplatsThree({ 
+				source: 'https://lumalabs.ai/capture/' + lumaContentID,
+				enableThreeShaderIntegration: true,
+				particleRevealEnabled: particleReveal,
+			}); 
+			scene.add(splat);  
+			
+			//Setup hotspots
+			for(let i = 0; i < hotspotsPositions.length; i++)
+			{   
+				hotspotsGroups[i] = new THREE.Group();
+				const loader = new THREE.TextureLoader();
+				loader.crossOrigin = "";
+				const map = loader.load(markersTexture[i]);
+				map.encoding = THREE.sRGBEncoding
+				const spriteMaterialFront = new THREE.SpriteMaterial( { map } ); 
+				hotspotsSpriteRef[i] = new THREE.Sprite( spriteMaterialFront );
+				hotspotsSpriteRef[i].position.copy(hotspotsPositions[i]) 
+				hotspotsSpriteRef[i].scale.set(hotspotSpriteScale_full,hotspotSpriteScale_full,hotspotSpriteScale_full);
+				scene.add(hotspotsGroups[i]);  
+				hotspotsGroups[i].add(hotspotsSpriteRef[i]) 
+			}
+			
+			//Set render loop and events:
+			renderer.setAnimationLoop(frameLoop);  
+			document.addEventListener( 'pointermove', onPointerMove );
+			
+			function frameLoop() {
+				let canvas = renderer.domElement;
+				let width = canvas.clientWidth;
+				let height = canvas.clientHeight; 
+				
+				if (canvas.width !== width || canvas.height !== height) {
+					camera.aspect = width / height;
+					camera.updateProjectionMatrix(); 
+					renderer.setSize(width, height, false);
+				}
+
+				controls.update(); 
+				renderer.render(scene, camera);
+				
+				updateAnnotationOpacity();
+				updateScreenPosition();
+				updateQuality();
+			}
+			 
+			let showAnnotation = false;
+			function updateAnnotationOpacity() {
+				for(let i = 0; i < hotspotsSpriteRef.length; i++)
+				{ 
+					const meshDistance = camera.position.distanceTo(new THREE.Vector3(0,0,0));
+					const spriteDistance = camera.position.distanceTo(hotspotsPositions[i]);
+					let spriteBehindObject = spriteDistance > meshDistance;
+					hotspotsVisibility[i] = !spriteBehindObject;
+					 
+					hotspotsSpriteRef[i].scale.lerp(spriteBehindObject ? new THREE.Vector3(hotspotSpriteScale_shrunk,hotspotSpriteScale_shrunk,hotspotSpriteScale_shrunk) : new THREE.Vector3(hotspotSpriteScale_full,hotspotSpriteScale_full,hotspotSpriteScale_full), 0.05);
+					hotspotsSpriteRef[i].material.opacity = THREE.MathUtils.lerp(hotspotsSpriteRef[i].material.opacity, spriteBehindObject ? hotspotOpacity_hidden : hotspotOpacity_visible, 0.05);
+				 
+				}
+				annotation.style.opacity = showAnnotation ? 1 : 0;
+			}
+		 
+			function updateScreenPosition() { 
+				const vector = new THREE.Vector3(intersectionPos.x,intersectionPos.y,intersectionPos.z); 
+				const canvasDom = renderer.domElement;
+
+				vector.project(camera);  
+				vector.x = Math.round((0.5 + vector.x / 2) * (canvasDom.width / pixelRatio));
+				vector.y = Math.round((0.5 - vector.y / 2) * (canvasDom.height / pixelRatio));
+
+				annotation.style.top = `${vector.y}px`;
+				annotation.style.left = `${vector.x}px`;
+			}
+			
+			let currentQuality = 100;
+			let newQuality;
+			function updateQuality()
+			{
+				newQuality = resolutionScalingSlider.value;
+				if(newQuality != currentQuality)
+				{ 
+					pixelRatio = newQuality/100;
+					renderer.setPixelRatio(pixelRatio);
+				}
+				currentQuality = newQuality;
+			}
+		
+			
+			let intersectionState = false;
+			let intersectionPos = new THREE.Vector3(0,0,0); 
+			const pointer = new THREE.Vector2();
+			const raycaster = new THREE.Raycaster();
+			
+			function onPointerMove( event ) {
+				pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+				raycaster.setFromCamera( pointer, camera );
+				 
+				intersectionState = false; 
+				for(let i = 0; i < hotspotsGroups.length; i++)
+				{  
+					if(hotspotsVisibility[i])
+					{
+						const intersects = raycaster.intersectObject(hotspotsGroups[i], true );
+						if(intersects.length > 0) 
+						{
+							intersectionState = true; 
+							intersectionPos = hotspotsPositions[i];
+							annotationTitle.innerHTML = markersTitle[i];
+							annotationContent.innerHTML = markersData[i];
+						} 
+					} 
+				}
+					 
+				showAnnotation = intersectionState;
+			} 
+		</script>
+	</body>
+</html>
