@@ -50,7 +50,7 @@
     <div class="mobile-content">
         <script src="/castle/script.js"></script>
         <link rel="stylesheet" href="/castle/style.css">
-        
+        <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
         
         
         <h1>Welcome to the Mobile Version</h1>
@@ -58,6 +58,11 @@
         <div id="home" class="tab-content active">
             <h2>Home</h2>
             <p>Welcome to the home screen of the mobile app.</p>
+            
+            <model-viewer src="/castle/3D/test.glb" ar ar-scale="fixed" camera-controls touch-action="pan-y" alt="A 3D model of an astronaut" shadow-intensity="2"
+                max-camera-orbit="auto 90deg auto" xr-environment></model-viewer>
+            
+            
         </div>
 
         <div id="list" class="tab-content">
