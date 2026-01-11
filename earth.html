@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<title>🌍 Earth</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+<body>
+
+    <div id="navbar"></div>
+	
+	
+
+
+			  
+	   <div class="w3-content w3-padding" style="max-width:1564px">
+	  <div class="w3-container w3-padding-32" id="about">
+	  <br>
+		<h2 class="w3-border-light-grey w3-padding-16" style="padding-left:16px;">Interactive Earth Data Globe Installation</h2>
+		<br>
+		<div class="w3-row-padding">
+		  <div class="w3-col l5 m6 w3-margin-bottom">
+			<div class="w3-display-container">
+				<img
+				  id="earthImage"
+				  src="/images/earth/FragilePlanet_GlobeInMuseumConcept.jpg"
+				  alt="Interactive Earth Data Globe Installation"
+				  style="width:100%;display:block"
+				>
+				 <div class = "imageDescription">
+                          <p>AI concept</p>
+                      </div>
+
+				<button
+				  type="button"
+				  id="fsBtn"
+				  aria-label="View image full screen"
+				  title="Full screen"
+				  style="
+					position:absolute;
+					top:10px;
+					right:10px;
+					border:none;
+					border-radius:999px;
+					padding:10px 12px;
+					cursor:pointer;
+					background:rgba(0,0,0,0.65);
+					color:#fff;
+					font-size:14px;
+					line-height:1;
+					box-shadow:0 2px 10px rgba(0,0,0,0.25);
+				  "
+				>
+				  ⛶
+				</button>
+			</div>
+		  </div>
+
+		  <div class="w3-col l5 m6 w3-margin-bottom">
+			<div class="w3-col 20 m10">
+			  <h3 id="project-overview">Project Overview</h3>
+			  <p>
+				This project proposes the creation of an immersive, interactive installation that transforms complex global
+				environmental data into a powerful spatial experience. At the centre of the installation is a large,
+				suspended globe of the Earth, visualising dynamic datasets as living, animated layers across the planet’s
+				surface. Visitors interact with the globe through a simple tablet interface mounted on a sculptural plinth,
+				allowing them to explore different perspectives on our changing world.
+			  </p>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	  
+	
+		<script>
+		  (function () {
+			var img = document.getElementById("earthImage");
+			var btn = document.getElementById("fsBtn");
+
+			if (!img || !btn) return;
+
+			function isFullscreen() {
+			  return !!(
+				document.fullscreenElement ||
+				document.webkitFullscreenElement ||
+				document.mozFullScreenElement ||
+				document.msFullscreenElement
+			  );
+			}
+
+			function requestFullscreen(el) {
+			  if (el.requestFullscreen) return el.requestFullscreen();
+			  if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+			  if (el.mozRequestFullScreen) return el.mozRequestFullScreen();
+			  if (el.msRequestFullscreen) return el.msRequestFullscreen();
+			}
+
+			function exitFullscreen() {
+			  if (document.exitFullscreen) return document.exitFullscreen();
+			  if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+			  if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
+			  if (document.msExitFullscreen) return document.msExitFullscreen();
+			}
+
+			function updateIcon() {
+			  btn.textContent = isFullscreen() ? "✕" : "⛶";
+			  btn.title = isFullscreen() ? "Exit full screen" : "Full screen";
+			  btn.setAttribute("aria-label", btn.title);
+			}
+
+			btn.addEventListener("click", function () {
+			  if (isFullscreen()) {
+				exitFullscreen();
+			  } else {
+				requestFullscreen(img);
+			  }
+			});
+
+			document.addEventListener("fullscreenchange", updateIcon);
+			document.addEventListener("webkitfullscreenchange", updateIcon);
+			document.addEventListener("mozfullscreenchange", updateIcon);
+			document.addEventListener("MSFullscreenChange", updateIcon);
+
+			updateIcon();
+		  })();
+		</script>
+			
+	
+
+			
+			
+			
+		<div class="w3-row-padding" style="padding-left:36px;">
+		<div class="w3-col l8 m8">
+
+		<section aria-labelledby="visitor-experience">
+        <h3 id="visitor-experience">Visitor Experience</h3>
+
+        <p>
+          Visitors approach a softly illuminated globe floating in space, immediately conveying scale and fragility.
+          Using the tablet, they can switch between different thematic modes, each revealing a different story about the
+          Earth.
+        </p>
+
+        <p>These modes may include:</p>
+        <ul>
+          <li>Deforestation and land use change</li>
+          <li>Global wind and ocean current systems</li>
+          <li>Weather patterns and extreme events</li>
+          <li>Global warming and temperature anomalies</li>
+          <li>Ice melt and polar change</li>
+          <li>Coral reef bleaching and ocean health</li>
+        </ul>
+
+        <p>
+          Each mode overlays carefully designed visual layers onto the globe, using colour, motion, and intensity to
+          communicate change over time. The interaction is intentionally simple, allowing visitors of all ages and
+          backgrounds to engage without instruction or technical knowledge.
+        </p>
+
+        <p>
+          The experience is contemplative rather than gamified, encouraging curiosity, reflection, and conversation.
+          Multiple visitors can observe the globe together, making it a shared experience rather than a solitary one.
+        </p>
+      </section>
+	  
+			
+		</div>
+<br><br>
+			<div class="w3-col l4 m6">
+				
+				
+				
+				<div class="gallery-container" style="max-height:500px;">
+				<!--div class="gallery-numbertext" id="gallery-numbertext"></div-->
+
+				<div class="gallery-Slides">
+					<img class="gallery-element" src="images/earth/FragilePlanet_GlobeUsecasesConcept_1.jpg" style="max-height:500px; height:auto; width:auto; display:block; margin-left:auto; margin-right:auto;">
+					 <div class = "imageDescription">
+                          <p>Global warming and temperature anomalies AI concept</p>
+                      </div>
+				</div>
+				<div class="gallery-Slides">
+					<img class="gallery-element" src="images/earth/FragilePlanet_GlobeUsecasesConcept_2.jpg" style="max-height:500px; height:auto; width:auto; display:block; margin-left:auto; margin-right:auto;">
+					<div class = "imageDescription">
+                          <p>Global wind and ocean current systems AI concept</p>
+                      </div>
+				</div>
+				<div class="gallery-Slides">
+					<img class="gallery-element" src="images/earth/FragilePlanet_GlobeUsecasesConcept_3.jpg" style="max-height:500px; height:auto; width:auto; display:block; margin-left:auto; margin-right:auto;">
+					<div class = "imageDescription">
+                          <p>Sea level rise AI concept</p>
+                      </div>
+				</div>
+				<div class="gallery-Slides">
+					<img class="gallery-element" src="images/earth/FragilePlanet_GlobeUsecasesConcept_4.jpg" style="max-height:500px; height:auto; width:auto; display:block; margin-left:auto; margin-right:auto;">
+					<div class = "imageDescription">
+                          <p>Weather patterns and extreme events AI concept</p>
+                      </div>
+				</div>
+
+				<a class="gallery-prev" onclick="plusSlides(-1)">
+					<div class="gallery-arrowLeft">❮</div>
+				</a>
+				<a class="gallery-next" onclick="plusSlides(1)">
+					<div class="gallery-arrowRight">❯</div>
+				</a>
+			</div>
+
+			<script src="code/gallery.js"></script>
+				
+				
+				
+			</div>
+	</div>
+			
+			
+			<br><br>
+			
+			
+			<div class="w3-row-padding">
+	<div class="w3-col l4 m6 w3-margin-bottom">
+		<div class="w3-display-container">
+			<img src="/images/earth/FragilePlanet_GlobeFrontConcept.jpg" style="padding-left:36px;width:100%"> 
+			 <div class = "imageDescription">
+                          <p>AI concept</p>
+                      </div>
+					</div>
+		</div>
+		<div class="w3-col l8 m8 w3-margin-bottom">
+			<div class="w3-col 20 m10">
+				<section aria-labelledby="use-case-and-context">
+					<h3 id="use-case-and-context">Use Case and Context</h3>
+					<p>The installation is well suited to:</p>
+					<ul>
+						<li>Science and natural history museums</li>
+						<li>Climate and sustainability exhibitions</li>
+						<li>Cultural institutions exploring humanity’s relationship with the planet</li>
+						<li>Educational centres and universities</li>
+						<li>Public engagement spaces focused on environmental awareness</li>
+					</ul>
+					<p>
+          It can function as a standalone centrepiece or as part of a larger exhibition on climate, ecology, or global
+          systems. The modular nature of the content allows the installation to evolve over time, supporting temporary
+          exhibitions, seasonal themes, or locally relevant datasets.
+        </p>
+				</section>
+			</div>
+		</div>
+	</div>
+			
+			
+			<br><br>
+			
+			
+			<div class="w3-row-padding">
+	<div class="w3-col l8 m8 w3-margin-bottom">
+		<div class="w3-display-container">
+		 <section aria-labelledby="why-important" style="padding-left:36px;">
+        <h3 id="why-important">Why This Project Is Important</h3>
+
+        <p>
+          Environmental data is often abstract, fragmented, or difficult to grasp when presented as charts, maps, or
+          numbers. This project addresses that challenge by giving data physical presence and spatial meaning.
+        </p>
+
+        <p>By visualising global processes directly on a three-dimensional Earth, the installation helps visitors:</p>
+        <ul>
+          <li>Understand scale and interconnectedness</li>
+          <li>See relationships between regions and systems</li>
+          <li>Grasp change over time rather than isolated moments</li>
+          <li>Connect emotionally with complex scientific information</li>
+        </ul>
+
+        <p>
+          The project bridges science, design, and storytelling. It does not seek to overwhelm with information, but to
+          create clarity and empathy. In an era defined by climate change and environmental uncertainty, helping people
+          see the planet as a single, interconnected system is both timely and necessary.
+        </p>
+      </section>
+			
+					</div>
+		</div>
+		<div class="w3-col l4 m6 w3-margin-bottom">
+			<div class="w3-col 20 m10">
+				<img src="/images/earth/FragilePlanet_GlobeSideConcent.jpg" style="padding-left:36px;width:100%"> 
+				 <div class = "imageDescription">
+                          <p>AI concept</p>
+                      </div>
+			</div>
+		</div>
+	</div>
+			
+			
+			
+			<br><br>
+			
+			
+			<div class="w3-row-padding">
+	<div class="w3-col l4 m6 w3-margin-bottom">
+		<div class="w3-display-container">
+			<img src="/images/earth/FragilePlanet_GlobeUsecasesConcept_2.jpg" style="padding-left:36px;width:100%"> 
+			 <div class = "imageDescription">
+                          <p>AI concept</p>
+                      </div>
+					</div>
+		</div>
+		<div class="w3-col l8 m8 w3-margin-bottom">
+			<div class="w3-col 20 m10">
+				<section aria-labelledby="educational-cultural-impact">
+        <h3 id="educational-cultural-impact">Educational and Cultural Impact</h3>
+
+        <p>
+          The installation supports both informal learning and deeper inquiry. It encourages questions rather than
+          prescribing answers, making it suitable for diverse audiences, from school groups to researchers to casual
+          visitors.
+        </p>
+
+        <p>Key impacts include:</p>
+        <ul>
+          <li>Increased climate and environmental literacy</li>
+          <li>Improved public understanding of global systems</li>
+          <li>Strong visual memory retention compared to traditional displays</li>
+          <li>A shared, social experience that prompts discussion</li>
+        </ul>
+
+        <p>
+          By situating data within a physical, human-scale encounter, the installation turns information into insight
+          and awareness into engagement.
+        </p>
+      </section>
+			</div>
+		</div>
+	</div>
+			
+			
+			
+				
+				
+				
+				
+				
+				<div class="w3-row-padding" style="padding-left:46px;width:80%">
+				
+				 <section aria-labelledby="hardware-overview">
+        <h3 id="hardware-overview">Hardware Overview</h3>
+
+        <ul>
+          <li>
+            Globe:
+            <ul>
+              <li>
+                Option A: LED sphere:
+                <a href="https://www.ledlightsworld.com/collections/sphere-led-display">link</a>
+              </li>
+              <li>
+                Option B: Projectors:
+                <a href="https://www.elumenati.com/product/globe/">link</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            Tablet plinth options:
+            <a href="https://www.displays2go.com/Class/iPad-Tablet-Holders-1097">link</a>
+          </li>
+          <li>
+            Tablet:
+            <a href="https://www.apple.com/shop/buy-ipad/ipad-pro">link</a>
+          </li>
+          <li>
+            Other:
+            <ul>
+              <li>WiFi router for network connection between tablet and globe</li>
+              <li>Sound system</li>
+              <li>PC</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+		<br>
+      <section aria-labelledby="conclusion">
+        <h3 id="conclusion">Conclusion</h3>
+
+        <p>
+          The Interactive Earth Data Globe is a compelling, future-facing installation that reimagines how we experience
+          and understand our planet. It combines scientific integrity with strong visual design and intuitive
+          interaction, creating an experience that is both educational and emotionally resonant.
+        </p>
+
+        <p>
+          This project offers institutions a powerful tool for public engagement, one that makes the invisible visible
+          and transforms global data into a shared human experience.
+        </p>
+      </section>
+			
+			</div>
+			
+	
+     			<br> 
+        </div>
+    </div>
+	
+	</div>
+
+
+    <div id="footer"></div>
+</body>
+<script type="text/javascript" src="code/jquery.min.js"></script>
+<script type="text/javascript" src="code/reuseElements.js"></script>
+</html>
