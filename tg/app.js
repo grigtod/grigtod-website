@@ -165,7 +165,7 @@ const pois = [
     lng: 18.85564,
     label: "info",
     emoji: "ℹ️",
-    embedUrl: "./embeds/pomnik-gwarka.html"
+    embedUrl: "https://en.wikipedia.org/wiki/Tarnowskie_G%C3%B3ry"
   },
   //Museums
   {
@@ -174,7 +174,7 @@ const pois = [
     lng: 18.85490,
     label: "Muzeum w TG",
     emoji: "🏛️",
-    embedUrl: "./embeds/pomnik-gwarka.html"
+    embedUrl: "./embeds/model-gallery-ar.html"
   },
   {
     id: "kopalnia-srebra",
