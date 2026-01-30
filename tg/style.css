@@ -1,0 +1,95 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+/* Top banner */
+.banner {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 2000;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.banner-hidden {
+  display: none;
+}
+
+.banner-btn {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.banner-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.banner-btn-secondary {
+  opacity: 0.8;
+}
+
+/* Map controls */
+.map-controls {
+  position: absolute;
+  z-index: 1500;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.control-btn {
+  pointer-events: auto;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.96);
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.control-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Too far banner */
+.distance-banner {
+  position: absolute;
+  z-index: 1500;
+  left: 12px;
+  bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.leaflet-attribution-flag { display: none !important; }

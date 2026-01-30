@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Discover TG</title>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- Location banner (hidden unless needed) -->
+    <div id="locationBanner" class="banner banner-hidden" role="status" aria-live="polite">
+      <span id="bannerText">
+        For the full experience, please allow location access.
+      </span>
+      <!--button id="enableLocationBtn" class="banner-btn" type="button">
+        Enable location
+      </button--->
+      <button id="dismissBannerBtn" class="banner-btn banner-btn-secondary" type="button">
+        Dismiss
+      </button>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Map buttons -->
+    <div class="map-controls" aria-label="Map controls">
+      <button id="myLocationBtn" class="control-btn" type="button" disabled>
+        My location
+      </button>
+      <button id="centerBtn" class="control-btn" type="button">
+        City center
+      </button>
+    </div>
+
+    <!-- Too far message -->
+    <div id="distanceBanner" class="distance-banner banner-hidden" role="status" aria-live="polite">
+      You&#39;re too far from the city center
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
