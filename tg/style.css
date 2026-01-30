@@ -92,4 +92,85 @@ body {
   font-size: 14px;
 }
 
+/* POI marker (emoji) */
+.poi-icon {
+  background: transparent;
+  border: none;
+}
+
+.poi-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, -100%);
+  user-select: none;
+  pointer-events: auto;
+}
+
+.poi-emoji {
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
+}
+
+.poi-label {
+  display: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.poi-marker.show-label .poi-label {
+  display: inline-block;
+}
+
+/* Full screen overlay that sits on top of the map */
+.poi-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.poi-overlay-hidden {
+  display: none;
+}
+
+.poi-overlay-bar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+}
+
+.poi-overlay-close {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.poi-overlay-close:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.poi-overlay-frame {
+  width: 100%;
+  height: calc(100% - 56px);
+  border: 0;
+}
+
+
 .leaflet-attribution-flag { display: none !important; }

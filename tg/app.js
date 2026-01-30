@@ -16,31 +16,263 @@ const map = L.map("map", {
   maxBoundsViscosity: 0.1
 });
 
-L.tileLayer(
-     "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-    //"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", 
-    {
-  maxZoom: 20,
-  minZoom: 14,
-  attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/">CARTO</a>'//'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+// ---------- Tile layers ----------
+const minimalistLayer = L.tileLayer(
+  "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+  {
+    maxZoom: 20,
+    minZoom: 14,
+    attribution:
+      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/">CARTO</a>'
+  }
+);
+
+const detailedLayer = L.tileLayer(
+  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  {
+    maxZoom: 20,
+    minZoom: 14,
+    attribution:
+      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }
+);
+
+// Start with minimalist map
+let currentBaseLayer = "minimalist";
+minimalistLayer.addTo(map);
 
 // UI elements
 const locationBanner = document.getElementById("locationBanner");
 const bannerText = document.getElementById("bannerText");
-//const enableLocationBtn = document.getElementById("enableLocationBtn");
 const dismissBannerBtn = document.getElementById("dismissBannerBtn");
 
 const myLocationBtn = document.getElementById("myLocationBtn");
 const centerBtn = document.getElementById("centerBtn");
+const styleToggleBtn = document.getElementById("styleToggleBtn");
 
 const distanceBanner = document.getElementById("distanceBanner");
+
+// Overlay elements
+const poiOverlay = document.getElementById("poiOverlay");
+const poiOverlayFrame = document.getElementById("poiOverlayFrame");
+const poiOverlayClose = document.getElementById("poiOverlayClose");
 
 // State
 let userLatLng = null;
 let userMarker = null;
 let userAccuracyCircle = null;
 
+// ---------- Overlay helpers ----------
+function openOverlay(url) {
+  poiOverlayFrame.src = url;
+  poiOverlay.classList.remove("poi-overlay-hidden");
+  poiOverlay.setAttribute("aria-hidden", "false");
+
+  // Optional: stop map interactions while overlay is open
+  map.dragging.disable();
+  map.scrollWheelZoom.disable();
+  map.doubleClickZoom.disable();
+  map.boxZoom.disable();
+  map.keyboard.disable();
+}
+
+function closeOverlay() {
+  poiOverlayFrame.src = "about:blank";
+  poiOverlay.classList.add("poi-overlay-hidden");
+  poiOverlay.setAttribute("aria-hidden", "true");
+
+  map.dragging.enable();
+  map.scrollWheelZoom.enable();
+  map.doubleClickZoom.enable();
+  map.boxZoom.enable();
+  map.keyboard.enable();
+}
+
+poiOverlayClose.addEventListener("click", closeOverlay);
+
+// Close on Escape
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !poiOverlay.classList.contains("poi-overlay-hidden")) {
+    closeOverlay();
+  }
+});
+
+// ---------- POIs ----------
+// https://pl.wikipedia.org/wiki/Rze%C5%BAby_gwark%C3%B3w_w_Tarnowskich_G%C3%B3rach
+const LABEL_ZOOM_THRESHOLD = 18;
+
+const pois = [
+  //Info:
+  {
+    id: "info",
+    lat: 50.44417,
+    lng: 18.85564,
+    label: "info",
+    emoji: "ℹ️",
+    embedUrl: "./embeds/pomnik-gwarka.html"
+  },
+  //Museums
+  {
+    id: "museum-tg",
+    lat: 50.44426,  
+    lng: 18.85490,
+    label: "Muzeum w TG",
+    emoji: "🏛️",
+    embedUrl: "./embeds/pomnik-gwarka.html"
+  },
+  {
+    id: "kopalnia-srebra",
+    lat: 50.42554,
+    lng: 18.84941,  
+    label: "Zabytkowa Kopalnia Srebra",
+    emoji: "⛏️",
+    embedUrl: "./embeds/pomnik-gwarka.html"
+  },
+
+  //Gwarek:
+  {
+    id: "gwarek-1",
+    lat: 50.444167,
+    lng: 18.858917,
+    label: "Gwarek 1",
+    emoji: "🗿",
+    embedUrl: "./embeds/pomnik-gwarka.html"
+  },
+  {
+    id: "gwarek-2",
+    lat: 50.447139,
+    lng: 18.863111,
+    label: "Gwarek 2",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-3",
+    lat: 50.444528,
+    lng: 18.854861,
+    label: "Gwarek 3",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-4",
+    lat: 50.442889,
+    lng: 18.856861,
+    label: "Gwarek 4",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-5",
+    lat: 50.445444,
+    lng: 18.853139,
+    label: "Gwarek 5",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-6",
+    lat: 50.423583,
+    lng: 18.864611,
+    label: "Gwarek 6",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-7",
+    lat: 50.420194,
+    lng: 18.817417,
+    label: "Gwarek 7",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-8",
+    lat: 50.439944,
+    lng: 18.819472,
+    label: "Gwarek 8",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-9",
+    lat: 50.456194,
+    lng: 18.8155,
+    label: "Gwarek 9",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-10",
+    lat: 50.438583,
+    lng: 18.866111,
+    label: "Gwarek 10",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-11",
+    lat: 50.495111,
+    lng: 18.817667,
+    label: "Gwarek 11",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  },
+  {
+    id: "gwarek-12",
+    lat: 50.450444,
+    lng: 18.88175,
+    label: "Gwarek 12",
+    emoji: "🗿",
+    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
+  }
+];
+
+function makePoiIcon({ emoji, label }, showLabel) {
+  const safeLabel = String(label).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
+  const className = showLabel ? "poi-marker show-label" : "poi-marker";
+  const html = `
+    <div class="${className}" role="button" aria-label="${safeLabel}">
+      <span class="poi-emoji">${emoji}</span>
+      <span class="poi-label">${safeLabel}</span>
+    </div>
+  `;
+
+  return L.divIcon({
+    className: "poi-icon",
+    html,
+    iconSize: [1, 1]
+  });
+}
+
+const poiMarkers = pois.map((poi) => {
+  const marker = L.marker([poi.lat, poi.lng], {
+    icon: makePoiIcon(poi, map.getZoom() >= LABEL_ZOOM_THRESHOLD),
+    keyboard: true,
+    riseOnHover: true
+  }).addTo(map);
+
+  marker.on("click", () => openOverlay(poi.embedUrl));
+  marker.on("keypress", (e) => {
+    if (e.originalEvent && (e.originalEvent.key === "Enter" || e.originalEvent.key === " ")) {
+      openOverlay(poi.embedUrl);
+    }
+  });
+
+  return { poi, marker };
+});
+
+function updatePoiIconsForZoom() {
+  const showLabel = map.getZoom() >= LABEL_ZOOM_THRESHOLD;
+  for (const { poi, marker } of poiMarkers) {
+    marker.setIcon(makePoiIcon(poi, showLabel));
+  }
+}
+
+map.on("zoomend", updatePoiIconsForZoom);
+
+// ---------- Existing banner + geolocation ----------
 function showBanner(message) {
   bannerText.textContent = message;
   locationBanner.classList.remove("banner-hidden");
@@ -99,7 +331,6 @@ function handleLocationError(err) {
   setMyLocationEnabled(false);
   updateTooFarMessage();
 
-  // Friendly messaging
   if (err && err.code === 1) {
     showBanner("For the full experience, please allow location access.");
     return;
@@ -135,16 +366,28 @@ centerBtn.addEventListener("click", () => {
   map.setView(center, 18);
 });
 
-/*enableLocationBtn.addEventListener("click", () => {
-  // This triggers the permission prompt in most browsers
-  requestLocation();
-});*/
-
 dismissBannerBtn.addEventListener("click", () => {
   hideBanner();
 });
 
-// On start, request permission and show banner if denied
+styleToggleBtn.addEventListener("click", () => {
+  if (currentBaseLayer === "minimalist") {
+    map.removeLayer(minimalistLayer);
+    detailedLayer.addTo(map);
+
+    currentBaseLayer = "detailed";
+    styleToggleBtn.textContent = "Minimal map";
+  } else {
+    map.removeLayer(detailedLayer);
+    minimalistLayer.addTo(map);
+
+    currentBaseLayer = "minimalist";
+    styleToggleBtn.textContent = "Detailed map";
+  }
+});
+
+// On start, request permission
 document.addEventListener("DOMContentLoaded", () => {
   requestLocation();
+  updatePoiIconsForZoom();
 });

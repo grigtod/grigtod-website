@@ -18,9 +18,6 @@
       <span id="bannerText">
         For the full experience, please allow location access.
       </span>
-      <!--button id="enableLocationBtn" class="banner-btn" type="button">
-        Enable location
-      </button--->
       <button id="dismissBannerBtn" class="banner-btn banner-btn-secondary" type="button">
         Dismiss
       </button>
@@ -36,11 +33,31 @@
       <button id="centerBtn" class="control-btn" type="button">
         City center
       </button>
+      <button id="styleToggleBtn" class="control-btn" type="button">
+        Detailed map
+      </button>
     </div>
 
     <!-- Too far message -->
     <div id="distanceBanner" class="distance-banner banner-hidden" role="status" aria-live="polite">
       You&#39;re too far from the city center
+    </div>
+
+    <!-- Full screen embedded page overlay -->
+    <div id="poiOverlay" class="poi-overlay poi-overlay-hidden" aria-hidden="true">
+      <div class="poi-overlay-bar">
+        <button id="poiOverlayClose" class="poi-overlay-close" type="button" aria-label="Close">
+          Close
+        </button>
+      </div>
+      <iframe
+        id="poiOverlayFrame"
+        class="poi-overlay-frame"
+        title="Point of interest"
+        src="about:blank"
+        loading="lazy"
+        referrerpolicy="no-referrer"
+      ></iframe>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
