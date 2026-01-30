@@ -46,10 +46,15 @@
     <!-- Full screen embedded page overlay -->
     <div id="poiOverlay" class="poi-overlay poi-overlay-hidden" aria-hidden="true">
       <div class="poi-overlay-bar">
-        <button id="poiOverlayClose" class="poi-overlay-close" type="button" aria-label="Close">
-          Close
-        </button>
-      </div>
+      <button id="poiOverlayClose" class="poi-overlay-close" type="button" aria-label="Close">
+        Cancel
+      </button>
+
+      <button id="poiCompleteBtn" class="poi-complete-btn" type="button" aria-pressed="false">
+        <span id="poiCompleteBox" class="poi-complete-box" aria-hidden="true"></span>
+        <span id="poiCompleteLabel">Complete</span>
+      </button>
+    </div>
       <iframe
         id="poiOverlayFrame"
         class="poi-overlay-frame"

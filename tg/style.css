@@ -172,5 +172,56 @@ body {
   border: 0;
 }
 
+/* Complete button in overlay bar */
+.poi-complete-btn {
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.poi-complete-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.poi-complete-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 18px;
+}
+
+.poi-complete-btn.is-complete .poi-complete-box::after {
+  content: "✓";
+  font-size: 14px;
+  line-height: 1;
+}
+
+.poi-complete-btn.is-complete #poiCompleteLabel {
+  font-weight: 600;
+}
+
+/* Greyed out POI markers */
+.poi-marker.is-completed {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.poi-marker.is-completed .poi-label {
+  opacity: 0.85;
+}
+
+
 
 .leaflet-attribution-flag { display: none !important; }

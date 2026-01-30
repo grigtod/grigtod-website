@@ -56,6 +56,8 @@ const distanceBanner = document.getElementById("distanceBanner");
 const poiOverlay = document.getElementById("poiOverlay");
 const poiOverlayFrame = document.getElementById("poiOverlayFrame");
 const poiOverlayClose = document.getElementById("poiOverlayClose");
+const poiCompleteBtn = document.getElementById("poiCompleteBtn");
+const poiCompleteLabel = document.getElementById("poiCompleteLabel");
 
 // State
 let userLatLng = null;
@@ -81,6 +83,8 @@ function closeOverlay() {
   poiOverlay.classList.add("poi-overlay-hidden");
   poiOverlay.setAttribute("aria-hidden", "true");
 
+  activePoiId = null;
+
   map.dragging.enable();
   map.scrollWheelZoom.enable();
   map.doubleClickZoom.enable();
@@ -90,6 +94,37 @@ function closeOverlay() {
 
 poiOverlayClose.addEventListener("click", closeOverlay);
 
+function syncCompleteUi() {
+  if (!activePoiId) return;
+
+  const isDone = completedPois.has(activePoiId);
+
+  if (isDone) {
+    poiCompleteBtn.classList.add("is-complete");
+    poiCompleteBtn.setAttribute("aria-pressed", "true");
+    poiCompleteLabel.textContent = "Completed";
+  } else {
+    poiCompleteBtn.classList.remove("is-complete");
+    poiCompleteBtn.setAttribute("aria-pressed", "false");
+    poiCompleteLabel.textContent = "Complete";
+  }
+}
+
+poiCompleteBtn.addEventListener("click", () => {
+  if (!activePoiId) return;
+
+  if (completedPois.has(activePoiId)) {
+    completedPois.delete(activePoiId);
+  } else {
+    completedPois.add(activePoiId);
+  }
+
+  saveCompletedSet(completedPois);
+  syncCompleteUi();
+  updatePoiIconsForZoom();
+});
+
+
 // Close on Escape
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !poiOverlay.classList.contains("poi-overlay-hidden")) {
@@ -98,6 +133,27 @@ document.addEventListener("keydown", (e) => {
 });
 
 // ---------- POIs ----------
+
+const COMPLETED_STORAGE_KEY = "discoverTG.completedPois.v1";
+
+function loadCompletedSet() {
+  try {
+    const raw = localStorage.getItem(COMPLETED_STORAGE_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveCompletedSet(set) {
+  localStorage.setItem(COMPLETED_STORAGE_KEY, JSON.stringify([...set]));
+}
+
+const completedPois = loadCompletedSet();
+let activePoiId = null;
+
+
 // https://pl.wikipedia.org/wiki/Rze%C5%BAby_gwark%C3%B3w_w_Tarnowskich_G%C3%B3rach
 const LABEL_ZOOM_THRESHOLD = 18;
 
@@ -228,10 +284,14 @@ const pois = [
   }
 ];
 
-function makePoiIcon({ emoji, label }, showLabel) {
+function makePoiIcon({ emoji, label, id }, showLabel) {
   const safeLabel = String(label).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 
-  const className = showLabel ? "poi-marker show-label" : "poi-marker";
+  const isCompleted = completedPois.has(id);
+  const classNameParts = ["poi-marker"];
+  if (showLabel) classNameParts.push("show-label");
+  if (isCompleted) classNameParts.push("is-completed");
+  const className = classNameParts.join(" ");
   const html = `
     <div class="${className}" role="button" aria-label="${safeLabel}">
       <span class="poi-emoji">${emoji}</span>
@@ -253,7 +313,12 @@ const poiMarkers = pois.map((poi) => {
     riseOnHover: true
   }).addTo(map);
 
-  marker.on("click", () => openOverlay(poi.embedUrl));
+  marker.on("click", () => {
+    activePoiId = poi.id;
+    openOverlay(poi.embedUrl);
+    syncCompleteUi();
+  });
+
   marker.on("keypress", (e) => {
     if (e.originalEvent && (e.originalEvent.key === "Enter" || e.originalEvent.key === " ")) {
       openOverlay(poi.embedUrl);
