@@ -23,6 +23,18 @@
       </button>
     </div>
 
+     <div id="layersBanner" class="layers layers-hidden" role="status" aria-live="polite">
+      <span id="bannerText">
+        Map Layer Modes:
+      </span> 
+       <button id="styleToggleBtn" class="control-btn" type="button">
+        Detailed map
+      </button>
+      <button id="layersDismissBtn" class="banner-btn banner-btn-secondary" type="button">
+        Dismiss
+      </button>
+    </div>
+
     <div id="map"></div>
 
     <!-- Map buttons -->
@@ -33,14 +45,16 @@
       <button id="centerBtn" class="control-btn" type="button">
         City center
       </button>
-      <button id="styleToggleBtn" class="control-btn" type="button">
-        Detailed map
+     
+      </button>
+      <button id="layersShowBtn" class="control-btn" type="button">
+        Layers
       </button>
     </div>
 
     <!-- Too far message -->
-    <div id="distanceBanner" class="distance-banner banner-hidden" role="status" aria-live="polite">
-      You&#39;re too far from the city center
+    <div id="distanceBanner" class="distance-banner" role="status" aria-live="polite"> <!--class="distance-banner banner-hidden" --> 
+      You&#39;re too far from the city center. 
     </div>
 
     <!-- Full screen embedded page overlay -->

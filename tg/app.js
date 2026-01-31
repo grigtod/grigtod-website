@@ -69,12 +69,16 @@ minimalistLayer.addTo(map);
 
 // UI elements
 const locationBanner = document.getElementById("locationBanner");
+const layersBanner = document.getElementById("layersBanner");
 const bannerText = document.getElementById("bannerText");
 const dismissBannerBtn = document.getElementById("dismissBannerBtn");
 
 const myLocationBtn = document.getElementById("myLocationBtn");
 const centerBtn = document.getElementById("centerBtn");
 const styleToggleBtn = document.getElementById("styleToggleBtn");
+
+const layersShowBtn = document.getElementById("layersShowBtn"); 
+const layersDismissBtn = document.getElementById("layersDismissBtn");
 
 const distanceBanner = document.getElementById("distanceBanner");
 
@@ -376,6 +380,14 @@ function hideBanner() {
   locationBanner.classList.add("banner-hidden");
 }
 
+function hideLayers() {
+   layersBanner.classList.add("layers-hidden");
+}
+
+function showLayers() {
+   layersBanner.classList.remove("layers-hidden");  
+}
+
 function showTooFar(show) {
   if (show) distanceBanner.classList.remove("banner-hidden");
   else distanceBanner.classList.add("banner-hidden");
@@ -626,6 +638,15 @@ centerBtn.addEventListener("click", () => {
 dismissBannerBtn.addEventListener("click", () => {
   hideBanner();
 });
+
+layersShowBtn.addEventListener("click", () => {
+  showLayers();
+});
+
+layersDismissBtn.addEventListener("click", () => {
+  hideLayers();
+});
+
 
 styleToggleBtn.addEventListener("click", () => {
   if (currentBaseLayer === "minimalist") {
