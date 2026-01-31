@@ -19,7 +19,28 @@ const map = L.map("map", {
   zoomDelta: 0.1  // used by keyboard and some interactions
 });
 
+map.zoomControl.remove();
+
+L.control.zoom({
+  zoomInText: "+",
+  zoomOutText: "−",
+  zoomInTitle: "Zoom in",
+  zoomOutTitle: "Zoom out"
+}).addTo(map);
+
+const ZOOM_BUTTON_DELTA = 0.5;
+
+map.on("zoomstart", () => {
+  map.options.zoomDelta = ZOOM_BUTTON_DELTA;
+});
+
+map.on("zoomend", () => {
+  map.options.zoomDelta = 0.1;
+});
+
 map.doubleClickZoom.disable();
+map.options.doubleClickZoom = false;
+map.options.tapTolerance = 15;
 
 // ---------- Tile layers ----------
 const minimalistLayer = L.tileLayer(
@@ -373,21 +394,40 @@ function updateTooFarMessage() {
   showTooFar(dist > tooFarThresholdMeters);
 }
 
+let lastHeading = null;
+const HEADING_SMOOTHING = 0.15; // 0.1–0.2 is a good range
+
+function smoothHeading(newDeg) {
+  if (lastHeading === null) {
+    lastHeading = newDeg;
+    return newDeg;
+  }
+
+  // shortest path around the circle
+  const diff = ((newDeg - lastHeading + 540) % 360) - 180;
+  lastHeading = (lastHeading + diff * HEADING_SMOOTHING + 360) % 360;
+  return lastHeading;
+}
+
 function updateHeadingUi() {
   if (!userHeadingEl) return;
 
-  const hasHeading = typeof userHeadingDeg === "number" && Number.isFinite(userHeadingDeg);
+  const hasHeading =
+    typeof userHeadingDeg === "number" && Number.isFinite(userHeadingDeg);
+
   userHeadingEl.classList.toggle("has-heading", hasHeading);
 
   if (hasHeading) {
-    const normalized = ((userHeadingDeg % 360) + 360) % 360;
-    userHeadingEl.style.setProperty("--heading", `${normalized}`);
+    userHeadingEl.style.setProperty("--heading", `${userHeadingDeg}`);
   }
 }
 
 function setHeading(deg) {
-  if (typeof deg !== "number" || !Number.isFinite(deg)) return;
-  userHeadingDeg = ((deg % 360) + 360) % 360;
+  if (!Number.isFinite(deg)) return;
+
+  const normalized = ((deg % 360) + 360) % 360;
+  userHeadingDeg = smoothHeading(normalized);
+
   updateHeadingUi();
 }
 
@@ -476,8 +516,12 @@ function renderUserLocation(pos) {
     userMarker = L.marker(userLatLng, { icon }).addTo(map);
 
     // Grab the element after Leaflet creates it
-    userHeadingEl = userMarker.getElement()?.querySelector(".user-heading") || null;
-
+    requestAnimationFrame(() => {
+      userHeadingEl =
+        userMarker.getElement()?.querySelector(".user-heading") || null;
+      updateHeadingUi();
+    });
+    
     userAccuracyCircle = L.circle(userLatLng, {
       radius: accuracy
     }).addTo(map);
@@ -608,18 +652,25 @@ document.addEventListener("DOMContentLoaded", () => {
 (function enableOneFingerZoom() {
   const el = map.getContainer();
 
-  let lastTapTime = 0;
-  let awaitingSecondTap = false;
+  // Tunables
+  const DOUBLE_TAP_MS = 320;      // max time between taps
+  const HOLD_START_MS = 120;      // how long to hold on 2nd tap before entering zoom mode
+  const PX_PER_ZOOM_LEVEL = 140;  // sensitivity: smaller = faster zoom
+  const ZOOM_MIN = map.getMinZoom();
+  const ZOOM_MAX = map.getMaxZoom();
+
+  // State
+  let lastTapEndTime = 0;
+  let secondTapActive = false;
 
   let zooming = false;
   let startY = 0;
   let startZoom = 0;
 
-  const DOUBLE_TAP_MS = 300;
-  const HOLD_START_MS = 120;
-  const PX_PER_ZOOM_LEVEL = 120;
-
   let holdTimer = null;
+  let rafId = null;
+  let pendingZoom = null;
+  let lastTouchPoint = null;
 
   function clearHold() {
     if (holdTimer) {
@@ -628,75 +679,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  el.addEventListener(
-    "touchstart",
-    (e) => {
-      if (e.touches.length !== 1) {
-        awaitingSecondTap = false;
-        clearHold();
-        return;
-      }
+  function stopRaf() {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    pendingZoom = null;
+  }
 
-      const now = Date.now();
-      const isDoubleTap = now - lastTapTime < DOUBLE_TAP_MS;
-      lastTapTime = now;
+  function enterZoomMode() {
+    zooming = true;
 
-      if (!isDoubleTap) {
-        awaitingSecondTap = true;
-        clearHold();
-        return;
-      }
+    // Prevent accidental map drag while zooming
+    map.dragging.disable();
+  }
 
-      // second tap began
-      awaitingSecondTap = false;
-      startY = e.touches[0].clientY;
-      startZoom = map.getZoom();
-
-      clearHold();
-      holdTimer = setTimeout(() => {
-        zooming = true;
-
-        // stop map dragging while in one finger zoom
-        map.dragging.disable();
-      }, HOLD_START_MS);
-    },
-    { passive: true }
-  );
-
-  let rafId = null;
-  let pendingZoom = null;
-
-  el.addEventListener(
-    "touchmove",
-    (e) => {
-      if (!zooming) return;
-      if (e.touches.length !== 1) return;
-
-      e.preventDefault();
-
-      const y = e.touches[0].clientY;
-      const dy = startY - y; // up = zoom in
-      const dz = dy / PX_PER_ZOOM_LEVEL;
-
-      const minZ = map.getMinZoom();
-      const maxZ = map.getMaxZoom();
-
-      // continuous zoom, no rounding
-      pendingZoom = Math.max(minZ, Math.min(maxZ, startZoom + dz));
-
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        if (pendingZoom === null) return;
-
-        map.setZoomAround(e.touches[0], pendingZoom, { animate: false });
-        pendingZoom = null;
-      });
-    },
-    { passive: false }
-  );
-
-  function end() {
+  function exitZoomMode() {
     clearHold();
 
     if (zooming) {
@@ -704,13 +702,104 @@ document.addEventListener("DOMContentLoaded", () => {
       map.dragging.enable();
     }
 
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-      pendingZoom = null;
-    }
+    secondTapActive = false;
+    stopRaf();
+    lastTouchPoint = null;
   }
 
-  el.addEventListener("touchend", end, { passive: true });
-  el.addEventListener("touchcancel", end, { passive: true });
+  el.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) {
+        exitZoomMode();
+        return;
+      }
+
+      const now = Date.now();
+      const isSecondTap = now - lastTapEndTime <= DOUBLE_TAP_MS;
+
+      // First tap: just wait for touchend to store time
+      if (!isSecondTap) {
+        secondTapActive = false;
+        clearHold();
+        return;
+      }
+
+      // Second tap began
+      secondTapActive = true;
+
+      // This is important: stop Leaflet and Safari from treating this as their own gesture
+      e.preventDefault();
+      e.stopPropagation();
+
+      startY = e.touches[0].clientY;
+      startZoom = map.getZoom();
+      lastTouchPoint = e.touches[0];
+
+      clearHold();
+      holdTimer = setTimeout(() => {
+        // If the user is still holding the second tap, enable one finger zoom mode
+        if (secondTapActive) enterZoomMode();
+      }, HOLD_START_MS);
+    },
+    { passive: false }
+  );
+
+  el.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!secondTapActive) return;
+      if (e.touches.length !== 1) return;
+
+      // Always block scroll and Leaflet drag during second tap sequence
+      e.preventDefault();
+      e.stopPropagation();
+
+      lastTouchPoint = e.touches[0];
+
+      // If hold has not triggered yet, do not zoom yet
+      if (!zooming) return;
+
+      const y = e.touches[0].clientY;
+      const dy = startY - y; // up = zoom in
+      const dz = dy / PX_PER_ZOOM_LEVEL;
+
+      pendingZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, startZoom + dz));
+
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        if (pendingZoom === null || !lastTouchPoint) return;
+
+        map.setZoomAround(lastTouchPoint, pendingZoom, { animate: false });
+        pendingZoom = null;
+      });
+    },
+    { passive: false }
+  );
+
+  el.addEventListener(
+    "touchend",
+    (e) => {
+      // If this touchend ends the first tap, record it
+      if (!secondTapActive && e.touches.length === 0) {
+        lastTapEndTime = Date.now();
+        return;
+      }
+
+      // If we were in second tap sequence, end it
+      if (e.touches.length === 0) {
+        exitZoomMode();
+        lastTapEndTime = Date.now();
+      }
+    },
+    { passive: true }
+  );
+
+  el.addEventListener("touchcancel", exitZoomMode, { passive: true });
+
+  // Extra safety: if the overlay opens, prevent stuck dragging state
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) exitZoomMode();
+  });
 })();
