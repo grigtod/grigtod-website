@@ -13,7 +13,10 @@ const map = L.map("map", {
   center,
   zoom: 18,
   maxBounds: bounds,
-  maxBoundsViscosity: 0.1
+  maxBoundsViscosity: 0.1,
+
+  zoomSnap: 0.1,  // allows fractional zoom (0.1 steps)
+  zoomDelta: 0.1  // used by keyboard and some interactions
 });
 
 map.doubleClickZoom.disable();
@@ -662,27 +665,35 @@ document.addEventListener("DOMContentLoaded", () => {
     { passive: true }
   );
 
+  let rafId = null;
+  let pendingZoom = null;
+
   el.addEventListener(
     "touchmove",
     (e) => {
       if (!zooming) return;
       if (e.touches.length !== 1) return;
 
-      // prevent page scroll while zooming
       e.preventDefault();
 
       const y = e.touches[0].clientY;
       const dy = startY - y; // up = zoom in
       const dz = dy / PX_PER_ZOOM_LEVEL;
 
-      const target = Math.round(startZoom + dz);
       const minZ = map.getMinZoom();
       const maxZ = map.getMaxZoom();
-      const clamped = Math.max(minZ, Math.min(maxZ, target));
 
-      if (clamped !== map.getZoom()) {
-        map.setZoom(clamped, { animate: false });
-      }
+      // continuous zoom, no rounding
+      pendingZoom = Math.max(minZ, Math.min(maxZ, startZoom + dz));
+
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        if (pendingZoom === null) return;
+
+        map.setZoomAround(e.touches[0], pendingZoom, { animate: false });
+        pendingZoom = null;
+      });
     },
     { passive: false }
   );
@@ -693,6 +704,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (zooming) {
       zooming = false;
       map.dragging.enable();
+    }
+
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+      pendingZoom = null;
     }
   }
 
