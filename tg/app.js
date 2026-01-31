@@ -63,6 +63,8 @@ const poiCompleteLabel = document.getElementById("poiCompleteLabel");
 let userLatLng = null;
 let userMarker = null;
 let userAccuracyCircle = null;
+let userHeadingDeg = null;
+let userHeadingEl = null;
 
 // ---------- Overlay helpers ----------
 function openOverlay(url) {
@@ -365,17 +367,43 @@ function updateTooFarMessage() {
   showTooFar(dist > tooFarThresholdMeters);
 }
 
+function updateHeadingUi() {
+  if (!userHeadingEl) return;
+
+  const hasHeading = typeof userHeadingDeg === "number" && Number.isFinite(userHeadingDeg);
+  userHeadingEl.classList.toggle("has-heading", hasHeading);
+
+  if (hasHeading) {
+    userHeadingEl.style.setProperty("--heading", `${userHeadingDeg}`);
+  }
+}
+
 function renderUserLocation(pos) {
   const lat = pos.coords.latitude;
   const lng = pos.coords.longitude;
   const accuracy = pos.coords.accuracy;
 
+  // Geolocation heading is often null unless the phone is moving.
+  const h = pos.coords.heading;
+  if (typeof h === "number" && Number.isFinite(h)) {
+    userHeadingDeg = h; // degrees clockwise from true north
+  }
+
   userLatLng = L.latLng(lat, lng);
 
   if (!userMarker) {
-    userMarker = L.circleMarker(userLatLng, {
-      radius: 7
-    }).addTo(map);
+    // Use a divIcon so we can rotate an arrow
+    const icon = L.divIcon({
+      className: "user-heading-icon",
+      html: `<div class="user-heading"></div>`,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11]
+    });
+
+    userMarker = L.marker(userLatLng, { icon }).addTo(map);
+
+    // Grab the element after Leaflet creates it
+    userHeadingEl = userMarker.getElement()?.querySelector(".user-heading") || null;
 
     userAccuracyCircle = L.circle(userLatLng, {
       radius: accuracy
@@ -384,7 +412,14 @@ function renderUserLocation(pos) {
     userMarker.setLatLng(userLatLng);
     userAccuracyCircle.setLatLng(userLatLng);
     userAccuracyCircle.setRadius(accuracy);
+
+    // The element can be recreated in some cases, so re-grab if needed
+    if (!userHeadingEl) {
+      userHeadingEl = userMarker.getElement()?.querySelector(".user-heading") || null;
+    }
   }
+
+  updateHeadingUi();
 
   setMyLocationEnabled(true);
   hideBanner();
@@ -403,6 +438,15 @@ function handleLocationError(err) {
   showBanner("Location is unavailable right now. Please try again.");
 }
 
+let geoWatchId = null;
+
+// Optional: if you want to show "trying to find you" when watch starts
+function showLocatingState() {
+  showBanner("Getting your location…");
+  setMyLocationEnabled(false);
+}
+
+// --- Replace your requestLocation() with this ---
 function requestLocation() {
   if (!navigator.geolocation) {
     showBanner("Your browser does not support location.");
@@ -410,16 +454,47 @@ function requestLocation() {
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
+  // If already watching, do not start a second watcher
+  if (geoWatchId !== null) return;
+
+  showLocatingState();
+
+  geoWatchId = navigator.geolocation.watchPosition(
     (pos) => renderUserLocation(pos),
-    (err) => handleLocationError(err),
+    (err) => {
+      handleLocationError(err);
+
+      // If permission denied, stop watching to avoid repeated errors
+      if (err && err.code === 1) {
+        stopLocationUpdates();
+      }
+    },
     {
       enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 30000
+      maximumAge: 5000, // allow a recently cached fix to improve responsiveness
+      timeout: 20000     // watchPosition ignores this sometimes, but keep it reasonable
     }
   );
 }
+
+function stopLocationUpdates() {
+  if (geoWatchId === null) return;
+  navigator.geolocation.clearWatch(geoWatchId);
+  geoWatchId = null;
+}
+
+// --- Add these listeners (good for mobile + battery + reliability) ---
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    // Optional: stop updates in background to save battery
+    stopLocationUpdates();
+  } else {
+    // Restart when back
+    requestLocation();
+  }
+});
+
+window.addEventListener("pagehide", stopLocationUpdates);
 
 // Buttons
 myLocationBtn.addEventListener("click", () => {

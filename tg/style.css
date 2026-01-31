@@ -222,6 +222,46 @@ body {
   opacity: 0.85;
 }
 
+/* User heading marker */
+.user-heading-icon {
+  background: transparent;
+  border: none;
+}
 
+.user-heading {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(0, 120, 255, 0.95);
+  border: 2px solid #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  position: relative;
+}
+
+/* Arrow "tip" */
+.user-heading::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 10px solid rgba(0, 120, 255, 0.95);
+  opacity: 0;
+}
+
+/* Only show arrow when we actually have a heading */
+.user-heading.has-heading::after {
+  opacity: 1;
+}
+
+/* Rotate the whole dot+arrow */
+.user-heading.has-heading {
+  transform: rotate(calc(var(--heading, 0) * 1deg));
+  transform-origin: 50% 50%;
+}
 
 .leaflet-attribution-flag { display: none !important; }
