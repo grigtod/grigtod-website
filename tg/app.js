@@ -16,6 +16,8 @@ const map = L.map("map", {
   maxBoundsViscosity: 0.1
 });
 
+map.doubleClickZoom.disable();
+
 // ---------- Tile layers ----------
 const minimalistLayer = L.tileLayer(
   "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
@@ -601,3 +603,99 @@ document.addEventListener("DOMContentLoaded", () => {
   requestLocation();
   updatePoiIconsForZoom();
 });
+
+(function enableOneFingerZoom() {
+  const el = map.getContainer();
+
+  let lastTapTime = 0;
+  let awaitingSecondTap = false;
+
+  let zooming = false;
+  let startY = 0;
+  let startZoom = 0;
+
+  const DOUBLE_TAP_MS = 300;
+  const HOLD_START_MS = 120;
+  const PX_PER_ZOOM_LEVEL = 120;
+
+  let holdTimer = null;
+
+  function clearHold() {
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+  }
+
+  el.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) {
+        awaitingSecondTap = false;
+        clearHold();
+        return;
+      }
+
+      const now = Date.now();
+      const isDoubleTap = now - lastTapTime < DOUBLE_TAP_MS;
+      lastTapTime = now;
+
+      if (!isDoubleTap) {
+        awaitingSecondTap = true;
+        clearHold();
+        return;
+      }
+
+      // second tap began
+      awaitingSecondTap = false;
+      startY = e.touches[0].clientY;
+      startZoom = map.getZoom();
+
+      clearHold();
+      holdTimer = setTimeout(() => {
+        zooming = true;
+
+        // stop map dragging while in one finger zoom
+        map.dragging.disable();
+      }, HOLD_START_MS);
+    },
+    { passive: true }
+  );
+
+  el.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!zooming) return;
+      if (e.touches.length !== 1) return;
+
+      // prevent page scroll while zooming
+      e.preventDefault();
+
+      const y = e.touches[0].clientY;
+      const dy = startY - y; // up = zoom in
+      const dz = dy / PX_PER_ZOOM_LEVEL;
+
+      const target = Math.round(startZoom + dz);
+      const minZ = map.getMinZoom();
+      const maxZ = map.getMaxZoom();
+      const clamped = Math.max(minZ, Math.min(maxZ, target));
+
+      if (clamped !== map.getZoom()) {
+        map.setZoom(clamped, { animate: false });
+      }
+    },
+    { passive: false }
+  );
+
+  function end() {
+    clearHold();
+
+    if (zooming) {
+      zooming = false;
+      map.dragging.enable();
+    }
+  }
+
+  el.addEventListener("touchend", end, { passive: true });
+  el.addEventListener("touchcancel", end, { passive: true });
+})();
