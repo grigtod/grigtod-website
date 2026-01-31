@@ -78,7 +78,10 @@ const imageBounds = [
 
 const imageOverlay = L.imageOverlay(imageUrl, imageBounds, {
   opacity: 0.85
-}).addTo(map);
+});
+
+// Track image overlay visibility
+let imageOverlayVisible = false;
 
 
 // UI elements
@@ -93,6 +96,7 @@ const styleToggleBtn = document.getElementById("styleToggleBtn");
 
 const layersShowBtn = document.getElementById("layersShowBtn"); 
 const layersDismissBtn = document.getElementById("layersDismissBtn");
+const toggleImageOverlayBtn = document.getElementById("toggleImageOverlayBtn");
 
 const distanceBanner = document.getElementById("distanceBanner");
 
@@ -661,6 +665,17 @@ layersDismissBtn.addEventListener("click", () => {
   hideLayers();
 });
 
+toggleImageOverlayBtn.addEventListener("click", () => {
+  if (imageOverlayVisible) {
+    map.removeLayer(imageOverlay);
+    imageOverlayVisible = false;
+    toggleImageOverlayBtn.textContent = "Show historic map";
+  } else {
+    imageOverlay.addTo(map);
+    imageOverlayVisible = true;
+    toggleImageOverlayBtn.textContent = "Hide historic map";
+  }
+});
 
 styleToggleBtn.addEventListener("click", () => {
   if (currentBaseLayer === "minimalist") {
