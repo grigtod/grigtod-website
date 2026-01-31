@@ -65,6 +65,9 @@ let userMarker = null;
 let userAccuracyCircle = null;
 let userHeadingDeg = null;
 let userHeadingEl = null;
+let compassEnabled = false;
+let compassPrimed = false;
+let compassHandler = null;
 
 // ---------- Overlay helpers ----------
 function openOverlay(url) {
@@ -374,8 +377,75 @@ function updateHeadingUi() {
   userHeadingEl.classList.toggle("has-heading", hasHeading);
 
   if (hasHeading) {
-    userHeadingEl.style.setProperty("--heading", `${userHeadingDeg}`);
+    const normalized = ((userHeadingDeg % 360) + 360) % 360;
+    userHeadingEl.style.setProperty("--heading", `${normalized}`);
   }
+}
+
+function setHeading(deg) {
+  if (typeof deg !== "number" || !Number.isFinite(deg)) return;
+  userHeadingDeg = ((deg % 360) + 360) % 360;
+  updateHeadingUi();
+}
+
+function startCompassListeners() {
+  if (compassEnabled) return;
+  if (typeof DeviceOrientationEvent === "undefined") return;
+
+  compassHandler = (e) => {
+    // iOS Safari uses this when available (degrees clockwise from true north)
+    if (typeof e.webkitCompassHeading === "number" && Number.isFinite(e.webkitCompassHeading)) {
+      setHeading(e.webkitCompassHeading);
+      return;
+    }
+
+    // Many Android browsers provide alpha (device rotation around z-axis)
+    if (typeof e.alpha === "number" && Number.isFinite(e.alpha)) {
+      const heading = (360 - e.alpha) % 360;
+      setHeading(heading);
+    }
+  };
+
+  window.addEventListener("deviceorientationabsolute", compassHandler, true);
+  window.addEventListener("deviceorientation", compassHandler, true);
+  compassEnabled = true;
+}
+
+async function requestCompassPermissionIfNeeded() {
+  if (typeof DeviceOrientationEvent === "undefined") return;
+
+  // iOS only: permission gate
+  if (typeof DeviceOrientationEvent.requestPermission !== "function") {
+    startCompassListeners();
+    return;
+  }
+
+  try {
+    const res = await DeviceOrientationEvent.requestPermission();
+    if (res === "granted") startCompassListeners();
+  } catch {
+    // If called without a gesture, iOS throws. We will retry on first tap.
+  }
+}
+
+function enableCompassAlwaysOn() {
+  // Android often works immediately
+  requestCompassPermissionIfNeeded();
+
+  // Prime first user gesture for iOS
+  if (compassPrimed) return;
+  compassPrimed = true;
+
+  const unlockOnce = async () => {
+    await requestCompassPermissionIfNeeded();
+    window.removeEventListener("pointerdown", unlockOnce, true);
+    window.removeEventListener("touchstart", unlockOnce, true);
+    window.removeEventListener("click", unlockOnce, true);
+  };
+
+  window.addEventListener("pointerdown", unlockOnce, true);
+  window.addEventListener("touchstart", unlockOnce, true);
+  window.addEventListener("click", unlockOnce, true);
 }
 
 function renderUserLocation(pos) {
@@ -386,7 +456,7 @@ function renderUserLocation(pos) {
   // Geolocation heading is often null unless the phone is moving.
   const h = pos.coords.heading;
   if (typeof h === "number" && Number.isFinite(h)) {
-    userHeadingDeg = h; // degrees clockwise from true north
+    setHeading(h);
   }
 
   userLatLng = L.latLng(lat, lng);
@@ -418,8 +488,6 @@ function renderUserLocation(pos) {
       userHeadingEl = userMarker.getElement()?.querySelector(".user-heading") || null;
     }
   }
-
-  updateHeadingUi();
 
   setMyLocationEnabled(true);
   hideBanner();
@@ -475,6 +543,8 @@ function requestLocation() {
       timeout: 20000     // watchPosition ignores this sometimes, but keep it reasonable
     }
   );
+
+  enableCompassAlwaysOn();
 }
 
 function stopLocationUpdates() {
