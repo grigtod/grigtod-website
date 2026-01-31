@@ -83,7 +83,6 @@ function openOverlay(url) {
   // Optional: stop map interactions while overlay is open
   map.dragging.disable();
   map.scrollWheelZoom.disable();
-  map.doubleClickZoom.disable();
   map.boxZoom.disable();
   map.keyboard.disable();
 }
@@ -97,7 +96,6 @@ function closeOverlay() {
 
   map.dragging.enable();
   map.scrollWheelZoom.enable();
-  map.doubleClickZoom.enable();
   map.boxZoom.enable();
   map.keyboard.enable();
 }
@@ -459,10 +457,10 @@ function renderUserLocation(pos) {
   const accuracy = pos.coords.accuracy;
 
   // Geolocation heading is often null unless the phone is moving.
-  const h = pos.coords.heading;
+  /*const h = pos.coords.heading;
   if (typeof h === "number" && Number.isFinite(h)) {
     setHeading(h);
-  }
+  }*/
 
   userLatLng = L.latLng(lat, lng);
 
