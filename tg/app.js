@@ -67,6 +67,20 @@ const detailedLayer = L.tileLayer(
 let currentBaseLayer = "minimalist";
 minimalistLayer.addTo(map);
 
+// Image overlay
+const imageUrl = "overlays/tiefe_friedrich_stollen_36.jpg";
+
+// Replace these with the real corner coordinates
+const imageBounds = [
+  [50.40169, 18.7857], // southwest corner 
+  [50.47071, 18.8667158]  // northeast corner 
+];
+
+const imageOverlay = L.imageOverlay(imageUrl, imageBounds, {
+  opacity: 0.85
+}).addTo(map);
+
+
 // UI elements
 const locationBanner = document.getElementById("locationBanner");
 const layersBanner = document.getElementById("layersBanner");
