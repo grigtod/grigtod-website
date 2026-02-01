@@ -208,133 +208,6 @@ let activePoiId = null;
 // https://pl.wikipedia.org/wiki/Rze%C5%BAby_gwark%C3%B3w_w_Tarnowskich_G%C3%B3rach
 const LABEL_ZOOM_THRESHOLD = 18;
 
-const pois = [
-  //Info:
-  {
-    id: "info",
-    lat: 50.44417,
-    lng: 18.85564,
-    label: "info",
-    emoji: "ℹ️",
-    embedUrl: "https://en.wikipedia.org/wiki/Tarnowskie_G%C3%B3ry"
-  },
-  //Museums
-  {
-    id: "museum-tg",
-    lat: 50.44426,  
-    lng: 18.85490,
-    label: "Muzeum w TG",
-    emoji: "🏛️",
-    embedUrl: "./embeds/model-gallery-ar.html"
-  },
-  {
-    id: "kopalnia-srebra",
-    lat: 50.42554,
-    lng: 18.84941,  
-    label: "Zabytkowa Kopalnia Srebra",
-    emoji: "⛏️",
-    embedUrl: "./embeds/pomnik-gwarka.html"
-  },
-
-  //Gwarek:
-  {
-    id: "gwarek-1",
-    lat: 50.444167,
-    lng: 18.858917,
-    label: "Gwarek 1",
-    emoji: "🗿",
-    embedUrl: "./embeds/pomnik-gwarka.html"
-  },
-  {
-    id: "gwarek-2",
-    lat: 50.447139,
-    lng: 18.863111,
-    label: "Gwarek 2",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-3",
-    lat: 50.444528,
-    lng: 18.854861,
-    label: "Gwarek 3",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-4",
-    lat: 50.442889,
-    lng: 18.856861,
-    label: "Gwarek 4",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-5",
-    lat: 50.445444,
-    lng: 18.853139,
-    label: "Gwarek 5",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-6",
-    lat: 50.423583,
-    lng: 18.864611,
-    label: "Gwarek 6",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-7",
-    lat: 50.420194,
-    lng: 18.817417,
-    label: "Gwarek 7",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-8",
-    lat: 50.439944,
-    lng: 18.819472,
-    label: "Gwarek 8",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-9",
-    lat: 50.456194,
-    lng: 18.8155,
-    label: "Gwarek 9",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-10",
-    lat: 50.438583,
-    lng: 18.866111,
-    label: "Gwarek 10",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-11",
-    lat: 50.495111,
-    lng: 18.817667,
-    label: "Gwarek 11",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  },
-  {
-    id: "gwarek-12",
-    lat: 50.450444,
-    lng: 18.88175,
-    label: "Gwarek 12",
-    emoji: "🗿",
-    embedUrl: "./embeds/gwarek-przy-podcieniach.html"
-  }
-];
-
 function makePoiIcon({ emoji, label, id }, showLabel) {
   const safeLabel = String(label).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 
@@ -357,27 +230,70 @@ function makePoiIcon({ emoji, label, id }, showLabel) {
   });
 }
 
-const poiMarkers = pois.map((poi) => {
-  const marker = L.marker([poi.lat, poi.lng], {
-    icon: makePoiIcon(poi, map.getZoom() >= LABEL_ZOOM_THRESHOLD),
-    keyboard: true,
-    riseOnHover: true
-  }).addTo(map);
+let pois = [];
+let poiMarkers = [];
 
-  marker.on("click", () => {
-    activePoiId = poi.id;
-    openOverlay(poi.embedUrl);
-    syncCompleteUi();
-  });
+function addToPois(id, lat, lon, label, emoji, embedUrl)  //add single poi to all POIs
+{
+  pois.push({id, lat, lon, label, emoji, embedUrl});
+}
 
-  marker.on("keypress", (e) => {
-    if (e.originalEvent && (e.originalEvent.key === "Enter" || e.originalEvent.key === " ")) {
-      openOverlay(poi.embedUrl);
+async function fetchAndParseJSON(url) {
+  try {
+    const response = await fetch(url); 
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    const data = await response.json(); 
+    return data; 
+  } catch (error) {
+    console.error("Error fetching or parsing JSON:", error);
+  }
+}
+ 
+function AddPoisToMap()
+{
+  poiMarkers = pois.map((poi) => {
+    const marker = L.marker([poi.lat, poi.lon], {
+      icon: makePoiIcon(poi, map.getZoom() >= LABEL_ZOOM_THRESHOLD),
+      keyboard: true,
+      riseOnHover: true
+    }).addTo(map);
+
+    marker.on("click", () => {
+      activePoiId = poi.id;
+      openOverlay(poi.embedUrl);
+      syncCompleteUi();
+    });
+
+    marker.on("keypress", (e) => {
+      if (e.originalEvent && (e.originalEvent.key === "Enter" || e.originalEvent.key === " ")) {
+        openOverlay(poi.embedUrl);
+      }
+    });
+
+    return { poi, marker };
   });
 
-  return { poi, marker };
-});
+}
+
+async function LoadAllPOIs()
+{
+  try{
+    loadedPOI = await fetchAndParseJSON("./data/poi.json");
+    loadedPOI.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, element.emoji, element.embedUrl));
+    
+    loadedGwarek = await fetchAndParseJSON("./data/gwarek.json");
+    loadedGwarek.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, "🗿", "ADD URL HERE!"));
+   
+    AddPoisToMap();
+  }
+  catch (error) {
+    console.error("Error calling fetchAndParseJSON:", error);
+  } 
+}
+
+LoadAllPOIs();
 
 function updatePoiIconsForZoom() {
   const showLabel = map.getZoom() >= LABEL_ZOOM_THRESHOLD;
@@ -387,6 +303,7 @@ function updatePoiIconsForZoom() {
 }
 
 map.on("zoomend", updatePoiIconsForZoom);
+
 
 // ---------- Existing banner + geolocation ----------
 function showBanner(message) {
