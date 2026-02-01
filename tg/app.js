@@ -286,6 +286,9 @@ async function LoadAllPOIs()
     loadedGwarek = await fetchAndParseJSON("./data/gwarek.json");
     loadedGwarek.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, "🗿", "ADD URL HERE!"));
    
+    loadedPhotos= await fetchAndParseJSON("./data/photo.json");
+    loadedPhotos.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, "📷", "./embeds/photo.html"));
+   
     AddPoisToMap();
   }
   catch (error) {
