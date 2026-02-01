@@ -119,15 +119,54 @@ function start() {
     stageId: "stageWrap",
     onControlsChange: syncCesiumToThree
   });
+  // Do NOT create the Cesium viewer until a token is applied by the user.
+  // Wire Apply key button to initialize or update Cesium when pressed.
+  const applyBtn = document.getElementById('cesiumKeyApply');
+  const keyInput = document.getElementById('cesiumKeyInput');
+  if (applyBtn && keyInput) {
+    applyBtn.addEventListener('click', () => {
+      const token = keyInput.value.trim();
+      if (!token) return;
+      // persist token in localStorage
+      localStorage.setItem('cesiumIonToken', token);
+      // set Ion token for Cesium
+      try {
+        Cesium.Ion.defaultAccessToken = token;
+      } catch (e) {
+        console.warn('Cesium not yet available to set Ion token', e);
+      }
 
-  cesium = createCesiumGlobe({ containerId: "cesiumContainer" });
+      // disable apply button to avoid repeated presses and gray it out
+      applyBtn.disabled = true;
+      applyBtn.style.opacity = '0.5';
+      applyBtn.style.cursor = 'not-allowed';
 
-  syncCesiumToThree();
+      if (!cesium) {
+        cesium = createCesiumGlobe({ containerId: "cesiumContainer" });
+      }
+
+      if (cesium && typeof cesium.applyIonKey === 'function') {
+        try {
+          cesium.applyIonKey(token);
+        } catch (err) {
+          console.error('applyIonKey failed:', err);
+          // re-enable so user can retry and restore style
+          applyBtn.disabled = false;
+          applyBtn.style.opacity = '';
+          applyBtn.style.cursor = '';
+        }
+      }
+
+      // sync camera after (re)initialization
+      syncCesiumToThree();
+    });
+  }
 
   wireMenu({
     gridId: "menuGrid",
     actions: buildCesiumActions()
   });
+  
 
   window.addEventListener("resize", onResize, { passive: true });
   onResize();

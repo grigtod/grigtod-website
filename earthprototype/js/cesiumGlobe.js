@@ -60,6 +60,90 @@ export function createCesiumGlobe({ containerId }) {
     viewer.scene.requestRender();
   }
 
+  // Apply a Cesium Ion token and switch to Cesium World Imagery
+  function applyIonKey(token) {
+    if (!token) return;
+    try {
+      Cesium.Ion.defaultAccessToken = token;
+      // Replace imagery with Cesium World Imagery (Ion) using the IonImageryProvider
+      try {
+        viewer.imageryLayers.removeAll();
+      } catch (e) {
+        // ignore
+      }
+
+      // Cesium World Imagery asset id on Ion
+      const WORLD_IMAGERY_ASSET_ID = 3845;
+      let provider = null;
+
+      // Prefer IonImageryProvider when available
+      if (typeof Cesium.IonImageryProvider === 'function') {
+        try {
+          provider = new Cesium.IonImageryProvider({ assetId: WORLD_IMAGERY_ASSET_ID });
+        } catch (e) {
+          provider = null;
+        }
+      }
+
+      // Fallback to createWorldImagery if present
+      if (!provider && typeof Cesium.createWorldImagery === 'function') {
+        try {
+          provider = Cesium.createWorldImagery();
+        } catch (e) {
+          provider = null;
+        }
+      }
+
+      if (provider) {
+        const addProviderLayer = () => {
+          try {
+            const layer = new Cesium.ImageryLayer(provider);
+            viewer.imageryLayers.add(layer);
+            viewer.scene.requestRender();
+          } catch (e) {
+            try {
+              viewer.imageryLayers.addImageryProvider(provider);
+              viewer.scene.requestRender();
+            } catch (err) {
+              console.error('Failed to add imagery provider:', err, e);
+            }
+          }
+        };
+
+        if (provider.readyPromise && typeof provider.readyPromise.then === 'function') {
+          provider.readyPromise.then(() => {
+            addProviderLayer();
+          }).catch((err) => {
+            console.error('Imagery provider readyPromise rejected:', err);
+            // Fallback to ArcGIS World Imagery
+            try {
+              const arc = new Cesium.ArcGisMapServerImageryProvider({
+                url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+              });
+              arc.readyPromise.then(() => {
+                try {
+                  const layer = new Cesium.ImageryLayer(arc);
+                  viewer.imageryLayers.add(layer);
+                  viewer.scene.requestRender();
+                } catch (e2) {
+                  console.error('ArcGIS fallback add failed:', e2);
+                }
+              }).catch((e3) => console.error('ArcGIS fallback ready failed:', e3));
+            } catch (e) {
+              console.error('ArcGIS fallback failed:', e);
+            }
+          });
+        } else {
+          addProviderLayer();
+        }
+      } else {
+        console.warn('No compatible Cesium imagery provider available in this build.');
+      }
+    } catch (err) {
+      console.error('Failed to apply Ion token', err);
+    }
+  }
+
   function resize() {
     viewer.resize();
     viewer.scene.requestRender();
@@ -69,5 +153,5 @@ export function createCesiumGlobe({ containerId }) {
     viewer.render();
   }
 
-  return { viewer, targetCartographic, get rangeMeters() { return rangeMeters; }, setCameraFromHeadingPitchRange, resize, renderFrame };
+  return { viewer, targetCartographic, get rangeMeters() { return rangeMeters; }, setCameraFromHeadingPitchRange, applyIonKey, resize, renderFrame };
 }
