@@ -1,0 +1,188 @@
+:root{
+  --bg:#0b0d10;
+  --panel:#101318;
+  --panel2:#0e1116;
+  --stroke:rgba(255,255,255,.08);
+  --stroke2:rgba(255,255,255,.12);
+  --text:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.55);
+  --shadow:rgba(0,0,0,.55);
+}
+
+html, body{
+  height:100%;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  overflow:hidden;
+}
+
+.app{
+  height:100%;
+  display:flex;
+}
+
+.stageWrap{
+  width:66.666%;
+  min-width:520px;
+  position:relative;
+  background:radial-gradient(1200px 700px at 30% 20%, rgba(255,255,255,.08), transparent 55%),
+             radial-gradient(900px 700px at 20% 90%, rgba(120,160,255,.07), transparent 60%),
+             linear-gradient(180deg, #0c0f14, #07090c);
+  border-right:1px solid var(--stroke);
+}
+
+canvas#threeCanvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+#cesiumOverlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none; /* mouse handled by Three orbit controls */
+}
+
+#cesiumContainer{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:transparent !important;
+}
+
+.menu{
+  width:33.333%;
+  min-width:360px;
+  background:linear-gradient(180deg, var(--panel), var(--panel2));
+  padding:22px 18px;
+  box-sizing:border-box;
+}
+
+.menuCard{
+  height:100%;
+  border-radius:26px;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border:1px solid var(--stroke);
+  box-shadow: 0 20px 60px var(--shadow);
+  padding:18px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.menuTitle{
+  text-align:center;
+  font-weight:700;
+  letter-spacing:.4px;
+  font-size:26px;
+  margin-top:6px;
+  color:rgba(255,255,255,.9);
+  user-select:none;
+}
+
+.hint{
+  font-size:13px;
+  color:var(--muted);
+  text-align:center;
+  padding:0 6px 6px;
+  user-select:none;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:12px 12px;
+  padding:8px 4px 6px;
+  overflow:hidden;
+}
+
+.tile{
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
+  padding:8px 8px 6px;
+  cursor:pointer;
+  user-select:none;
+  transition:transform .08s ease, border-color .12s ease, background .12s ease, filter .12s ease;
+}
+
+.tile:active{
+  transform:scale(.985);
+}
+
+.tileTop{
+  border-radius:10px;
+  height:64px;
+  width:64px;
+  border:1px solid var(--stroke2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  margin:0 auto;
+}
+
+.tileLabel{
+  margin-top:6px;
+  font-size:12px;
+  text-align:center;
+  color:rgba(255,255,255,.88);
+  white-space:normal;
+  overflow:visible;
+  text-overflow:clip;
+  line-height:1.2;
+}
+
+.tile.disabled{
+  cursor:not-allowed;
+  filter:saturate(.1) brightness(.85);
+  opacity:.75;
+}
+
+.tile.disabled .tileLabel{
+  color:rgba(255,255,255,.55);
+}
+
+/* Active thumbs */
+.thumbSeabed{
+  background:
+    radial-gradient(120px 80px at 35% 25%, rgba(80,220,255,.55), transparent 60%),
+    linear-gradient(180deg, rgba(25,140,190,.65), rgba(10,60,120,.55)),
+    linear-gradient(180deg, rgba(10,20,30,0), rgba(10,20,30,.45));
+}
+.thumbForest{
+  background:
+    radial-gradient(160px 90px at 55% 20%, rgba(255,255,255,.35), transparent 55%),
+    linear-gradient(180deg, rgba(50,170,90,.75), rgba(12,70,30,.65));
+}
+.thumbTemp{
+  background:
+    radial-gradient(120px 80px at 40% 30%, rgba(255,210,90,.75), transparent 60%),
+    linear-gradient(180deg, rgba(220,60,40,.85), rgba(120,20,20,.75));
+}
+
+.icon{
+  width:62px;
+  height:62px;
+  opacity:.95;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.35));
+}
+
+.iconMuted{
+  opacity:.55;
+  filter:none;
+}
+
+@media (max-width: 1100px){
+  .stageWrap{ width:62%; }
+  .menu{ width:38%; }
+}

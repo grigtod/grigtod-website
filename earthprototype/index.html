@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Bebok Exhibit - Globe</title>
+
+  <!-- Cesium -->
+  <link
+    rel="stylesheet"
+    href="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Widgets/widgets.css"
+  />
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.114/Build/Cesium/Cesium.js"></script>
+
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="stageWrap" id="stageWrap" aria-label="3D stage">
+      <canvas id="threeCanvas"></canvas>
+
+      <div id="cesiumOverlay">
+        <div id="cesiumContainer"></div>
+      </div>
+    </div>
+
+    <aside class="menu" aria-label="Augmentations menu">
+      <div class="menuCard">
+        <div class="menuTitle">Augmentations</div>
+        <div class="hint">Drag on the left to orbit. <br> Scroll to zoom. <br> Select augmentation below.</div>
+
+        <div class="grid" id="menuGrid">
+          <!-- Row 1 (active) -->
+            <!--button class="tile" data-action="none" type="button">
+            <div class="tileTop thumbSeabed">
+              <svg class="icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M6 44c10-6 16 4 26-2s12-10 26-2v10H6V44z" fill="rgba(0,0,0,.18)"/>
+                <path d="M8 40c10-8 18 2 28-4s14-12 20-6" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round"/>
+                <path d="M34 14c0 10-8 12-8 20" stroke="rgba(200,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="34" cy="14" r="4" fill="rgba(220,255,255,.95)"/>
+              </svg>
+            </div>
+            <div class="tileLabel">None</div>
+          </button-->
+
+          <button class="tile" data-action="seabed2030" type="button">
+            <div class="tileTop thumbSeabed">
+              <svg class="icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M6 44c10-6 16 4 26-2s12-10 26-2v10H6V44z" fill="rgba(0,0,0,.18)"/>
+                <path d="M8 40c10-8 18 2 28-4s14-12 20-6" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linecap="round"/>
+                <path d="M34 14c0 10-8 12-8 20" stroke="rgba(200,255,255,.95)" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="34" cy="14" r="4" fill="rgba(220,255,255,.95)"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Seabed 2030</div>
+          </button>
+
+          <button class="tile" data-action="globalforestwatch" type="button">
+            <div class="tileTop thumbForest">
+              <svg class="icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M16 46l8-20 8 20H16z" fill="rgba(255,255,255,.9)"/>
+                <path d="M30 46l9-24 9 24H30z" fill="rgba(255,255,255,.8)"/>
+                <path d="M26 46v10" stroke="rgba(255,255,255,.9)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M39 46v10" stroke="rgba(255,255,255,.9)" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Global Forest Watch</div>
+          </button>
+
+          <button class="tile" data-action="climateTemperature" type="button">
+            <div class="tileTop thumbTemp">
+              <svg class="icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <circle cx="26" cy="30" r="16" fill="rgba(255,255,255,.18)"/>
+                <path d="M46 18v22a8 8 0 1 1-10 7V18a5 5 0 0 1 10 0z" fill="rgba(255,255,255,.9)"/>
+                <path d="M41 24v24" stroke="rgba(220,60,40,.95)" stroke-width="4" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Climate Temperature</div>
+          </button>
+
+          <!-- Row 2 (disabled) -->
+          <button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M10 36c12-10 16 2 28-6" stroke="rgba(255,255,255,.85)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M16 46c10-8 18 0 34-8" stroke="rgba(255,255,255,.75)" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Wind</div>
+          </button>
+
+          <button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M22 42h22a10 10 0 0 0 0-20 14 14 0 0 0-26-2 9 9 0 0 0 4 22z"
+                      fill="rgba(255,255,255,.8)"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Clouds</div>
+          </button>
+
+          <button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M18 38h28a9 9 0 0 0 0-18 13 13 0 0 0-25-2 8 8 0 0 0-3 20z"
+                      fill="rgba(255,255,255,.75)"/>
+                <path d="M26 46l-2 6M34 46l-2 6M42 46l-2 6" stroke="rgba(255,255,255,.75)" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Precipitation</div>
+          </button>
+
+          <!-- Row 3 (disabled) -->
+          <button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M18 46l8-18 6 10 8-16 12 24H18z" fill="rgba(255,255,255,.75)"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Ice &amp; Snow</div>
+          </button>
+
+          <button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M14 44h36" stroke="rgba(255,255,255,.65)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M18 44V30h8v14M30 44V22h10v22M44 44V34h6v10"
+                      stroke="rgba(255,255,255,.7)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Urban Lights</div>
+          </button>
+
+          <button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M10 40c10-16 18 10 30-10 6-10 10 2 14-6" stroke="rgba(255,255,255,.75)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M10 48c14-14 18 8 34-10" stroke="rgba(255,255,255,.6)" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Aurora</div>
+          </button>
+
+          <!-- Row 4 (disabled) -->
+          <!--button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <circle cx="32" cy="32" r="10" stroke="rgba(255,255,255,.75)" stroke-width="4"/>
+                <path d="M32 8v10M32 46v10M8 32h10M46 32h10M14 14l7 7M43 43l7 7M50 14l-7 7M21 43l-7 7"
+                      stroke="rgba(255,255,255,.65)" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Magnetic Field</div>
+          </button>
+
+          <button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M14 44l14-10 6 6 16-18" stroke="rgba(255,255,255,.75)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M24 50l-4 6M34 50l-4 6M44 50l-4 6" stroke="rgba(255,255,255,.55)" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Meteor Impacts</div>
+          </button>
+
+          <button class="tile disabled" type="button" disabled>
+            <div class="tileTop">
+              <svg class="icon iconMuted" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <path d="M14 44h36" stroke="rgba(255,255,255,.7)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M18 44V30h10v14M32 44V26h10v18M46 44V34h4v10"
+                      fill="none" stroke="rgba(255,255,255,.65)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18 22h16" stroke="rgba(255,255,255,.55)" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tileLabel">Pollution</div>
+          </button-->
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Main entry -->
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
