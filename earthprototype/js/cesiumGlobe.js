@@ -48,7 +48,7 @@ export function createCesiumGlobe({ containerId }) {
     const PITCH_MIN = -Math.PI / 4; // -45°
     const PITCH_MAX = Math.PI / 4;  // +45°
 
-    const clampedPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch));
+    const clampedPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch)); 
 
     rangeMeters = rangeMeters = range;
     const target = Cesium.Cartesian3.fromRadians(
@@ -56,93 +56,40 @@ export function createCesiumGlobe({ containerId }) {
       targetCartographic.latitude,
       targetCartographic.height
     );
+
+    
     viewer.camera.lookAt(target, new Cesium.HeadingPitchRange(heading, clampedPitch, range));
     viewer.scene.requestRender();
   }
 
   // Apply a Cesium Ion token and switch to Cesium World Imagery
-  function applyIonKey(token) {
-    if (!token) return;
-    try {
-      Cesium.Ion.defaultAccessToken = token;
-      // Replace imagery with Cesium World Imagery (Ion) using the IonImageryProvider
-      try {
-        viewer.imageryLayers.removeAll();
-      } catch (e) {
-        // ignore
-      }
+    async function applyIonKey(token) {
+  if (!token) return;
 
-      // Cesium World Imagery asset id on Ion
-      const WORLD_IMAGERY_ASSET_ID = 3845;
-      let provider = null;
+  Cesium.Ion.defaultAccessToken = token;
 
-      // Prefer IonImageryProvider when available
-      if (typeof Cesium.IonImageryProvider === 'function') {
-        try {
-          provider = new Cesium.IonImageryProvider({ assetId: WORLD_IMAGERY_ASSET_ID });
-        } catch (e) {
-          provider = null;
-        }
-      }
+  // Clear existing imagery
+  viewer.imageryLayers.removeAll();
 
-      // Fallback to createWorldImagery if present
-      if (!provider && typeof Cesium.createWorldImagery === 'function') {
-        try {
-          provider = Cesium.createWorldImagery();
-        } catch (e) {
-          provider = null;
-        }
-      }
+  let provider;
 
-      if (provider) {
-        const addProviderLayer = () => {
-          try {
-            const layer = new Cesium.ImageryLayer(provider);
-            viewer.imageryLayers.add(layer);
-            viewer.scene.requestRender();
-          } catch (e) {
-            try {
-              viewer.imageryLayers.addImageryProvider(provider);
-              viewer.scene.requestRender();
-            } catch (err) {
-              console.error('Failed to add imagery provider:', err, e);
-            }
-          }
-        };
+  try {
+    // Use Cesium's default global imagery for the token
+    provider = await Cesium.createWorldImageryAsync();
+    viewer.imageryLayers.addImageryProvider(provider);
+  } catch (err) {
+    console.error("ion imagery failed, falling back:", err);
 
-        if (provider.readyPromise && typeof provider.readyPromise.then === 'function') {
-          provider.readyPromise.then(() => {
-            addProviderLayer();
-          }).catch((err) => {
-            console.error('Imagery provider readyPromise rejected:', err);
-            // Fallback to ArcGIS World Imagery
-            try {
-              const arc = new Cesium.ArcGisMapServerImageryProvider({
-                url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
-              });
-              arc.readyPromise.then(() => {
-                try {
-                  const layer = new Cesium.ImageryLayer(arc);
-                  viewer.imageryLayers.add(layer);
-                  viewer.scene.requestRender();
-                } catch (e2) {
-                  console.error('ArcGIS fallback add failed:', e2);
-                }
-              }).catch((e3) => console.error('ArcGIS fallback ready failed:', e3));
-            } catch (e) {
-              console.error('ArcGIS fallback failed:', e);
-            }
-          });
-        } else {
-          addProviderLayer();
-        }
-      } else {
-        console.warn('No compatible Cesium imagery provider available in this build.');
-      }
-    } catch (err) {
-      console.error('Failed to apply Ion token', err);
-    }
+    // Fallback that does not require ion at all
+    provider = new Cesium.OpenStreetMapImageryProvider({
+      url: "https://tile.openstreetmap.org/"
+    });
+    viewer.imageryLayers.addImageryProvider(provider);
   }
+
+  viewer.scene.requestRender();
+}
+
 
   function resize() {
     viewer.resize();

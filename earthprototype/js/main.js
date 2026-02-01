@@ -145,20 +145,19 @@ function start() {
         cesium = createCesiumGlobe({ containerId: "cesiumContainer" });
       }
 
-      if (cesium && typeof cesium.applyIonKey === 'function') {
-        try {
-          cesium.applyIonKey(token);
-        } catch (err) {
-          console.error('applyIonKey failed:', err);
-          // re-enable so user can retry and restore style
-          applyBtn.disabled = false;
-          applyBtn.style.opacity = '';
-          applyBtn.style.cursor = '';
-        }
-      }
+       
+        (async () => {
+            try {
+                await cesium.applyIonKey(token);
+            } catch (err) {
+                console.error("applyIonKey failed:", err);
+                applyBtn.disabled = false;
+                applyBtn.style.opacity = "";
+                applyBtn.style.cursor = "";
+            }
 
-      // sync camera after (re)initialization
-      syncCesiumToThree();
+            syncCesiumToThree();
+            })();
     });
   }
 
