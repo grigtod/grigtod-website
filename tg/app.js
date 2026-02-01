@@ -143,6 +143,11 @@ function closeOverlay() {
   map.keyboard.enable();
 }
 
+function GetCurrentlySelectedPOI()
+{
+  return activePoiId;
+}
+
 poiOverlayClose.addEventListener("click", closeOverlay);
 
 function syncCompleteUi() {
@@ -174,7 +179,6 @@ poiCompleteBtn.addEventListener("click", () => {
   syncCompleteUi();
   updatePoiIconsForZoom();
 });
-
 
 // Close on Escape
 document.addEventListener("keydown", (e) => {
