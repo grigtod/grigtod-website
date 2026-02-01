@@ -1,5 +1,6 @@
 import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
 import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
 export function createThreeScene({ canvasId, stageId, onControlsChange }) {
   const canvas = document.getElementById(canvasId);
@@ -10,8 +11,19 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
 
   const scene = new THREE.Scene();
 
+  // Load environment
+  const gltfLoader = new GLTFLoader();
+  gltfLoader.load('./assets/temp/environment/hintze_hall_nhm_london_surface_model.glb', (gltf) => {
+    const environment = gltf.scene;
+    environment.scale.set(5, 5, 5);
+    environment.position.y = -17;
+    environment.position.x = 36;
+    environment.position.z = -2;
+    scene.add(environment);
+  });
+
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 2000);
-  camera.position.set(6, 4, 10);
+  camera.position.set(0, 0, 15);
 
   const ambient = new THREE.AmbientLight(0xffffff, 0.65);
   scene.add(ambient);
@@ -20,47 +32,13 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
   key.position.set(8, 12, 6);
   scene.add(key);
 
-  const floorMat = new THREE.MeshStandardMaterial({ color: 0x0f141b, roughness: 0.9, metalness: 0.05 });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), floorMat);
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -1.2;
-  scene.add(floor);
-
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0x0b1016, roughness: 0.95, metalness: 0.03 });
-  const backWall = new THREE.Mesh(new THREE.PlaneGeometry(60, 30), wallMat);
-  backWall.position.set(0, 10, -18);
-  scene.add(backWall);
-
-  const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(60, 30), wallMat);
-  leftWall.rotation.y = Math.PI / 2;
-  leftWall.position.set(-22, 10, 0);
-  scene.add(leftWall);
-
-  const pedestalMat = new THREE.MeshStandardMaterial({ color: 0x1a2330, roughness: 0.5, metalness: 0.25 });
-  const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.7, 1.2, 48), pedestalMat);
-  pedestal.position.set(0, -0.6, 0);
-  scene.add(pedestal);
-
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(3.2, 0.08, 16, 90),
-    new THREE.MeshStandardMaterial({
-      color: 0x67d7ff,
-      emissive: 0x1a6a7a,
-      emissiveIntensity: 0.6,
-      roughness: 0.2,
-      metalness: 0.1
-    })
-  );
-  ring.rotation.x = Math.PI / 2;
-  ring.position.set(0, 0.05, 0);
-  scene.add(ring);
-
-  const controls = new OrbitControls(camera, stage);
+  const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.06;
-  controls.target.set(0, 0.6, 0);
-  controls.minDistance = 4;
-  controls.maxDistance = 35;
+  controls.enablePan = false;
+  controls.target.set(0, 0, 0);
+  controls.minDistance = 12;
+  controls.maxDistance = 18;
 
   if (typeof onControlsChange === "function") {
     controls.addEventListener("change", onControlsChange);

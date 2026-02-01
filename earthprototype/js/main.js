@@ -15,8 +15,8 @@ function syncCesiumToThree() {
   const offset = three.camera.position.clone().sub(three.controls.target);
   const spherical = new three.THREE.Spherical().setFromVector3(offset);
 
-  const heading = spherical.theta;
-  const pitch = spherical.phi - Math.PI / 2;
+  const heading = -spherical.theta;  // Invert heading to match rotation direction
+  const pitch = spherical.phi - Math.PI / 2;  // Pitch from spherical coordinates
 
   const range = clamp(spherical.radius * 2500000, 4000000, 50000000);
 

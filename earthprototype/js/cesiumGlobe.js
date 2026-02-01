@@ -2,9 +2,7 @@ export function createCesiumGlobe({ containerId }) {
   const container = document.getElementById(containerId);
 
   const viewer = new Cesium.Viewer(container, {
-    imageryProvider: new Cesium.OpenStreetMapImageryProvider({
-      url: "https://a.tile.openstreetmap.org/"
-    }),
+    imageryProvider: new Cesium.OpenStreetMapImageryProvider(),
     terrainProvider: new Cesium.EllipsoidTerrainProvider(),
     baseLayerPicker: false,
     geocoder: false,
@@ -18,7 +16,13 @@ export function createCesiumGlobe({ containerId }) {
     selectionIndicator: false,
     shouldAnimate: false,
     requestRenderMode: true,
-    maximumRenderTimeChange: Infinity
+    maximumRenderTimeChange: Infinity,
+    contextOptions: {
+      webgl: {
+        alpha: true,
+        preserveDrawingBuffer: true
+      }
+    }
   });
 
   viewer.scene.backgroundColor = Cesium.Color.TRANSPARENT;
