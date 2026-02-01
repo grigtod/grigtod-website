@@ -30,6 +30,8 @@ export function createCesiumGlobe({ containerId }) {
   viewer.scene.sun.show = false;
   viewer.scene.moon.show = false;
   viewer.scene.globe.showGroundAtmosphere = true;
+  viewer.scene.skyAtmosphere.show = false; 
+  viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 2.0);
 
   const ssc = viewer.scene.screenSpaceCameraController;
   ssc.enableRotate = false;
@@ -38,17 +40,23 @@ export function createCesiumGlobe({ containerId }) {
   ssc.enableTilt = false;
   ssc.enableLook = false;
 
-  const targetCartographic = Cesium.Cartographic.fromDegrees(15, 5, 0);
+  const targetCartographic = Cesium.Cartographic.fromDegrees(0, 0, 0);
   let rangeMeters = 22000000;
 
   function setCameraFromHeadingPitchRange({ heading, pitch, range }) {
+    // Enforce sensible pitch limits so the globe doesn't tilt to ±90°
+    const PITCH_MIN = -Math.PI / 4; // -45°
+    const PITCH_MAX = Math.PI / 4;  // +45°
+
+    const clampedPitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch));
+
     rangeMeters = rangeMeters = range;
     const target = Cesium.Cartesian3.fromRadians(
       targetCartographic.longitude,
       targetCartographic.latitude,
       targetCartographic.height
     );
-    viewer.camera.lookAt(target, new Cesium.HeadingPitchRange(heading, pitch, range));
+    viewer.camera.lookAt(target, new Cesium.HeadingPitchRange(heading, clampedPitch, range));
     viewer.scene.requestRender();
   }
 

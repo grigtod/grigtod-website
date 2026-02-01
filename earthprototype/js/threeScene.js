@@ -16,7 +16,7 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
   gltfLoader.load('./assets/temp/environment/hintze_hall_nhm_london_surface_model.glb', (gltf) => {
     const environment = gltf.scene;
     environment.scale.set(5, 5, 5);
-    environment.position.y = -17;
+    environment.position.y = -16;
     environment.position.x = 36;
     environment.position.z = -2;
     scene.add(environment);
@@ -39,6 +39,8 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
   controls.target.set(0, 0, 0);
   controls.minDistance = 12;
   controls.maxDistance = 18;
+  controls.minPolarAngle = Math.PI / 3.3;      
+  controls.maxPolarAngle = 2.2 * Math.PI / 3.3; 
 
   if (typeof onControlsChange === "function") {
     controls.addEventListener("change", onControlsChange);
