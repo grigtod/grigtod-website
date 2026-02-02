@@ -288,7 +288,7 @@ async function LoadAllPOIs()
     loadedPOI.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, element.emoji, element.embedUrl));
     
     loadedGwarek = await fetchAndParseJSON("./data/gwarek.json");
-    loadedGwarek.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, "🗿", "ADD URL HERE!"));
+    loadedGwarek.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, "🗿", "./embeds/pomnik-gwarka.html"));
    
     loadedPhotos= await fetchAndParseJSON("./data/photo.json");
     loadedPhotos.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, "📷", "./embeds/photo.html"));
