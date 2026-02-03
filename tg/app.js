@@ -95,7 +95,6 @@ const centerBtn = document.getElementById("centerBtn");
 const styleToggleBtn = document.getElementById("styleToggleBtn");
 
 const layersShowBtn = document.getElementById("layersShowBtn"); 
-const layersDismissBtn = document.getElementById("layersDismissBtn");
 const toggleImageOverlayBtn = document.getElementById("toggleImageOverlayBtn");
 
 const distanceBanner = document.getElementById("distanceBanner");
@@ -116,6 +115,8 @@ let userHeadingEl = null;
 let compassEnabled = false;
 let compassPrimed = false;
 let compassHandler = null;
+
+var layersVisible = false;
 
 // ---------- Overlay helpers ----------
 function openOverlay(url) {
@@ -571,23 +572,33 @@ window.addEventListener("pagehide", stopLocationUpdates);
 myLocationBtn.addEventListener("click", () => {
   if (!userLatLng) return;
   map.setView(userLatLng, Math.max(map.getZoom(), 18));
+  tryHideLayers();
 });
 
 centerBtn.addEventListener("click", () => {
   map.setView(center, 18);
+  tryHideLayers();
 });
 
 dismissBannerBtn.addEventListener("click", () => {
   hideBanner();
+  tryHideLayers();
 });
 
 layersShowBtn.addEventListener("click", () => {
-  showLayers();
+  layersVisible = !layersVisible;
+  if(layersVisible) showLayers();
+  else hideLayers();
 });
 
-layersDismissBtn.addEventListener("click", () => {
-  hideLayers();
-});
+function tryHideLayers()
+{
+  if(layersVisible) 
+  {
+    layersVisible = false;
+    hideLayers();
+  }
+}
 
 toggleImageOverlayBtn.addEventListener("click", () => {
   if (imageOverlayVisible) {
@@ -596,6 +607,7 @@ toggleImageOverlayBtn.addEventListener("click", () => {
     toggleImageOverlayBtn.textContent = "Show tunnels map";
   } else {
     imageOverlay.addTo(map);
+    map.setZoom(12);
     imageOverlayVisible = true;
     toggleImageOverlayBtn.textContent = "Hide tunnels map";
   }
@@ -681,9 +693,12 @@ document.addEventListener("DOMContentLoaded", () => {
     lastTouchPoint = null;
   }
 
+  el.addEventListener("mousedown", tryHideLayers, { passive: true });
+
   el.addEventListener(
     "touchstart",
     (e) => {
+      tryHideLayers();
       if (e.touches.length !== 1) {
         exitZoomMode();
         return;
