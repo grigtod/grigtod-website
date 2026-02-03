@@ -2,7 +2,7 @@
 const center = L.latLng(50.4445, 18.8554);
 
 // Panning lock around center
-const radiusMeters = 3000;
+const radiusMeters = 8000;
 const bounds = center.toBounds(radiusMeters * 2);
 
 // Distance warning threshold
@@ -68,16 +68,16 @@ let currentBaseLayer = "minimalist";
 minimalistLayer.addTo(map);
 
 // Image overlay
-const imageUrl = "overlays/tiefe_friedrich_stollen_36.jpg";
+const imageUrl = "overlays/overlayMapTunnels.png";
 
 // Replace these with the real corner coordinates
 const imageBounds = [
-  [50.40169, 18.7857], // southwest corner 
-  [50.47071, 18.8667158]  // northeast corner 
+  [50.40126, 18.78499], // southwest corner   //50.40126, 18.78199  
+  [50.46909, 18.86915]  // northeast corner  //50.46909, 18.86915
 ];
 
 const imageOverlay = L.imageOverlay(imageUrl, imageBounds, {
-  opacity: 0.85
+  opacity: 1
 });
 
 // Track image overlay visibility
@@ -593,11 +593,11 @@ toggleImageOverlayBtn.addEventListener("click", () => {
   if (imageOverlayVisible) {
     map.removeLayer(imageOverlay);
     imageOverlayVisible = false;
-    toggleImageOverlayBtn.textContent = "Show historic map";
+    toggleImageOverlayBtn.textContent = "Show tunnels map";
   } else {
     imageOverlay.addTo(map);
     imageOverlayVisible = true;
-    toggleImageOverlayBtn.textContent = "Hide historic map";
+    toggleImageOverlayBtn.textContent = "Hide tunnels map";
   }
 });
 
