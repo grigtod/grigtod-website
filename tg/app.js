@@ -72,8 +72,8 @@ const imageUrl = "overlays/overlayMapTunnels.png";
 
 // Replace these with the real corner coordinates
 const imageBounds = [
-  [50.40126, 18.78499], // southwest corner   //50.40126, 18.78199  
-  [50.46909, 18.86915]  // northeast corner  //50.46909, 18.86915
+  [50.40126, 18.78499], // southwest corner   
+  [50.46909, 18.86915]  // northeast corner  
 ];
 
 const imageOverlay = L.imageOverlay(imageUrl, imageBounds, {
