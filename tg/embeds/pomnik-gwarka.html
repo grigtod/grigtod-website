@@ -125,7 +125,10 @@
 
       // Optional: set an image URL here if you want a picture to appear
       // Example: const MINER_IMAGE_URL = "miner.jpg";
-      const MINER_IMAGE_URL = "./assets/statues/" + parent.GetCurrentlySelectedPOI() + ".jpg";
+      const params = new URLSearchParams(window.location.search);
+      const poiId = params.get("poiId");
+
+      const MINER_IMAGE_URL = poiId ? "./assets/statues/" + poiId + ".jpg" : "NA";
 
       const minerImgEl = document.getElementById("minerImg");
       const imageHintEl = document.getElementById("imageHint");

@@ -14,7 +14,14 @@
       <p class="muted">[TODO: Display image info here]</p>
     </div>
   </body>
-  <script> 
-    document.getElementById('image').src = "./photographs/" + parent.GetCurrentlySelectedPOI() + ".jpg";
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const poiId = params.get("poiId");
+
+    if (poiId) {
+      document.getElementById("image").src = "./photographs/" + poiId + ".jpg";
+    } else {
+      console.warn("Missing poiId in iframe URL");
+    }
   </script>
 </html>
