@@ -1,27 +1,11 @@
 // map.js
 import config from "./config.js";
+import { createPoiOverlay } from "./overlay.js";
 
-export function createMap({
-  mapElId = "map",
+export function createMap({ mapElId = "map", ui } = {}) {
+  if (!ui) throw new Error("createMap requires { ui }");
 
-  // DOM hooks passed in so map.js is not tied to globals
-  ui: {
-    poiOverlay,
-    poiOverlayFrame,
-    poiOverlayClose,
-    poiCompleteBtn,
-    poiCompleteLabel,
-    bannerText,
-    locationBanner,
-    layersBanner,
-    myLocationBtn,
-    centerBtn,
-    dismissBannerBtn,
-    layersShowBtn,
-    toggleImageOverlayBtn,
-    styleToggleBtn
-  }
-} = {}) {
+  // ---- Leaflet init ----
   const center = L.latLng(config.targetLat, config.targetLon);
   const bounds = center.toBounds(config.radiusMeters * 2);
 
@@ -39,7 +23,40 @@ export function createMap({
   map.options.doubleClickZoom = false;
   map.options.tapTolerance = 15;
 
-  // Tile layers
+  // ---- Overlay module ----
+  function disableMapInteractions() {
+    map.dragging.disable();
+    map.scrollWheelZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+  }
+
+  function enableMapInteractions() {
+    map.dragging.enable();
+    map.scrollWheelZoom.enable();
+    map.boxZoom.enable();
+    map.keyboard.enable();
+  }
+
+  const overlay = createPoiOverlay({
+    overlayEl: ui.poiOverlay,
+    frameEl: ui.poiOverlayFrame,
+    closeBtnEl: ui.poiOverlayClose,
+    completeBtnEl: ui.poiCompleteBtn,
+    completeLabelEl: ui.poiCompleteLabel,
+
+    // optional but recommended if you add these in overlay.js
+    onOpen: disableMapInteractions,
+    onClose: enableMapInteractions,
+    onToggleComplete: () => updatePoiIconsForZoom()
+  });
+
+  // If your overlay.js does NOT support callbacks yet,
+  // remove onOpen/onClose/onToggleComplete above and instead do:
+  // - call disableMapInteractions() right after overlay.open(...)
+  // - wrap overlay.close to re-enable interactions
+
+  // ---- Tile layers ----
   const minimalistLayer = L.tileLayer(
     "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
     {
@@ -73,93 +90,63 @@ export function createMap({
   const imageOverlay = L.imageOverlay(imageUrl, imageBounds, { opacity: 1 });
   let imageOverlayVisible = false;
 
-  // POI state
-  const COMPLETED_STORAGE_KEY = "discoverTG.completedPois.v1";
-  const LABEL_ZOOM_THRESHOLD = 18;
+  // ---- UI bindings that are still map-related ----
+  let layersVisible = false;
 
-  function loadCompletedSet() {
-    try {
-      const raw = localStorage.getItem(COMPLETED_STORAGE_KEY);
-      const arr = raw ? JSON.parse(raw) : [];
-      return new Set(Array.isArray(arr) ? arr : []);
-    } catch {
-      return new Set();
-    }
+  function hideLayers() {
+    ui.layersBanner.classList.add("layers-hidden");
   }
 
-  function saveCompletedSet(set) {
-    localStorage.setItem(COMPLETED_STORAGE_KEY, JSON.stringify([...set]));
+  function showLayers() {
+    ui.layersBanner.classList.remove("layers-hidden");
   }
 
-  const completedPois = loadCompletedSet();
-  let activePoiId = null;
-
-  function getCurrentlySelectedPOI() {
-    return activePoiId;
+  function tryHideLayers() {
+    if (!layersVisible) return;
+    layersVisible = false;
+    hideLayers();
   }
 
-  function openOverlay(url, poiId) {
-    const u = new URL(url, window.location.href);
+  ui.layersShowBtn.addEventListener("click", () => {
+    layersVisible = !layersVisible;
+    if (layersVisible) showLayers();
+    else hideLayers();
+  });
 
-    if (poiId != null) u.searchParams.set("poiId", poiId);
-
-    poiOverlayFrame.src = u.toString();
-    poiOverlay.classList.remove("poi-overlay-hidden");
-    poiOverlay.setAttribute("aria-hidden", "false");
-
-    map.dragging.disable();
-    map.scrollWheelZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-  }
-
-  function closeOverlay() {
-    poiOverlayFrame.src = "about:blank";
-    poiOverlay.classList.add("poi-overlay-hidden");
-    poiOverlay.setAttribute("aria-hidden", "true");
-
-    activePoiId = null;
-
-    map.dragging.enable();
-    map.scrollWheelZoom.enable();
-    map.boxZoom.enable();
-    map.keyboard.enable();
-  }
-
-  function syncCompleteUi() {
-    if (!activePoiId) return;
-
-    const isDone = completedPois.has(activePoiId);
-
-    if (isDone) {
-      poiCompleteBtn.classList.add("is-complete");
-      poiCompleteBtn.setAttribute("aria-pressed", "true");
-      poiCompleteLabel.textContent = "Completed";
+  ui.toggleImageOverlayBtn.addEventListener("click", () => {
+    if (imageOverlayVisible) {
+      map.removeLayer(imageOverlay);
+      imageOverlayVisible = false;
+      ui.toggleImageOverlayBtn.textContent = "Show tunnels map";
     } else {
-      poiCompleteBtn.classList.remove("is-complete");
-      poiCompleteBtn.setAttribute("aria-pressed", "false");
-      poiCompleteLabel.textContent = "Complete";
-    }
-  }
-
-  poiOverlayClose.addEventListener("click", closeOverlay);
-
-  poiCompleteBtn.addEventListener("click", () => {
-    if (!activePoiId) return;
-
-    if (completedPois.has(activePoiId)) completedPois.delete(activePoiId);
-    else completedPois.add(activePoiId);
-
-    saveCompletedSet(completedPois);
-    syncCompleteUi();
-    updatePoiIconsForZoom();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !poiOverlay.classList.contains("poi-overlay-hidden")) {
-      closeOverlay();
+      imageOverlay.addTo(map);
+      map.setZoom(12);
+      imageOverlayVisible = true;
+      ui.toggleImageOverlayBtn.textContent = "Hide tunnels map";
     }
   });
+
+  ui.styleToggleBtn.addEventListener("click", () => {
+    if (currentBaseLayer === "minimalist") {
+      map.removeLayer(minimalistLayer);
+      detailedLayer.addTo(map);
+      currentBaseLayer = "detailed";
+      ui.styleToggleBtn.textContent = "Minimal map";
+    } else {
+      map.removeLayer(detailedLayer);
+      minimalistLayer.addTo(map);
+      currentBaseLayer = "minimalist";
+      ui.styleToggleBtn.textContent = "Detailed map";
+    }
+  });
+
+  map.getContainer().addEventListener("mousedown", tryHideLayers, { passive: true });
+  map.getContainer().addEventListener("touchstart", tryHideLayers, { passive: true });
+
+  // ---- POIs ----
+  const LABEL_ZOOM_THRESHOLD = 18;
+  let pois = [];
+  let poiMarkers = [];
 
   function makePoiIcon({ emoji, label, id }, showLabel) {
     const safeLabel = String(label)
@@ -167,7 +154,8 @@ export function createMap({
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;");
 
-    const isCompleted = completedPois.has(id);
+    const isCompleted = overlay.isCompleted(id);
+
     const classNameParts = ["poi-marker"];
     if (showLabel) classNameParts.push("show-label");
     if (isCompleted) classNameParts.push("is-completed");
@@ -179,11 +167,21 @@ export function createMap({
       </div>
     `;
 
-    return L.divIcon({ className: "poi-icon", html, iconSize: [1, 1] });
+    return L.divIcon({
+      className: "poi-icon",
+      html,
+      iconSize: [1, 1]
+    });
   }
 
-  let pois = [];
-  let poiMarkers = [];
+  function updatePoiIconsForZoom() {
+    const showLabel = map.getZoom() >= LABEL_ZOOM_THRESHOLD;
+    for (const { poi, marker } of poiMarkers) {
+      marker.setIcon(makePoiIcon(poi, showLabel));
+    }
+  }
+
+  map.on("zoomend", updatePoiIconsForZoom);
 
   function addToPois(id, lat, lon, label, emoji, embedUrl) {
     pois.push({ id, lat, lon, label, emoji, embedUrl });
@@ -191,11 +189,11 @@ export function createMap({
 
   async function fetchAndParseJSON(url) {
     const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    if (!response.ok) throw new Error(`HTTP error ${response.status} for ${url}`);
     return await response.json();
   }
 
-  function AddPoisToMap() {
+  function addPoisToMap() {
     poiMarkers = pois.map((poi) => {
       const marker = L.marker([poi.lat, poi.lon], {
         icon: makePoiIcon(poi, map.getZoom() >= LABEL_ZOOM_THRESHOLD),
@@ -204,118 +202,51 @@ export function createMap({
       }).addTo(map);
 
       marker.on("click", () => {
-        activePoiId = poi.id;
-        openOverlay(poi.embedUrl, activePoiId);
-        syncCompleteUi();
+        overlay.open({ url: poi.embedUrl, poiId: poi.id });
       });
 
-      /*marker.on("keypress", (e) => {
-        if (e.originalEvent && (e.originalEvent.key === "Enter" || e.originalEvent.key === " ")) {
-          openOverlay(poi.embedUrl);
-        }
-      });*/
+      marker.on("keypress", (e) => {
+        const k = e.originalEvent?.key;
+        if (k === "Enter" || k === " ") overlay.open({ url: poi.embedUrl, poiId: poi.id });
+      });
 
       return { poi, marker };
     });
   }
 
-  async function LoadAllPOIs() {
+  async function loadAllPOIs() {
     const loadedPOI = await fetchAndParseJSON("./data/poi.json");
-    loadedPOI.data.forEach((el) => addToPois(el.id, el.lat, el.lon, el.label, el.emoji, el.embedUrl));
+    loadedPOI.data.forEach((el) =>
+      addToPois(el.id, el.lat, el.lon, el.label, el.emoji, el.embedUrl)
+    );
 
     const loadedGwarek = await fetchAndParseJSON("./data/gwarek.json");
-    loadedGwarek.data.forEach((el) => addToPois(el.id, el.lat, el.lon, el.label, "🗿", "./embeds/pomnik-gwarka.html"));
+    loadedGwarek.data.forEach((el) =>
+      addToPois(el.id, el.lat, el.lon, el.label, "🗿", "./embeds/pomnik-gwarka.html")
+    );
 
     const loadedPhotos = await fetchAndParseJSON("./data/photo.json");
-    loadedPhotos.data.forEach((el) => addToPois(el.id, el.lat, el.lon, el.label, "📷", "./embeds/photo.html"));
+    loadedPhotos.data.forEach((el) =>
+      addToPois(el.id, el.lat, el.lon, el.label, "📷", "./embeds/photo.html")
+    );
 
-    AddPoisToMap();
+    addPoisToMap();
+    updatePoiIconsForZoom();
   }
 
-  function updatePoiIconsForZoom() {
-    const showLabel = map.getZoom() >= LABEL_ZOOM_THRESHOLD;
-    for (const { poi, marker } of poiMarkers) marker.setIcon(makePoiIcon(poi, showLabel));
-  }
+  loadAllPOIs().catch((err) => console.error("POI load failed:", err));
 
-  map.on("zoomend", updatePoiIconsForZoom);
-
-  // Minimal UI helpers you already had
-  function showBanner(message) {
-    bannerText.textContent = message;
-    locationBanner.classList.remove("banner-hidden");
-  }
-
-  function hideBanner() {
-    locationBanner.classList.add("banner-hidden");
-  }
-
-  let layersVisible = false;
-  function hideLayers() {
-    layersBanner.classList.add("layers-hidden");
-  }
-  function showLayers() {
-    layersBanner.classList.remove("layers-hidden");
-  }
-  function tryHideLayers() {
-    if (layersVisible) {
-      layersVisible = false;
-      hideLayers();
-    }
-  }
-
-  layersShowBtn.addEventListener("click", () => {
-    layersVisible = !layersVisible;
-    if (layersVisible) showLayers();
-    else hideLayers();
-  });
-
-  toggleImageOverlayBtn.addEventListener("click", () => {
-    if (imageOverlayVisible) {
-      map.removeLayer(imageOverlay);
-      imageOverlayVisible = false;
-      toggleImageOverlayBtn.textContent = "Show tunnels map";
-    } else {
-      imageOverlay.addTo(map);
-      map.setZoom(12);
-      imageOverlayVisible = true;
-      toggleImageOverlayBtn.textContent = "Hide tunnels map";
-    }
-  });
-
-  styleToggleBtn.addEventListener("click", () => {
-    if (currentBaseLayer === "minimalist") {
-      map.removeLayer(minimalistLayer);
-      detailedLayer.addTo(map);
-      currentBaseLayer = "detailed";
-      styleToggleBtn.textContent = "Minimal map";
-    } else {
-      map.removeLayer(detailedLayer);
-      minimalistLayer.addTo(map);
-      currentBaseLayer = "minimalist";
-      styleToggleBtn.textContent = "Detailed map";
-    }
-  });
-
-  centerBtn.addEventListener("click", () => {
+  // ---- Center button (map-related) ----
+  ui.centerBtn.addEventListener("click", () => {
     map.setView(center, 18);
     tryHideLayers();
   });
 
-  dismissBannerBtn.addEventListener("click", () => {
-    hideBanner();
-    tryHideLayers();
-  });
-
-  // Start POIs when module is created
-  LoadAllPOIs().catch((err) => console.error(err));
-
-  // Export the bits other modules might need
+  // Return API if other modules need it
   return {
     map,
+    overlay,
     center,
-    getCurrentlySelectedPOI,
-    openOverlay,
-    closeOverlay,
     updatePoiIconsForZoom
   };
 }
