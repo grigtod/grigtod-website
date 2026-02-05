@@ -1,6 +1,8 @@
 // map.js
 import config from "./config.js";
 import { createPoiOverlay } from "./overlay.js";
+import { loadAllPois } from "./poiData.js";
+import { createPoiLayer } from "./poiLayer.js";
 
 export function createMap({ mapElId = "map", ui } = {}) {
   if (!ui) throw new Error("createMap requires { ui }");
@@ -143,98 +145,13 @@ export function createMap({ mapElId = "map", ui } = {}) {
   map.getContainer().addEventListener("mousedown", tryHideLayers, { passive: true });
   map.getContainer().addEventListener("touchstart", tryHideLayers, { passive: true });
 
-  // ---- POIs ----
-  const LABEL_ZOOM_THRESHOLD = 18;
-  let pois = [];
-  let poiMarkers = [];
+  const poiLayer = createPoiLayer({ map, overlay, labelZoomThreshold: 18 });
+  loadAllPois()
+    .then((pois) => poiLayer.setPois(pois))
+    .catch((err) => console.error("POI load failed:", err));
 
-  function makePoiIcon({ emoji, label, id }, showLabel) {
-    const safeLabel = String(label)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;");
+    document.addEventListener("poi:complete-changed", () => poiLayer.updateIcons());
 
-    const isCompleted = overlay.isCompleted(id);
-
-    const classNameParts = ["poi-marker"];
-    if (showLabel) classNameParts.push("show-label");
-    if (isCompleted) classNameParts.push("is-completed");
-
-    const html = `
-      <div class="${classNameParts.join(" ")}" role="button" aria-label="${safeLabel}">
-        <span class="poi-emoji">${emoji}</span>
-        <span class="poi-label">${safeLabel}</span>
-      </div>
-    `;
-
-    return L.divIcon({
-      className: "poi-icon",
-      html,
-      iconSize: [1, 1]
-    });
-  }
-
-  function updatePoiIconsForZoom() {
-    const showLabel = map.getZoom() >= LABEL_ZOOM_THRESHOLD;
-    for (const { poi, marker } of poiMarkers) {
-      marker.setIcon(makePoiIcon(poi, showLabel));
-    }
-  }
-
-  map.on("zoomend", updatePoiIconsForZoom);
-
-  function addToPois(id, lat, lon, label, emoji, embedUrl) {
-    pois.push({ id, lat, lon, label, emoji, embedUrl });
-  }
-
-  async function fetchAndParseJSON(url) {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP error ${response.status} for ${url}`);
-    return await response.json();
-  }
-
-  function addPoisToMap() {
-    poiMarkers = pois.map((poi) => {
-      const marker = L.marker([poi.lat, poi.lon], {
-        icon: makePoiIcon(poi, map.getZoom() >= LABEL_ZOOM_THRESHOLD),
-        keyboard: true,
-        riseOnHover: true
-      }).addTo(map);
-
-      marker.on("click", () => {
-        overlay.open({ url: poi.embedUrl, poiId: poi.id });
-      });
-
-      marker.on("keypress", (e) => {
-        const k = e.originalEvent?.key;
-        if (k === "Enter" || k === " ") overlay.open({ url: poi.embedUrl, poiId: poi.id });
-      });
-
-      return { poi, marker };
-    });
-  }
-
-  async function loadAllPOIs() {
-    const loadedPOI = await fetchAndParseJSON("./data/poi.json");
-    loadedPOI.data.forEach((el) =>
-      addToPois(el.id, el.lat, el.lon, el.label, el.emoji, el.embedUrl)
-    );
-
-    const loadedGwarek = await fetchAndParseJSON("./data/gwarek.json");
-    loadedGwarek.data.forEach((el) =>
-      addToPois(el.id, el.lat, el.lon, el.label, "🗿", "./embeds/pomnik-gwarka.html")
-    );
-
-    const loadedPhotos = await fetchAndParseJSON("./data/photo.json");
-    loadedPhotos.data.forEach((el) =>
-      addToPois(el.id, el.lat, el.lon, el.label, "📷", "./embeds/photo.html")
-    );
-
-    addPoisToMap();
-    updatePoiIconsForZoom();
-  }
-
-  loadAllPOIs().catch((err) => console.error("POI load failed:", err));
 
   // ---- Center button (map-related) ----
   ui.centerBtn.addEventListener("click", () => {
@@ -246,7 +163,6 @@ export function createMap({ mapElId = "map", ui } = {}) {
   return {
     map,
     overlay,
-    center,
-    updatePoiIconsForZoom
+    center
   };
 }

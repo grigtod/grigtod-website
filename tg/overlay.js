@@ -69,6 +69,8 @@ export function createPoiOverlay({
 
     saveCompletedSet(completedPois);
     syncCompleteUi();
+
+    document.dispatchEvent(new CustomEvent("poi:complete-changed"));
   }
 
   function isCompleted(id) {
