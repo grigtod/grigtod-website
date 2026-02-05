@@ -1,14 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
     <title>Discover TG</title>
-
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="style.css" />
   </head>
 
@@ -23,11 +18,11 @@
       </button>
     </div>
 
-     <div id="layersBanner" class="layers layers-hidden" role="status" aria-live="polite">
+    <div id="layersBanner" class="layers layers-hidden" role="status" aria-live="polite">
       <span id="bannerText">
         Map Layer Modes:
       </span> 
-       <button id="styleToggleBtn" class="control-btn" type="button">
+      <button id="styleToggleBtn" class="control-btn" type="button">
         Detailed map
       </button>
       <button id="toggleImageOverlayBtn" class="control-btn" type="button">
@@ -44,18 +39,16 @@
       </button>
       <button id="centerBtn" class="control-btn" type="button">
         City center
-      </button>
-     
-      </button>
+      </button> 
       <button id="layersShowBtn" class="control-btn" type="button">
         Layers
       </button>
     </div>
 
     <!-- Too far message -->
-    <div id="distanceBanner" class="distance-banner" role="status" aria-live="polite"> <!--class="distance-banner banner-hidden" --> 
+    <!--div id="distanceBanner" class="distance-banner" role="status" aria-live="polite"> 
       You&#39;re too far from the city center. 
-    </div>
+    </div-->
 
     <!-- Full screen embedded page overlay -->
     <div id="poiOverlay" class="poi-overlay poi-overlay-hidden" aria-hidden="true">
@@ -79,7 +72,7 @@
       ></iframe>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="app.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> 
+    <script type="module" src="app.js"></script>
   </body>
 </html>

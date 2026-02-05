@@ -1,27 +1,21 @@
-// Your fixed city center
-const center = L.latLng(50.4445, 18.8554);
+import config from "./config.js";
 
-// Panning lock around center
-const radiusMeters = 8000;
-const bounds = center.toBounds(radiusMeters * 2);
-
-// Distance warning threshold
-const tooFarThresholdMeters = 2000;
+const center = L.latLng(config.targetLat,config.targetLon);
+const bounds = center.toBounds(config.radiusMeters * 2);
 
 // Map init
 const map = L.map("map", {
   center,
-  zoom: 18,
+  zoom: config.startZoom,
   maxBounds: bounds,
-  maxBoundsViscosity: 0.1,
-
+  maxBoundsViscosity: 0.1, 
   zoomSnap: 0.1,  // allows fractional zoom (0.1 steps)
   zoomDelta: 0.1  // used by keyboard and some interactions
 });
 
 map.zoomControl.remove();
 
-L.control.zoom({
+/*L.control.zoom({
   zoomInText: "+",
   zoomOutText: "−",
   zoomInTitle: "Zoom in",
@@ -36,7 +30,7 @@ map.on("zoomstart", () => {
 
 map.on("zoomend", () => {
   map.options.zoomDelta = 0.1;
-});
+});*/
 
 map.doubleClickZoom.disable();
 map.options.doubleClickZoom = false;
@@ -46,8 +40,8 @@ map.options.tapTolerance = 15;
 const minimalistLayer = L.tileLayer(
   "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
   {
-    maxZoom: 20,
-    minZoom: 14,
+    maxZoom: config.maxZoom,
+    minZoom: config.minZoom,
     attribution:
       '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/">CARTO</a>'
   }
@@ -56,8 +50,8 @@ const minimalistLayer = L.tileLayer(
 const detailedLayer = L.tileLayer(
   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   {
-    maxZoom: 20,
-    minZoom: 14,
+    maxZoom: config.maxZoom,
+    minZoom: config.minZoom,
     attribution:
       '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }
@@ -97,7 +91,7 @@ const styleToggleBtn = document.getElementById("styleToggleBtn");
 const layersShowBtn = document.getElementById("layersShowBtn"); 
 const toggleImageOverlayBtn = document.getElementById("toggleImageOverlayBtn");
 
-const distanceBanner = document.getElementById("distanceBanner");
+//const distanceBanner = document.getElementById("distanceBanner");
 
 // Overlay elements
 const poiOverlay = document.getElementById("poiOverlay");
@@ -148,6 +142,7 @@ function GetCurrentlySelectedPOI()
 {
   return activePoiId;
 }
+window.GetCurrentlySelectedPOI = GetCurrentlySelectedPOI; //fix for app.js module
 
 poiOverlayClose.addEventListener("click", closeOverlay);
 
@@ -285,13 +280,13 @@ function AddPoisToMap()
 async function LoadAllPOIs()
 {
   try{
-    loadedPOI = await fetchAndParseJSON("./data/poi.json");
+    var loadedPOI = await fetchAndParseJSON("./data/poi.json");
     loadedPOI.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, element.emoji, element.embedUrl));
     
-    loadedGwarek = await fetchAndParseJSON("./data/gwarek.json");
+    var loadedGwarek = await fetchAndParseJSON("./data/gwarek.json");
     loadedGwarek.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, "🗿", "./embeds/pomnik-gwarka.html"));
    
-    loadedPhotos= await fetchAndParseJSON("./data/photo.json");
+    var loadedPhotos= await fetchAndParseJSON("./data/photo.json");
     loadedPhotos.data.forEach((element) => addToPois(element.id, element.lat, element.lon, element.label, "📷", "./embeds/photo.html"));
    
     AddPoisToMap();
@@ -331,23 +326,23 @@ function showLayers() {
    layersBanner.classList.remove("layers-hidden");  
 }
 
-function showTooFar(show) {
+/*function showTooFar(show) {
   if (show) distanceBanner.classList.remove("banner-hidden");
   else distanceBanner.classList.add("banner-hidden");
-}
+}*/
 
 function setMyLocationEnabled(enabled) {
   myLocationBtn.disabled = !enabled;
 }
 
-function updateTooFarMessage() {
+/*function updateTooFarMessage() {
   if (!userLatLng) {
     showTooFar(false);
     return;
   }
   const dist = map.distance(center, userLatLng);
   showTooFar(dist > tooFarThresholdMeters);
-}
+}*/
 
 let lastHeading = null;
 const HEADING_SMOOTHING = 0.15; // 0.1–0.2 is a good range
@@ -493,13 +488,13 @@ function renderUserLocation(pos) {
 
   setMyLocationEnabled(true);
   hideBanner();
-  updateTooFarMessage();
+  //updateTooFarMessage();
 }
 
 function handleLocationError(err) {
   userLatLng = null;
   setMyLocationEnabled(false);
-  updateTooFarMessage();
+  //updateTooFarMessage();
 
   if (err && err.code === 1) {
     showBanner("For the full experience, please allow location access.");
