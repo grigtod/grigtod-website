@@ -33,28 +33,102 @@ body {
   display: none;
 }
 
+
+/* Bottom sheet layers panel */
 .layers {
   position: fixed;
-  bottom: 9%;
-  left: 12px;
-  right: 12px;  
-  z-index: 2000;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2500;
+
+  padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.16);
+
+  transform: translateY(0);
+  transition: transform 180ms ease, opacity 180ms ease;
 }
 
 .layers-hidden {
-  display: none;
+  display: block; /* keep in flow so we can animate */
+  transform: translateY(110%);
+  opacity: 0;
+  pointer-events: none;
 }
+
+.layers-header {
+  display: grid;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  gap: 6px;
+  padding: 2px 0 10px;
+}
+
+.layers-handle {
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.layers-title {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.82);
+}
+
+.layers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* Tile style buttons like Google Maps */
+.layer-tile {
+  text-align: left;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 12px 12px;
+  cursor: pointer;
+
+  display: grid;
+  gap: 6px;
+  align-content: start;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.layer-tile:active {
+  transform: scale(0.99);
+}
+
+.layer-tile-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.86);
+}
+
+.layer-tile-subtitle {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.62);
+}
+
+/* Optional "selected" state you can toggle from JS */
+.layer-tile.is-active {
+  border-color: rgba(0, 120, 255, 0.45);
+  box-shadow: 0 8px 22px rgba(0, 120, 255, 0.18);
+}
+
 
 .banner-btn {
   border: 1px solid rgba(0, 0, 0, 0.15);

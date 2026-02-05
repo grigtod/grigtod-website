@@ -114,33 +114,58 @@ export function createMap({ mapElId = "map", ui } = {}) {
     if (layersVisible) showLayers();
     else hideLayers();
   });
+  
 
-  ui.toggleImageOverlayBtn.addEventListener("click", () => {
+  const tunnelsSubtitle =
+  ui.toggleImageOverlayBtn.querySelector(".layer-tile-subtitle");
+
+    ui.toggleImageOverlayBtn.addEventListener("click", () => {
     if (imageOverlayVisible) {
-      map.removeLayer(imageOverlay);
-      imageOverlayVisible = false;
-      ui.toggleImageOverlayBtn.textContent = "Show tunnels map";
-    } else {
-      imageOverlay.addTo(map);
-      map.setZoom(12);
-      imageOverlayVisible = true;
-      ui.toggleImageOverlayBtn.textContent = "Hide tunnels map";
-    }
-  });
+        map.removeLayer(imageOverlay);
+        imageOverlayVisible = false;
 
-  ui.styleToggleBtn.addEventListener("click", () => {
-    if (currentBaseLayer === "minimalist") {
-      map.removeLayer(minimalistLayer);
-      detailedLayer.addTo(map);
-      currentBaseLayer = "detailed";
-      ui.styleToggleBtn.textContent = "Minimal map";
+        if (tunnelsSubtitle) tunnelsSubtitle.textContent = "Off";
+        ui.toggleImageOverlayBtn.classList.remove("is-active");
+
     } else {
-      map.removeLayer(detailedLayer);
-      minimalistLayer.addTo(map);
-      currentBaseLayer = "minimalist";
-      ui.styleToggleBtn.textContent = "Detailed map";
+        imageOverlay.addTo(map);
+        map.setZoom(12);
+        imageOverlayVisible = true;
+
+        if (tunnelsSubtitle) tunnelsSubtitle.textContent = "On";
+        ui.toggleImageOverlayBtn.classList.add("is-active");
     }
-  });
+    });
+
+
+  
+
+    const styleSubtitle =
+    ui.styleToggleBtn.querySelector(".layer-tile-subtitle");
+
+    ui.styleToggleBtn.addEventListener("click", () => {
+    if (currentBaseLayer === "minimalist") {
+        map.removeLayer(minimalistLayer);
+        detailedLayer.addTo(map);
+
+        currentBaseLayer = "detailed";
+
+        if (styleSubtitle) styleSubtitle.textContent = "Minimal";
+        ui.styleToggleBtn.classList.add("is-active");
+    } else {
+        map.removeLayer(detailedLayer);
+        minimalistLayer.addTo(map);
+
+        currentBaseLayer = "minimalist";
+
+        if (styleSubtitle) styleSubtitle.textContent = "Detailed";
+        ui.styleToggleBtn.classList.remove("is-active");
+    }
+    });
+  
+
+
+
 
   map.getContainer().addEventListener("mousedown", tryHideLayers, { passive: true });
   map.getContainer().addEventListener("touchstart", tryHideLayers, { passive: true });

@@ -18,17 +18,27 @@
       </button>
     </div>
 
-    <div id="layersBanner" class="layers layers-hidden" role="status" aria-live="polite">
-      <span id="bannerText">
-        Map Layer Modes:
-      </span> 
-      <button id="styleToggleBtn" class="control-btn" type="button">
-        Detailed map
+  
+
+    <div id="layersBanner" class="layers layers-hidden" role="dialog" aria-label="Map layers">
+    <div class="layers-header">
+      <!--div class="layers-handle" aria-hidden="true"></div-->
+      <div class="layers-title">Map Layers</div>
+    </div>
+
+    <div class="layers-grid" role="group" aria-label="Layer options">
+      <button id="styleToggleBtn" class="layer-tile" type="button">
+        <span class="layer-tile-title">Base map</span>
+        <span class="layer-tile-subtitle">Minimal</span>
       </button>
-      <button id="toggleImageOverlayBtn" class="control-btn" type="button">
-        Show tunnels map
+
+      <button id="toggleImageOverlayBtn" class="layer-tile" type="button">
+        <span class="layer-tile-title">Tunnels Overlay</span>
+        <span class="layer-tile-subtitle">Off</span>
       </button>
     </div>
+  </div>
+ 
 
     <div id="map"></div>
 
