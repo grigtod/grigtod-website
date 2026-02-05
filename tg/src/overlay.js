@@ -1,4 +1,3 @@
-// overlay.js
 export function createPoiOverlay({
   overlayEl,
   frameEl,

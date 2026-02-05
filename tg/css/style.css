@@ -1,0 +1,366 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+/* Top banner */
+.banner {
+  position: fixed;
+  top: 9%;
+  left: 12px;
+  right: 12px;  
+  z-index: 2000;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.banner-hidden {
+  display: none;
+}
+
+
+/* Bottom sheet layers panel */
+.layers {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2500;
+
+  padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.16);
+
+  transform: translateY(0);
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.layers-hidden {
+  display: block; /* keep in flow so we can animate */
+  transform: translateY(110%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.layers-header {
+  display: grid;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  gap: 6px;
+  padding: 2px 0 10px;
+}
+
+.layers-handle {
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.layers-title {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.82);
+}
+
+.layers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* Tile style buttons like Google Maps */
+.layer-tile {
+  text-align: left;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  padding: 12px 12px;
+  cursor: pointer;
+
+  display: grid;
+  gap: 6px;
+  align-content: start;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.layer-tile:active {
+  transform: scale(0.99);
+}
+
+.layer-tile-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.86);
+}
+
+.layer-tile-subtitle {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.62);
+}
+
+/* Optional "selected" state you can toggle from JS */
+.layer-tile.is-active {
+  border-color: rgba(0, 120, 255, 0.45);
+  box-shadow: 0 8px 22px rgba(0, 120, 255, 0.18);
+}
+
+
+.banner-btn {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.banner-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.banner-btn-secondary {
+  opacity: 0.8;
+}
+
+/* Map controls */
+.map-controls {
+  position: absolute;
+  z-index: 1500;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.control-btn {
+  pointer-events: auto;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.96);
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.control-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Too far banner */
+.distance-banner {
+  position: absolute;
+  z-index: 1500;
+  right: 12px;
+  bottom: 2%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+}
+
+/* POI marker (emoji) */
+.poi-icon {
+  background: transparent;
+  border: none;
+}
+
+.poi-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, -100%);
+  user-select: none;
+  pointer-events: auto;
+}
+
+.poi-emoji {
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
+}
+
+.poi-label {
+  display: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.poi-marker.show-label .poi-label {
+  display: inline-block;
+}
+
+/* Full screen overlay that sits on top of the map */
+.poi-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.poi-overlay-hidden {
+  display: none;
+}
+
+.poi-overlay-bar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+}
+
+.poi-overlay-close {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.poi-overlay-close:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.poi-overlay-frame {
+  width: 100%;
+  height: calc(100% - 56px);
+  border: 0;
+}
+
+/* Complete button in overlay bar */
+.poi-complete-btn {
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.poi-complete-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.poi-complete-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 18px;
+}
+
+.poi-complete-btn.is-complete .poi-complete-box::after {
+  content: "✓";
+  font-size: 14px;
+  line-height: 1;
+}
+
+.poi-complete-btn.is-complete #poiCompleteLabel {
+  font-weight: 600;
+}
+
+/* Greyed out POI markers */
+.poi-marker.is-completed {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.poi-marker.is-completed .poi-label {
+  opacity: 0.85;
+}
+
+/* User heading marker */
+.user-heading-icon {
+  background: transparent;
+  border: none;
+}
+
+.user-heading {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(0, 120, 255, 0.95);
+  border: 2px solid #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  position: relative;
+}
+
+/* Arrow "tip" */
+.user-heading::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 10px solid rgba(0, 120, 255, 0.95);
+  opacity: 0;
+}
+
+/* Only show arrow when we actually have a heading */
+.user-heading.has-heading::after {
+  opacity: 1;
+}
+
+/* Rotate the whole dot+arrow */
+.user-heading.has-heading {
+  transform: rotate(calc(var(--heading, 0) * 1deg));
+  transform-origin: 50% 50%;
+}
+
+
+
+.leaflet-attribution-flag { display: none !important; }

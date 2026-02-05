@@ -1,4 +1,3 @@
-// map.js
 import config from "./config.js";
 import { createPoiOverlay } from "./overlay.js";
 import { loadAllPois } from "./poiData.js";

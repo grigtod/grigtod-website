@@ -1,5 +1,3 @@
-// poiLayer.js
-
 export function createPoiLayer({
   map,
   overlay,

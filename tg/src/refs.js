@@ -1,4 +1,3 @@
-
 const locationBanner = document.getElementById("locationBanner");
 const layersBanner = document.getElementById("layersBanner");
 const bannerText = document.getElementById("bannerText");
@@ -11,14 +10,8 @@ const styleToggleBtn = document.getElementById("styleToggleBtn");
 const layersShowBtn = document.getElementById("layersShowBtn"); 
 const toggleImageOverlayBtn = document.getElementById("toggleImageOverlayBtn");
 
-
-// Overlay elements
 const poiOverlay = document.getElementById("poiOverlay");
 const poiOverlayFrame = document.getElementById("poiOverlayFrame");
 const poiOverlayClose = document.getElementById("poiOverlayClose");
 const poiCompleteBtn = document.getElementById("poiCompleteBtn");
 const poiCompleteLabel = document.getElementById("poiCompleteLabel");
-
-
-
-//const distanceBanner = document.getElementById("distanceBanner");
