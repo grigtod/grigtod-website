@@ -8,6 +8,8 @@ export function createPoiOverlay({
   if (!overlayEl || !frameEl) throw new Error("overlayEl and frameEl are required");
 
   let activePoiId = null;
+  let pendingFrameUrl = null;
+  let pendingFrameToken = null;
 
   const COMPLETED_STORAGE_KEY = "discoverTG.completedPois.v1";
 
@@ -32,6 +34,18 @@ export function createPoiOverlay({
     overlayEl.setAttribute("aria-hidden", hidden ? "true" : "false");
   }
 
+  function setLoading(loading) {
+    overlayEl.classList.toggle("is-loading", loading);
+  }
+
+  function normalizeUrl(url) {
+    try {
+      return new URL(url, window.location.href).toString();
+    } catch {
+      return String(url);
+    }
+  }
+
   function syncCompleteUi() {
     if (!completeBtnEl || !completeLabelEl) return;
     if (!activePoiId) return;
@@ -49,12 +63,33 @@ export function createPoiOverlay({
     const u = new URL(url, window.location.href);
     if (activePoiId) u.searchParams.set("poiId", activePoiId);
 
-    frameEl.src = u.toString();
+    const targetUrl = u.toString();
+    const token = Symbol("poi-open");
+    pendingFrameUrl = targetUrl;
+    pendingFrameToken = token;
+
+    setLoading(true);
     setHidden(false);
     syncCompleteUi();
+
+    const navigateToTarget = () => {
+      if (pendingFrameToken !== token) return;
+      frameEl.src = targetUrl;
+    };
+
+    if (normalizeUrl(frameEl.src) === "about:blank") {
+      navigateToTarget();
+      return;
+    }
+
+    frameEl.src = "about:blank";
+    setTimeout(navigateToTarget, 0);
   }
 
   function close() {
+    pendingFrameUrl = null;
+    pendingFrameToken = null;
+    setLoading(false);
     frameEl.src = "about:blank";
     setHidden(true);
     activePoiId = null;
@@ -87,6 +122,13 @@ export function createPoiOverlay({
   function attachListeners() {
     if (closeBtnEl) closeBtnEl.addEventListener("click", close);
     if (completeBtnEl) completeBtnEl.addEventListener("click", toggleComplete);
+    frameEl.addEventListener("load", () => {
+      if (!pendingFrameUrl) return;
+      if (normalizeUrl(frameEl.src) !== pendingFrameUrl) return;
+      pendingFrameUrl = null;
+      pendingFrameToken = null;
+      setLoading(false);
+    });
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && isOpen()) close();

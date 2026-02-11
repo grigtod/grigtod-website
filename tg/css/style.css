@@ -286,6 +286,12 @@ body {
   width: 100%;
   height: calc(100% - 56px);
   border: 0;
+  opacity: 1;
+  transition: opacity 120ms ease;
+}
+
+.poi-overlay.is-loading .poi-overlay-frame {
+  opacity: 0;
 }
 
 /* Complete button in overlay bar */
