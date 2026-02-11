@@ -229,6 +229,15 @@ body {
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
 }
 
+.poi-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--poi-dot-color, rgba(0, 120, 255, 0.95));
+  border: 2px solid #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
 .poi-label {
   display: none;
   padding: 6px 10px;
@@ -342,6 +351,10 @@ body {
 
 .poi-marker.is-completed .poi-label {
   opacity: 0.85;
+}
+
+.poi-marker.is-completed .poi-dot {
+  opacity: 0.7;
 }
 
 /* User heading marker */

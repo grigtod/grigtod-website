@@ -1,28 +1,47 @@
 export function createPoiLayer({
   map,
   overlay,
-  labelZoomThreshold = 18
+  labelZoomThreshold = 18,
+  dotZoomThreshold = 16
 }) {
   if (!map) throw new Error("createPoiLayer requires map");
   if (!overlay) throw new Error("createPoiLayer requires overlay");
 
   let poiMarkers = [];
 
-  function makePoiIcon({ emoji, label, id }, showLabel) {
+  function getDotColor(emoji) {
+    const colorsByEmoji = {
+      "📷": "#d9480f",
+      "🗿": "#495057",
+      "ℹ️": "#1971c2",
+      "🏛️": "#5f3dc4",
+      "⛏️": "#2b8a3e"
+    };
+
+    return colorsByEmoji[emoji] ?? "#0078ff";
+  }
+
+  function makePoiIcon({ emoji, label, id }, zoomLevel) {
     const safeLabel = String(label)
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;");
 
     const isCompleted = overlay.isCompleted(id);
+    const showLabel = zoomLevel >= labelZoomThreshold;
+    const showDotOnly = zoomLevel < dotZoomThreshold;
 
     const classNameParts = ["poi-marker"];
     if (showLabel) classNameParts.push("show-label");
     if (isCompleted) classNameParts.push("is-completed");
 
+    const markerVisual = showDotOnly
+      ? `<span class="poi-dot" style="--poi-dot-color: ${getDotColor(emoji)}" aria-hidden="true"></span>`
+      : `<span class="poi-emoji">${emoji}</span>`;
+
     const html = `
       <div class="${classNameParts.join(" ")}" role="button" aria-label="${safeLabel}">
-        <span class="poi-emoji">${emoji}</span>
+        ${markerVisual}
         <span class="poi-label">${safeLabel}</span>
       </div>
     `;
@@ -35,9 +54,9 @@ export function createPoiLayer({
   }
 
   function updateIcons() {
-    const showLabel = map.getZoom() >= labelZoomThreshold;
+    const zoomLevel = map.getZoom();
     for (const { poi, marker } of poiMarkers) {
-      marker.setIcon(makePoiIcon(poi, showLabel));
+      marker.setIcon(makePoiIcon(poi, zoomLevel));
     }
   }
 
@@ -48,7 +67,7 @@ export function createPoiLayer({
 
     poiMarkers = pois.map((poi) => {
       const marker = L.marker([poi.lat, poi.lon], {
-        icon: makePoiIcon(poi, map.getZoom() >= labelZoomThreshold),
+        icon: makePoiIcon(poi, map.getZoom()),
         keyboard: true,
         riseOnHover: true
       }).addTo(map);
