@@ -171,6 +171,16 @@ body {
   pointer-events: none;
 }
 
+.map-controls-left {
+  position: absolute;
+  z-index: 1500;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 10px;
+  pointer-events: none;
+}
+
 .control-btn {
   pointer-events: auto;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -297,6 +307,41 @@ body {
   border: 0;
   opacity: 1;
   transition: opacity 120ms ease;
+}
+
+.info-overlay-bar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.info-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.info-nav-btn {
+  white-space: nowrap;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 9px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.info-nav-btn.is-active {
+  border-color: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.08);
+  font-weight: 600;
 }
 
 .poi-overlay.is-loading .poi-overlay-frame {
@@ -426,6 +471,11 @@ body {
     gap: 12px;
   }
 
+  .map-controls-left {
+    left: 10px;
+    bottom: 10px;
+  }
+
   .control-btn {
     width: 52px;
     height: 52px;
@@ -486,6 +536,16 @@ body {
     padding: 10px 14px;
     font-size: 15px;
     border-radius: 12px;
+  }
+
+  .info-nav-btn {
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+
+  .info-nav {
+    gap: 10px;
   }
 
   .poi-complete-box {

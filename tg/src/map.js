@@ -13,9 +13,8 @@ export function createMap({ mapElId = "map", ui } = {}) {
     navigator.userAgentData?.platform || navigator.platform || navigator.userAgent || "";
   const isWindows = /win/i.test(platform);
   const isMobileViewport = window.matchMedia("(max-width: 768px), (pointer: coarse)").matches;
-  const initialZoom = isMobileViewport
-    ? Math.min(config.startZoom + 1, config.maxZoom)
-    : config.startZoom;
+  const cityCenterZoom = 18;
+  const initialZoom = isMobileViewport ? cityCenterZoom : config.startZoom;
   const zoomSnap = isWindows ? 0.5 : 0.1;
   const zoomDelta = isWindows ? 0.5 : 0.1;
   const wheelDebounceTime = isWindows ? 20 : 40;
@@ -121,11 +120,61 @@ export function createMap({ mapElId = "map", ui } = {}) {
     hideLayers();
   }
 
+  const infoPages = {
+    credits: "./embeds/info-credits.html",
+    coffee: "./embeds/info-coffee.html",
+    feature: "./embeds/info-feature.html"
+  };
+  let activeInfoPage = "credits";
+
+  function setInfoTab(activeKey) {
+    const tabMap = {
+      credits: ui.infoCreditsBtn,
+      coffee: ui.infoCoffeeBtn,
+      feature: ui.infoFeatureBtn
+    };
+
+    Object.entries(tabMap).forEach(([key, el]) => {
+      const isActive = key === activeKey;
+      el.classList.toggle("is-active", isActive);
+      el.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+  }
+
+  function setInfoHidden(hidden) {
+    ui.infoOverlay.classList.toggle("poi-overlay-hidden", hidden);
+    ui.infoOverlay.setAttribute("aria-hidden", hidden ? "true" : "false");
+  }
+
+  function openInfoPage(pageKey = "credits") {
+    const nextKey = infoPages[pageKey] ? pageKey : "credits";
+    activeInfoPage = nextKey;
+    setInfoTab(nextKey);
+    ui.infoOverlayFrame.src = infoPages[nextKey];
+    setInfoHidden(false);
+  }
+
+  function closeInfoOverlay() {
+    ui.infoOverlayFrame.src = "about:blank";
+    setInfoHidden(true);
+  }
+
   ui.layersShowBtn.addEventListener("click", () => {
     layersVisible = !layersVisible;
     if (layersVisible) showLayers();
     else hideLayers();
   });
+
+  ui.infoBtn.addEventListener("click", () => {
+    tryHideLayers();
+    overlay.close();
+    openInfoPage(activeInfoPage);
+  });
+
+  ui.infoOverlayClose.addEventListener("click", closeInfoOverlay);
+  ui.infoCreditsBtn.addEventListener("click", () => openInfoPage("credits"));
+  ui.infoCoffeeBtn.addEventListener("click", () => openInfoPage("coffee"));
+  ui.infoFeatureBtn.addEventListener("click", () => openInfoPage("feature"));
   
 
   const tunnelsSubtitle =
@@ -192,7 +241,7 @@ export function createMap({ mapElId = "map", ui } = {}) {
 
   // ---- Center button (map-related) ----
   ui.centerBtn.addEventListener("click", () => {
-    map.setView(center, 18);
+    map.setView(center, cityCenterZoom);
     tryHideLayers();
   });
 
@@ -302,6 +351,7 @@ export function createMap({ mapElId = "map", ui } = {}) {
   });
 
   ui.myLocationBtn.addEventListener("click", () => {
+    closeInfoOverlay();
     tryHideLayers();
     if (!hasLocationPermission) {
       showLocationPrompt();
@@ -359,6 +409,12 @@ export function createMap({ mapElId = "map", ui } = {}) {
     disableMyLocation();
     showLocationPrompt();
   }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !ui.infoOverlay.classList.contains("poi-overlay-hidden")) {
+      closeInfoOverlay();
+    }
+  });
 
   // Return API if other modules need it
   return {

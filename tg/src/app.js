@@ -14,6 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
     poiOverlayClose: id("poiOverlayClose"),
     poiCompleteBtn: id("poiCompleteBtn"),
     poiCompleteLabel: id("poiCompleteLabel"),
+    infoOverlay: id("infoOverlay"),
+    infoOverlayFrame: id("infoOverlayFrame"),
+    infoOverlayClose: id("infoOverlayClose"),
+    infoCreditsBtn: id("infoCreditsBtn"),
+    infoCoffeeBtn: id("infoCoffeeBtn"),
+    infoFeatureBtn: id("infoFeatureBtn"),
 
     // banners
     locationBanner: id("locationBanner"),
@@ -26,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     grantLocationBtn: id("grantLocationBtn"),
     dismissBannerBtn: id("dismissBannerBtn"),
     layersShowBtn: id("layersShowBtn"),
+    infoBtn: id("infoBtn"),
     styleToggleBtn: id("styleToggleBtn"),
     toggleImageOverlayBtn: id("toggleImageOverlayBtn")
   };
