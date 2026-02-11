@@ -402,3 +402,99 @@ body {
 
 
 .leaflet-attribution-flag { display: none !important; }
+
+@media (max-width: 768px), (pointer: coarse) {
+  .banner {
+    top: 12px;
+    left: 10px;
+    right: 10px;
+    padding: 14px;
+    gap: 12px;
+    font-size: 16px;
+    border-radius: 14px;
+  }
+
+  .banner-btn {
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+
+  .map-controls {
+    top: 10px;
+    right: 10px;
+    gap: 12px;
+  }
+
+  .control-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    font-size: 22px;
+  }
+
+  .layers {
+    padding: 14px 14px calc(16px + env(safe-area-inset-bottom));
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+
+  .layers-title {
+    font-size: 18px;
+  }
+
+  .layers-grid {
+    gap: 12px;
+  }
+
+  .layer-tile {
+    min-height: 72px;
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .layer-tile-title {
+    font-size: 15px;
+  }
+
+  .layer-tile-subtitle {
+    font-size: 13px;
+  }
+
+  .poi-emoji {
+    font-size: 34px;
+  }
+
+  .poi-dot {
+    width: 13px;
+    height: 13px;
+  }
+
+  .poi-label {
+    font-size: 15px;
+    padding: 7px 12px;
+  }
+
+  .poi-overlay-bar {
+    height: 64px;
+    padding: 0 10px;
+  }
+
+  .poi-overlay-close,
+  .poi-complete-btn {
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+
+  .poi-complete-box {
+    width: 20px;
+    height: 20px;
+    flex-basis: 20px;
+  }
+
+  .poi-overlay-frame {
+    height: calc(100% - 64px);
+  }
+}

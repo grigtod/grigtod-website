@@ -9,14 +9,27 @@ export function createMap({ mapElId = "map", ui } = {}) {
   // ---- Leaflet init ----
   const center = L.latLng(config.targetLat, config.targetLon);
   const bounds = center.toBounds(config.radiusMeters * 2);
+  const platform =
+    navigator.userAgentData?.platform || navigator.platform || navigator.userAgent || "";
+  const isWindows = /win/i.test(platform);
+  const isMobileViewport = window.matchMedia("(max-width: 768px), (pointer: coarse)").matches;
+  const initialZoom = isMobileViewport
+    ? Math.min(config.startZoom + 1, config.maxZoom)
+    : config.startZoom;
+  const zoomSnap = isWindows ? 0.5 : 0.1;
+  const zoomDelta = isWindows ? 0.5 : 0.1;
+  const wheelDebounceTime = isWindows ? 20 : 40;
+  const wheelPxPerZoomLevel = isWindows ? 40 : 60;
 
   const map = L.map(mapElId, {
     center,
-    zoom: config.startZoom,
+    zoom: initialZoom,
     maxBounds: bounds,
     maxBoundsViscosity: 0.1,
-    zoomSnap: 0.1,
-    zoomDelta: 0.1
+    zoomSnap,
+    zoomDelta,
+    wheelDebounceTime,
+    wheelPxPerZoomLevel
   });
 
   map.zoomControl.remove();
