@@ -171,6 +171,16 @@ body {
   pointer-events: none;
 }
 
+.map-controls-top-left {
+  position: absolute;
+  z-index: 1500;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 10px;
+  pointer-events: none;
+}
+
 .map-controls-left {
   position: absolute;
   z-index: 1500;
@@ -202,6 +212,90 @@ body {
 .control-btn:disabled {
   cursor: not-allowed;
   opacity: 0.45;
+}
+
+.language-menu {
+  position: absolute;
+  z-index: 2200;
+  top: 62px;
+  left: 12px;
+  min-width: 210px;
+  max-width: calc(100vw - 24px);
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.language-menu-hidden {
+  display: none;
+}
+
+.language-menu-title {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.78);
+  margin: 0 0 8px;
+}
+
+.language-options {
+  display: grid;
+  gap: 6px;
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 14px;
+  text-align: left;
+}
+
+.language-option:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.language-option.is-active {
+  border-color: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+}
+
+.language-option-flag {
+  font-size: 18px;
+  line-height: 1;
+  width: 24px;
+  height: 18px;
+  border-radius: 3px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-btn-flag {
+  width: 24px;
+  height: 18px;
+  border-radius: 3px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.language-flag-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* Too far banner */
@@ -471,6 +565,11 @@ body {
     gap: 12px;
   }
 
+  .map-controls-top-left {
+    top: 10px;
+    left: 10px;
+  }
+
   .map-controls-left {
     left: 10px;
     bottom: 10px;
@@ -481,6 +580,26 @@ body {
     height: 52px;
     border-radius: 14px;
     font-size: 22px;
+  }
+
+  .language-menu {
+    top: 70px;
+    left: 10px;
+    min-width: min(280px, calc(100vw - 20px));
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .language-menu-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .language-option {
+    min-height: 44px;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 15px;
   }
 
   .layers {

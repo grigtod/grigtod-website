@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -47,21 +47,32 @@
     <div id="map"></div>
 
     <!-- Map buttons -->
+    <div class="map-controls-top-left" aria-label="Language controls">
+      <button id="languageBtn" class="control-btn" type="button" aria-label="Language">
+        &#127468;&#127463;
+      </button>
+    </div>
+
     <div class="map-controls" aria-label="Map controls">
       <button id="myLocationBtn" class="control-btn" type="button" disabled>
-        ⚲
+        &#8982;
       </button>
       <button id="centerBtn" class="control-btn" type="button">
-        𖣠
+        &#9678;
       </button> 
       <button id="layersShowBtn" class="control-btn" type="button">
-        ☰
+        &#9638;
       </button>
+    </div>
+
+    <div id="languageMenu" class="language-menu language-menu-hidden" role="dialog" aria-label="Language">
+      <div id="languageMenuTitle" class="language-menu-title">Language</div>
+      <div id="languageOptions" class="language-options" role="listbox" aria-label="Languages"></div>
     </div>
 
     <div class="map-controls-left" aria-label="Info controls">
       <button id="infoBtn" class="control-btn" type="button" aria-label="Info">
-        ℹ️
+        &#8505;
       </button>
     </div>
 
@@ -102,10 +113,10 @@
             Credits
           </button>
           <button id="infoCoffeeBtn" class="info-nav-btn" type="button" role="tab" aria-selected="false">
-            Donate
+            Buy us coffee
           </button>
           <button id="infoFeatureBtn" class="info-nav-btn" type="button" role="tab" aria-selected="false">
-            Contact
+            Request a feature
           </button>
         </div>
       </div>
@@ -124,3 +135,6 @@
     <script type="module" src="src/app.js"></script>
   </body>
 </html>
+
+
+

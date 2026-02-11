@@ -3,11 +3,16 @@ export function createPoiOverlay({
   frameEl,
   closeBtnEl,
   completeBtnEl,
-  completeLabelEl
+  completeLabelEl,
+  onOpen,
+  onClose,
+  translate = (_key, fallback) => fallback,
+  localizeUrl = (url) => url
 }) {
   if (!overlayEl || !frameEl) throw new Error("overlayEl and frameEl are required");
 
   let activePoiId = null;
+  let activeBaseUrl = null;
   let pendingFrameUrl = null;
   let pendingFrameToken = null;
 
@@ -30,8 +35,12 @@ export function createPoiOverlay({
   const completedPois = loadCompletedSet();
 
   function setHidden(hidden) {
+    const wasHidden = overlayEl.classList.contains("poi-overlay-hidden");
     overlayEl.classList.toggle("poi-overlay-hidden", hidden);
     overlayEl.setAttribute("aria-hidden", hidden ? "true" : "false");
+
+    if (hidden && !wasHidden) onClose?.();
+    if (!hidden && wasHidden) onOpen?.();
   }
 
   function setLoading(loading) {
@@ -51,19 +60,25 @@ export function createPoiOverlay({
     if (!activePoiId) return;
 
     const isDone = completedPois.has(activePoiId);
-
     completeBtnEl.classList.toggle("is-complete", isDone);
     completeBtnEl.setAttribute("aria-pressed", isDone ? "true" : "false");
-    completeLabelEl.textContent = isDone ? "Completed" : "Complete";
+    completeLabelEl.textContent = isDone
+      ? translate("app.poi.completed", "Completed")
+      : translate("app.poi.complete", "Complete");
+  }
+
+  function buildTargetUrl(url, poiId) {
+    const localized = localizeUrl(url);
+    const parsed = new URL(localized, window.location.href);
+    if (poiId) parsed.searchParams.set("poiId", poiId);
+    return parsed.toString();
   }
 
   function open({ url, poiId }) {
     activePoiId = poiId ?? null;
+    activeBaseUrl = url ?? null;
 
-    const u = new URL(url, window.location.href);
-    if (activePoiId) u.searchParams.set("poiId", activePoiId);
-
-    const targetUrl = u.toString();
+    const targetUrl = buildTargetUrl(url, activePoiId);
     const token = Symbol("poi-open");
     pendingFrameUrl = targetUrl;
     pendingFrameToken = token;
@@ -89,10 +104,17 @@ export function createPoiOverlay({
   function close() {
     pendingFrameUrl = null;
     pendingFrameToken = null;
+    activeBaseUrl = null;
+    activePoiId = null;
     setLoading(false);
     frameEl.src = "about:blank";
     setHidden(true);
-    activePoiId = null;
+  }
+
+  function refreshLanguage() {
+    syncCompleteUi();
+    if (!activeBaseUrl || !isOpen()) return;
+    open({ url: activeBaseUrl, poiId: activePoiId });
   }
 
   function toggleComplete() {
@@ -103,7 +125,6 @@ export function createPoiOverlay({
 
     saveCompletedSet(completedPois);
     syncCompleteUi();
-
     document.dispatchEvent(new CustomEvent("poi:complete-changed"));
   }
 
@@ -122,6 +143,7 @@ export function createPoiOverlay({
   function attachListeners() {
     if (closeBtnEl) closeBtnEl.addEventListener("click", close);
     if (completeBtnEl) completeBtnEl.addEventListener("click", toggleComplete);
+
     frameEl.addEventListener("load", () => {
       if (!pendingFrameUrl) return;
       if (normalizeUrl(frameEl.src) !== pendingFrameUrl) return;
@@ -140,6 +162,8 @@ export function createPoiOverlay({
   return {
     open,
     close,
+    refreshLanguage,
+    syncCompleteUi,
     toggleComplete,
     isCompleted,
     getActivePoiId,

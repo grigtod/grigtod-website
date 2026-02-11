@@ -2,7 +2,8 @@ export function createPoiLayer({
   map,
   overlay,
   labelZoomThreshold = 18,
-  dotZoomThreshold = 16
+  dotZoomThreshold = 16,
+  translate = (_key, fallback) => fallback
 }) {
   if (!map) throw new Error("createPoiLayer requires map");
   if (!overlay) throw new Error("createPoiLayer requires overlay");
@@ -21,13 +22,23 @@ export function createPoiLayer({
     return colorsByEmoji[emoji] ?? "#0078ff";
   }
 
-  function makePoiIcon({ emoji, label, id }, zoomLevel) {
-    const safeLabel = String(label)
+  function escapeHtml(input) {
+    return String(input)
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;");
+  }
 
-    const isCompleted = overlay.isCompleted(id);
+  function translatedLabel(poi) {
+    if (!poi?.labelKey) return poi?.label ?? "";
+    return translate(poi.labelKey, poi.label ?? "");
+  }
+
+  function makePoiIcon(poi, zoomLevel) {
+    const label = translatedLabel(poi);
+    const safeLabel = escapeHtml(label);
+
+    const isCompleted = overlay.isCompleted(poi.id);
     const showLabel = zoomLevel >= labelZoomThreshold;
     const showDotOnly = zoomLevel < dotZoomThreshold;
 
@@ -36,8 +47,8 @@ export function createPoiLayer({
     if (isCompleted) classNameParts.push("is-completed");
 
     const markerVisual = showDotOnly
-      ? `<span class="poi-dot" style="--poi-dot-color: ${getDotColor(emoji)}" aria-hidden="true"></span>`
-      : `<span class="poi-emoji">${emoji}</span>`;
+      ? `<span class="poi-dot" style="--poi-dot-color: ${getDotColor(poi.emoji)}" aria-hidden="true"></span>`
+      : `<span class="poi-emoji">${poi.emoji}</span>`;
 
     const html = `
       <div class="${classNameParts.join(" ")}" role="button" aria-label="${safeLabel}">
@@ -61,7 +72,6 @@ export function createPoiLayer({
   }
 
   function setPois(pois) {
-    // remove old markers if reloading
     for (const { marker } of poiMarkers) map.removeLayer(marker);
     poiMarkers = [];
 
@@ -77,8 +87,10 @@ export function createPoiLayer({
       });
 
       marker.on("keypress", (e) => {
-        const k = e.originalEvent?.key;
-        if (k === "Enter" || k === " ") overlay.open({ url: poi.embedUrl, poiId: poi.id });
+        const key = e.originalEvent?.key;
+        if (key === "Enter" || key === " ") {
+          overlay.open({ url: poi.embedUrl, poiId: poi.id });
+        }
       });
 
       return { poi, marker };
@@ -87,7 +99,6 @@ export function createPoiLayer({
     updateIcons();
   }
 
-  // keep labels in sync with zoom
   map.on("zoomend", updateIcons);
 
   return {
