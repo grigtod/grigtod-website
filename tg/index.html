@@ -9,10 +9,13 @@
 
   <body>
     <!-- Location banner (hidden unless needed) -->
-    <div id="locationBanner" class="banner banner-hidden" role="status" aria-live="polite">
+    <div id="locationBanner" class="banner banner-hidden" role="dialog" aria-live="polite" aria-label="Location permission">
       <span id="bannerText">
         For the full experience, please allow location access.
       </span>
+      <button id="grantLocationBtn" class="banner-btn" type="button">
+        Allow location
+      </button>
       <button id="dismissBannerBtn" class="banner-btn banner-btn-secondary" type="button">
         Dismiss
       </button>

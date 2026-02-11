@@ -183,6 +183,170 @@ export function createMap({ mapElId = "map", ui } = {}) {
     tryHideLayers();
   });
 
+  // ---- Location permission + my location flow ----
+  let isRequestInFlight = false;
+  let hasLocationPermission = false;
+  let userMarker = null;
+
+  function hideLocationBanner() {
+    ui.locationBanner.classList.add("banner-hidden");
+    ui.locationBanner.classList.remove("banner-notice");
+  }
+
+  function showLocationPrompt() {
+    ui.bannerText.textContent =
+      "Allow location access to use My Location.";
+    ui.grantLocationBtn.classList.remove("banner-btn-hidden");
+    ui.grantLocationBtn.disabled = false;
+    ui.grantLocationBtn.textContent = "Allow location";
+    ui.dismissBannerBtn.classList.remove("banner-btn-hidden");
+    ui.locationBanner.classList.remove("banner-hidden", "banner-notice");
+  }
+
+  function showLocationNotice(message) {
+    ui.bannerText.textContent = message;
+    ui.grantLocationBtn.classList.add("banner-btn-hidden");
+    ui.grantLocationBtn.disabled = false;
+    ui.grantLocationBtn.textContent = "Allow location";
+    ui.dismissBannerBtn.classList.remove("banner-btn-hidden");
+    ui.locationBanner.classList.remove("banner-hidden");
+    ui.locationBanner.classList.add("banner-notice");
+  }
+
+  function enableMyLocation() {
+    hasLocationPermission = true;
+    ui.myLocationBtn.disabled = false;
+  }
+
+  function disableMyLocation() {
+    hasLocationPermission = false;
+    ui.myLocationBtn.disabled = true;
+  }
+
+  function updateUserMarker(latlng) {
+    if (!userMarker) {
+      userMarker = L.circleMarker(latlng, {
+        radius: 8,
+        color: "#ffffff",
+        weight: 2,
+        fillColor: "#0078ff",
+        fillOpacity: 0.95
+      }).addTo(map);
+      return;
+    }
+    userMarker.setLatLng(latlng);
+  }
+
+  function permissionErrorMessage(error) {
+    if (!error || typeof error.code !== "number") {
+      return "Location access failed. You can try again from your browser settings.";
+    }
+    if (error.code === error.PERMISSION_DENIED) {
+      return "Location permission was denied. Enable it in browser settings, then reload.";
+    }
+    if (error.code === error.POSITION_UNAVAILABLE) {
+      return "Your location is unavailable right now. Try again in a moment.";
+    }
+    if (error.code === error.TIMEOUT) {
+      return "Location request timed out. Try again.";
+    }
+    return "Location access failed. You can try again from your browser settings.";
+  }
+
+  function requestLocationPermission() {
+    if (!navigator.geolocation || isRequestInFlight) return;
+    isRequestInFlight = true;
+    ui.grantLocationBtn.disabled = true;
+    ui.grantLocationBtn.textContent = "Requesting...";
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        isRequestInFlight = false;
+        enableMyLocation();
+        hideLocationBanner();
+        const latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+        updateUserMarker(latlng);
+      },
+      (error) => {
+        isRequestInFlight = false;
+        disableMyLocation();
+        showLocationNotice(permissionErrorMessage(error));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  }
+
+  ui.grantLocationBtn.addEventListener("click", () => {
+    requestLocationPermission();
+  });
+
+  ui.dismissBannerBtn.addEventListener("click", () => {
+    hideLocationBanner();
+  });
+
+  ui.myLocationBtn.addEventListener("click", () => {
+    tryHideLayers();
+    if (!hasLocationPermission) {
+      showLocationPrompt();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+        updateUserMarker(latlng);
+        const targetZoom = Math.max(map.getZoom(), 17);
+        map.setView(latlng, targetZoom);
+      },
+      (error) => {
+        showLocationNotice(permissionErrorMessage(error));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 5000
+      }
+    );
+  });
+
+  if (!navigator.geolocation) {
+    disableMyLocation();
+    showLocationNotice("Location is not supported in this browser.");
+  } else if (navigator.permissions?.query) {
+    navigator.permissions
+      .query({ name: "geolocation" })
+      .then((status) => {
+        if (status.state === "granted") {
+          enableMyLocation();
+          hideLocationBanner();
+        } else {
+          disableMyLocation();
+          showLocationPrompt();
+        }
+
+        status.onchange = () => {
+          if (status.state === "granted") {
+            enableMyLocation();
+            hideLocationBanner();
+          } else {
+            disableMyLocation();
+            showLocationPrompt();
+          }
+        };
+      })
+      .catch(() => {
+        disableMyLocation();
+        showLocationPrompt();
+      });
+  } else {
+    disableMyLocation();
+    showLocationPrompt();
+  }
+
   // Return API if other modules need it
   return {
     map,

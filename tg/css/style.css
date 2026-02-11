@@ -29,7 +29,20 @@ body {
   line-height: 1.2;
 }
 
+#bannerText {
+  flex: 1;
+}
+
 .banner-hidden {
+  display: none;
+}
+
+.banner-notice {
+  background: rgba(255, 249, 232, 0.98);
+  border: 1px solid rgba(190, 145, 0, 0.35);
+}
+
+.banner-btn-hidden {
   display: none;
 }
 

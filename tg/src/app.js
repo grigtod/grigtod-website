@@ -17,12 +17,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // banners
     locationBanner: id("locationBanner"),
-    bannerText: id("bannerText"), // note: fix duplicate id in HTML, see note below
+    bannerText: id("bannerText"),
     layersBanner: id("layersBanner"),
 
     // buttons
     myLocationBtn: id("myLocationBtn"),
     centerBtn: id("centerBtn"),
+    grantLocationBtn: id("grantLocationBtn"),
     dismissBannerBtn: id("dismissBannerBtn"),
     layersShowBtn: id("layersShowBtn"),
     styleToggleBtn: id("styleToggleBtn"),
