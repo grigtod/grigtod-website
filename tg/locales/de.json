@@ -41,8 +41,8 @@
       "close": "Schließen",
       "tabs": {
         "credits": "Credits",
-        "coffee": "Kaffee spendieren",
-        "feature": "Funktion vorschlagen"
+        "coffee": "Spenden",
+        "feature": "Kontakt"
       }
     }
   },
@@ -95,7 +95,7 @@
       "asset5": "Asset 05: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas bibendum risus ac ligula ultrices, nec consequat justo pharetra."
     },
     "coffee": {
-      "title": "Kaffee spendieren",
+      "title": "Spenden",
       "body": "Wenn dir diese Karten-Erfahrung gefällt und du zukünftige Updates unterstützen möchtest, kannst du über die Optionen unten beitragen.",
       "hint": "Diese Buttons sind aktuell Platzhalter und noch nicht verbunden.",
       "donate2": "2 $ spenden",

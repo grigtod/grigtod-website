@@ -41,8 +41,8 @@
       "close": "Zamknij",
       "tabs": {
         "credits": "Podziękowania",
-        "coffee": "Postaw nam kawę",
-        "feature": "Zaproponuj funkcję"
+        "coffee": "Wesprzyj",
+        "feature": "Kontakt"
       }
     }
   },
@@ -95,7 +95,7 @@
       "asset5": "Zasób 05: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas bibendum risus ac ligula ultrices, nec consequat justo pharetra."
     },
     "coffee": {
-      "title": "Postaw nam kawę",
+      "title": "Wesprzyj",
       "body": "Jeśli podoba Ci się to mapowe doświadczenie i chcesz wesprzeć kolejne aktualizacje, możesz skorzystać z opcji poniżej.",
       "hint": "Te przyciski są na razie poglądowe i nie są jeszcze podłączone.",
       "donate2": "Wpłać 2 $",

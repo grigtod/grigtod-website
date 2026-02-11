@@ -41,8 +41,8 @@
       "close": "Fermer",
       "tabs": {
         "credits": "Crédits",
-        "coffee": "Offrez-nous un café",
-        "feature": "Demander une fonctionnalité"
+        "coffee": "Faire un don",
+        "feature": "Contact"
       }
     }
   },
@@ -95,7 +95,7 @@
       "asset5": "Ressource 05: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas bibendum risus ac ligula ultrices, nec consequat justo pharetra."
     },
     "coffee": {
-      "title": "Offrez-nous un café",
+      "title": "Faire un don",
       "body": "Si vous aimez cette expérience cartographique et souhaitez soutenir les prochaines mises à jour, vous pouvez contribuer via les options ci-dessous.",
       "hint": "Ces boutons sont des espaces réservés pour l'instant et ne sont pas encore connectés.",
       "donate2": "Donner 2 $",

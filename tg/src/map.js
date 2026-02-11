@@ -260,8 +260,8 @@ export function createMap({ mapElId = "map", ui, i18n } = {}) {
     ui.poiOverlayClose.textContent = i18n.t("app.poi.cancel", "Cancel");
     ui.infoOverlayClose.textContent = i18n.t("app.info.close", "Close");
     ui.infoCreditsBtn.textContent = i18n.t("app.info.tabs.credits", "Credits");
-    ui.infoCoffeeBtn.textContent = i18n.t("app.info.tabs.coffee", "Buy us coffee");
-    ui.infoFeatureBtn.textContent = i18n.t("app.info.tabs.feature", "Request a feature");
+    ui.infoCoffeeBtn.textContent = i18n.t("app.info.tabs.coffee", "Donate");
+    ui.infoFeatureBtn.textContent = i18n.t("app.info.tabs.feature", "Contact");
     ui.dismissBannerBtn.textContent = i18n.t("app.location.dismiss", "Dismiss");
 
     ui.myLocationBtn.setAttribute("aria-label", i18n.t("app.controls.myLocation", "My location"));

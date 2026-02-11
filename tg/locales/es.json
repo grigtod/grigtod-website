@@ -41,8 +41,8 @@
       "close": "Cerrar",
       "tabs": {
         "credits": "Créditos",
-        "coffee": "Invítanos un café",
-        "feature": "Solicitar función"
+        "coffee": "Donar",
+        "feature": "Contacto"
       }
     }
   },
@@ -95,7 +95,7 @@
       "asset5": "Recurso 05: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas bibendum risus ac ligula ultrices, nec consequat justo pharetra."
     },
     "coffee": {
-      "title": "Invítanos un café",
+      "title": "Donar",
       "body": "Si disfrutas esta experiencia de mapa y quieres apoyar futuras mejoras, puedes contribuir usando una de las opciones de donación.",
       "hint": "Estos botones son solo de ejemplo por ahora y todavía no están conectados.",
       "donate2": "Donar 2 $",
