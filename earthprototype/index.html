@@ -22,11 +22,15 @@
   }
   </script>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
   <div class="app">
     <div class="stageWrap" id="stageWrap" aria-label="3D stage">
+      <div class="sectionLabel sectionLabelStage">Environment simulation:</div>
       <canvas id="threeCanvas"></canvas>
       <button id="creditsToggle" class="creditsToggle" type="button" aria-controls="creditsPanel" aria-expanded="false">
         Credits
@@ -51,6 +55,8 @@
             Global Forest Map:
             <a href="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Flive.staticflickr.com%2F633%2F31550395483_06cced636f_o.png&f=1&nofb=1&ipt=d618f757abbd48d9c681dbf74f79bc073a36d16decc219ff4c11d9771201ac98" target="_blank" rel="noopener noreferrer">duckduckgo/staticflickr image</a>
           </li>
+          <li>
+           "Hintze Hall, NHM London [surface model]" (https://skfb.ly/6sYPv) by Thomas Flynn is licensed under Creative Commons Attribution-NonCommercial (http://creativecommons.org/licenses/by-nc/4.0/).
         </ul>
       </section>
 
@@ -62,6 +68,7 @@
     </div>
 
     <aside class="menu" aria-label="Augmentations menu">
+      <div class="sectionLabel sectionLabelMenu">Tablet simulation:</div>
 
       <div class="menuCard">
         <!--

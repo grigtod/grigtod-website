@@ -2,6 +2,10 @@ import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
 import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 import { TIFFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/TIFFLoader.js";
+import { EffectComposer } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/RenderPass.js";
+import { BokehPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/BokehPass.js";
+import { OutputPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/OutputPass.js";
 
 const DAYMAP_URL = "./assets/earth/2k_earth_daymap.jpg";
 const NORMAL_MAP_URL = "./assets/earth/2k_earth_normal_map.tif";
@@ -134,8 +138,10 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.autoClear = false;
 
-  const scene = new THREE.Scene();
+  const backgroundScene = new THREE.Scene();
+  const foregroundScene = new THREE.Scene();
   const textureLoader = new THREE.TextureLoader();
   const tiffLoader = new TIFFLoader();
 
@@ -147,18 +153,20 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
     environment.position.y = -16;
     environment.position.x = 36;
     environment.position.z = -2;
-    scene.add(environment);
+    backgroundScene.add(environment);
   });
 
   const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 2000);
   camera.position.set(0, 0, 15);
 
   const ambient = new THREE.AmbientLight(0xffffff, 0.65);
-  scene.add(ambient);
+  backgroundScene.add(ambient);
+  foregroundScene.add(ambient.clone());
 
   const key = new THREE.DirectionalLight(0xffffff, 1.0);
   key.position.set(8, 12, 6);
-  scene.add(key);
+  backgroundScene.add(key);
+  foregroundScene.add(key.clone());
 
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
@@ -170,8 +178,20 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
   controls.minPolarAngle = Math.PI / 3.3;      
   controls.maxPolarAngle = 2.2 * Math.PI / 3.3; 
 
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(backgroundScene, camera));
+  const bokehPass = new BokehPass(backgroundScene, camera, {
+    focus: 10.0,
+    aperture: 0.00020,
+    maxblur: 0.020,
+    width: stage.clientWidth || 1,
+    height: stage.clientHeight || 1
+  });
+  composer.addPass(bokehPass);
+  composer.addPass(new OutputPass());
+
   const globeGroup = new THREE.Group();
-  scene.add(globeGroup);
+  foregroundScene.add(globeGroup);
 
   const globeRadius = 5.0;
   const cloudRadius = 5.03;
@@ -289,14 +309,18 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
     const w = stage.clientWidth;
     const h = stage.clientHeight;
     renderer.setSize(w, h, false);
+    composer.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
 
   function renderFrame() {
     controls.update();
-    renderer.render(scene, camera);
+    renderer.clear();
+    composer.render();
+    renderer.clearDepth();
+    renderer.render(foregroundScene, camera);
   }
 
-  return { THREE, renderer, scene, camera, controls, resize, renderFrame, setOverlay };
+  return { THREE, renderer, scene: foregroundScene, camera, controls, resize, renderFrame, setOverlay };
 }

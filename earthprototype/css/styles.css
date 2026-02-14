@@ -14,7 +14,7 @@ html, body{
   margin:0;
   background:var(--bg);
   color:var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  font-family: "Manrope", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow:hidden;
 }
 
@@ -60,13 +60,42 @@ canvas#threeCanvas{
 .menu{
   width:33.333%;
   min-width:360px;
+  position:relative;
   background:linear-gradient(180deg, var(--panel), var(--panel2));
-  padding:22px 18px;
+  padding:22px 18px 34px;
   box-sizing:border-box;
 }
 
+.sectionLabel{
+  font-family: "Sora", "Manrope", "Segoe UI", sans-serif;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.2px;
+  color:rgba(210,232,245,.88);
+  user-select:none;
+}
+
+.sectionLabelStage{
+  position:absolute;
+  top:12px;
+  left:14px;
+  z-index:3; 
+}
+
+.sectionLabelMenu{
+  position:absolute;
+  top:12px;
+  left:14px;
+  z-index:3;
+  margin:0;
+}
+
 .menuCard{
-  height:100%;
+  margin-top:22px;
+}
+
+.menuCard{
+  height:calc(100% - 22px);
   border-radius:26px;
   background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
   border:1px solid var(--stroke);
@@ -101,12 +130,18 @@ canvas#threeCanvas{
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap:12px 12px;
   padding:8px 4px 6px;
-  overflow:hidden;
+  background:transparent;
+  overflow:visible;
 }
 
 .tile{
   border:1px solid var(--stroke);
   border-radius:12px;
+  aspect-ratio:1 / 1;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
   background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
   box-shadow: 0 10px 25px rgba(0,0,0,.35);
   padding:8px 8px 6px;
@@ -135,11 +170,16 @@ canvas#threeCanvas{
 .tileLabel{
   margin-top:6px;
   font-size:12px;
+  font-weight:500;
+  min-height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   text-align:center;
   color:rgba(255,255,255,.88);
   white-space:normal;
-  overflow:visible;
-  text-overflow:clip;
+  overflow:hidden;
+  text-overflow:ellipsis;
   line-height:1.2;
 }
 
@@ -214,49 +254,73 @@ canvas#threeCanvas{
   background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
 }
 
-/* Theme accents by button/action */
+/* Image thumbnails by button/action */
+.tile[data-action] .tileTop{
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .tile[data-action="none"] .tileTop{
-  background: linear-gradient(180deg, rgba(145,165,185,.20), rgba(80,95,112,.18));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.26)),
+    url("../assets/earth/2k_earth_daymap.jpg");
   border-color: rgba(175,195,215,.32);
 }
 
 .tile[data-action="seabed2030"] .tileTop{
-  background: linear-gradient(180deg, rgba(40,165,210,.24), rgba(18,84,122,.22));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.26)),
+    url("../assets/earth/seabed2023.jpg");
   border-color: rgba(95,210,245,.34);
 }
 
 .tile[data-action="globalforestwatch"] .tileTop{
-  background: linear-gradient(180deg, rgba(72,168,102,.24), rgba(30,94,56,.22));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.26)),
+    url("../assets/earth/globalForestMap.jpg");
   border-color: rgba(130,220,155,.34);
 }
 
 .tile[data-action="climateTemperature"] .tileTop{
-  background: linear-gradient(180deg, rgba(230,95,72,.26), rgba(142,44,34,.24));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.24)),
+    url("../assets/earth/temperature_adjusted.jpg");
   border-color: rgba(245,150,130,.34);
 }
 
 .tile[data-action="wind"] .tileTop{
-  background: linear-gradient(180deg, rgba(110,150,235,.24), rgba(58,86,160,.22));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.24)),
+    url("../assets/earth/wind_adjusted.jpg");
   border-color: rgba(165,192,255,.34);
 }
 
 .tile[data-action="clouds"] .tileTop{
-  background: linear-gradient(180deg, rgba(170,182,198,.22), rgba(96,110,128,.20));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.22)),
+    url("../assets/earth/clouds_adjusted.jpg");
   border-color: rgba(205,216,230,.32);
 }
 
 .tile[data-action="precipitation"] .tileTop{
-  background: linear-gradient(180deg, rgba(70,178,200,.24), rgba(32,106,122,.22));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.24)),
+    url("../assets/earth/precipitation_adjusted.jpg");
   border-color: rgba(132,225,242,.34);
 }
 
 .tile[data-action="seaSurfaceTemperature"] .tileTop{
-  background: linear-gradient(180deg, rgba(34,172,178,.24), rgba(18,96,120,.22));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.24)),
+    url("../assets/earth/seasurfacetemp_adjusted.jpg");
   border-color: rgba(100,226,232,.34);
 }
 
 .tile[data-action="urbanLights"] .tileTop{
-  background: linear-gradient(180deg, rgba(230,186,88,.24), rgba(122,88,28,.24));
+  background-image:
+    linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.22)),
+    url("../assets/earth/2k_earth_nightmap.jpg");
   border-color: rgba(245,214,140,.34);
 }
 
@@ -265,6 +329,9 @@ canvas#threeCanvas{
   left:16px;
   bottom:16px;
   z-index:3;
+  font-family: "Manrope", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight:500;
+  letter-spacing:.15px;
   border:1px solid rgba(160,210,235,.32);
   border-radius:10px;
   background:linear-gradient(180deg, rgba(20,56,78,.78), rgba(10,28,44,.78));
@@ -279,6 +346,7 @@ canvas#threeCanvas{
   left:16px;
   bottom:56px;
   z-index:3;
+  font-family: "Manrope", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   width:min(480px, calc(100% - 32px));
   max-height:42%;
   overflow:auto;
