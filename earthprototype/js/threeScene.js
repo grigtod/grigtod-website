@@ -9,9 +9,14 @@ const SPECULAR_MAP_URL = "./assets/earth/2k_earth_specular_map.tif";
 const CLOUDS_MAP_URL = "./assets/earth/2k_earth_clouds.jpg";
 const OVERLAY_TEXTURE_URLS = {
   none: "",
-  seabed2030: "./assets/textures/overlay-seabed2030.png",
-  globalforestwatch: "./assets/textures/overlay-globalforestwatch.png",
-  climateTemperature: "./assets/textures/overlay-climate-temperature.png"
+  seabed2030: "./assets/earth/seabed2023_hd.jpg",
+  globalforestwatch: "./assets/earth/globalForestMap.jpg",
+  climateTemperature: "./assets/earth/temperature_adjusted.jpg",
+  wind: "./assets/earth/wind_adjusted.jpg",
+  clouds: "./assets/earth/clouds_adjusted.jpg",
+  precipitation: "./assets/earth/precipitation_adjusted.jpg",
+  urbanLights: "./assets/earth/2k_earth_nightmap.jpg",
+  seaSurfaceTemperature: "./assets/earth/seasurfacetemp_adjusted.jpg"
 };
 
 function makeLatLonTexture({
@@ -169,8 +174,8 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
   scene.add(globeGroup);
 
   const globeRadius = 5.0;
-  const cloudRadius = 5.08;
-  const overlayRadius = 5.16;
+  const cloudRadius = 5.03;
+  const overlayRadius = 5.01;
   const globeSegments = 96;
   const sphereGeometry = new THREE.SphereGeometry(globeRadius, globeSegments, globeSegments);
   const cloudGeometry = new THREE.SphereGeometry(cloudRadius, globeSegments, globeSegments);
@@ -216,10 +221,13 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
   globeGroup.add(overlayMesh);
 
   const overlayTextureCache = { none: null };
+  let activeOverlayKind = "none";
 
   async function setOverlay(kind) {
     const key = kind in OVERLAY_TEXTURE_URLS ? kind : "none";
+    activeOverlayKind = key;
     if (key === "none") {
+      cloudsMesh.visible = Boolean(cloudsMaterial.map);
       overlayMesh.visible = false;
       overlayMaterial.map = null;
       overlayMaterial.needsUpdate = true;
@@ -238,6 +246,7 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
     overlayMaterial.map = overlayTextureCache[key];
     overlayMaterial.needsUpdate = true;
     overlayMesh.visible = true;
+    cloudsMesh.visible = false;
   }
 
   loadTextureWithLoader(textureLoader, DAYMAP_URL, (texture) => {
@@ -268,7 +277,7 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
     texture.colorSpace = THREE.SRGBColorSpace;
     cloudsMaterial.map = texture;
     cloudsMaterial.needsUpdate = true;
-    cloudsMesh.visible = true;
+    cloudsMesh.visible = activeOverlayKind === "none";
     baseMaterial.needsUpdate = true;
   });
 
@@ -286,9 +295,6 @@ export function createThreeScene({ canvasId, stageId, onControlsChange }) {
 
   function renderFrame() {
     controls.update();
-    globeGroup.rotation.y += 0.0012;
-    cloudsMesh.rotation.y += 0.00145;
-    overlayMesh.rotation.y = globeMesh.rotation.y;
     renderer.render(scene, camera);
   }
 

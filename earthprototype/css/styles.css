@@ -187,3 +187,134 @@ canvas#threeCanvas{
   .stageWrap{ width:62%; }
   .menu{ width:38%; }
 }
+
+.tile.is-active{
+  border-color: rgba(120,220,255,.88);
+  background: linear-gradient(180deg, rgba(120,220,255,.22), rgba(60,120,180,.14));
+  box-shadow: 0 0 0 1px rgba(120,220,255,.35), 0 14px 30px rgba(0,0,0,.42);
+}
+
+.tile.is-active .tileTop{
+  border-color: rgba(170,235,255,.9);
+  box-shadow: inset 0 0 0 1px rgba(170,235,255,.22);
+}
+
+.tile.is-active .tileLabel{
+  color: rgba(230,250,255,.98);
+}
+
+/* Remove button imagery while keeping button layout/behavior intact */
+.tileTop .icon{
+  display:none;
+}
+
+.thumbSeabed,
+.thumbForest,
+.thumbTemp{
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+}
+
+/* Theme accents by button/action */
+.tile[data-action="none"] .tileTop{
+  background: linear-gradient(180deg, rgba(145,165,185,.20), rgba(80,95,112,.18));
+  border-color: rgba(175,195,215,.32);
+}
+
+.tile[data-action="seabed2030"] .tileTop{
+  background: linear-gradient(180deg, rgba(40,165,210,.24), rgba(18,84,122,.22));
+  border-color: rgba(95,210,245,.34);
+}
+
+.tile[data-action="globalforestwatch"] .tileTop{
+  background: linear-gradient(180deg, rgba(72,168,102,.24), rgba(30,94,56,.22));
+  border-color: rgba(130,220,155,.34);
+}
+
+.tile[data-action="climateTemperature"] .tileTop{
+  background: linear-gradient(180deg, rgba(230,95,72,.26), rgba(142,44,34,.24));
+  border-color: rgba(245,150,130,.34);
+}
+
+.tile[data-action="wind"] .tileTop{
+  background: linear-gradient(180deg, rgba(110,150,235,.24), rgba(58,86,160,.22));
+  border-color: rgba(165,192,255,.34);
+}
+
+.tile[data-action="clouds"] .tileTop{
+  background: linear-gradient(180deg, rgba(170,182,198,.22), rgba(96,110,128,.20));
+  border-color: rgba(205,216,230,.32);
+}
+
+.tile[data-action="precipitation"] .tileTop{
+  background: linear-gradient(180deg, rgba(70,178,200,.24), rgba(32,106,122,.22));
+  border-color: rgba(132,225,242,.34);
+}
+
+.tile[data-action="seaSurfaceTemperature"] .tileTop{
+  background: linear-gradient(180deg, rgba(34,172,178,.24), rgba(18,96,120,.22));
+  border-color: rgba(100,226,232,.34);
+}
+
+.tile[data-action="urbanLights"] .tileTop{
+  background: linear-gradient(180deg, rgba(230,186,88,.24), rgba(122,88,28,.24));
+  border-color: rgba(245,214,140,.34);
+}
+
+.creditsToggle{
+  position:absolute;
+  left:16px;
+  bottom:16px;
+  z-index:3;
+  border:1px solid rgba(160,210,235,.32);
+  border-radius:10px;
+  background:linear-gradient(180deg, rgba(20,56,78,.78), rgba(10,28,44,.78));
+  color:rgba(230,244,255,.95);
+  padding:8px 12px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.creditsPanel{
+  position:absolute;
+  left:16px;
+  bottom:56px;
+  z-index:3;
+  width:min(480px, calc(100% - 32px));
+  max-height:42%;
+  overflow:auto;
+  display:none;
+  border:1px solid rgba(180,220,255,.3);
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(10,18,28,.92), rgba(8,14,22,.9));
+  box-shadow:0 14px 34px rgba(0,0,0,.46);
+  padding:12px 14px;
+}
+
+.creditsPanel.is-open{
+  display:block;
+}
+
+.creditsTitle{
+  font-size:13px;
+  font-weight:700;
+  color:rgba(230,246,255,.95);
+  margin-bottom:8px;
+}
+
+.creditsNote{
+  margin:0 0 8px 0;
+  font-size:11px;
+  color:rgba(196,214,228,.84);
+}
+
+.creditsList{
+  margin:0;
+  padding-left:18px;
+  color:rgba(220,236,248,.88);
+  font-size:12px;
+  line-height:1.4;
+}
+
+.creditsList a{
+  color:rgba(140,206,255,.98);
+}
