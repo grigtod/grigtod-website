@@ -40,10 +40,10 @@ canvas#threeCanvas{
   z-index:1;
 }
 
-#cesiumOverlay{
+/* #cesiumOverlay{
   position:absolute;
   inset:0;
-  pointer-events:none; /* mouse handled by Three orbit controls */
+  pointer-events:none;
   z-index:2;
 }
 
@@ -55,7 +55,7 @@ canvas#threeCanvas{
   height:100%;
   background:transparent !important;
   z-index:2;
-}
+} */
 
 .menu{
   width:33.333%;
