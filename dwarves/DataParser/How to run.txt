@@ -1,0 +1,6 @@
+# Open command prompt (cmd NOT POWERSHELL) and cd to directory
+# To start using you need to set environment, if you've set this already skip this step: python -m venv venv
+# Then activate the venv: venv\Scripts\activate.bat
+# Install all dependencies run the following, if you've already done this skip this step: 
+# pip install wikipedia requests beautifulsoup4
+# To run this script: python parseData.py
