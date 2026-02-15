@@ -322,6 +322,7 @@ export function createMap({ mapElId = "map", ui } = {}) {
     map,
     overlay,
     labelZoomThreshold: 19,
+    dotZoomThreshold: isMobileViewport ? 19 : 16,
     labelMaxLength: 24,
     translate: (key, fallback, vars) => t(key, fallback, vars)
   });

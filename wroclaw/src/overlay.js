@@ -118,8 +118,8 @@ export function createPoiOverlay({
     completeBtnEl.classList.toggle("is-complete", isDone);
     completeBtnEl.setAttribute("aria-pressed", isDone ? "true" : "false");
     completeLabelEl.textContent = isDone
-      ? translate("app.poi.completed", "Completed")
-      : translate("app.poi.complete", "Complete");
+      ? translate("app.poi.completed", "Ukończono")
+      : translate("app.poi.complete", "Ukończ");
   }
 
   function buildTargetUrl(url, poiId) {

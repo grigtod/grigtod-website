@@ -11,13 +11,8 @@
 
   let poiMarkers = [];
 
-  function getDotColor(emoji, isFullyZoomedOut = false) {
-    if (isFullyZoomedOut) return "#ff2d2d";
-    const colorsByEmoji = {
-      "ðŸ—¿": "#495057"
-    };
-
-    return colorsByEmoji[emoji] ?? "#0078ff";
+  function getDotColor() {
+    return "#16a34a";
   }
 
   function escapeHtml(input) {
@@ -48,14 +43,13 @@
     const isCompleted = overlay.isCompleted(poi.id);
     const showLabel = zoomLevel >= labelZoomThreshold;
     const showDotOnly = zoomLevel < dotZoomThreshold;
-    const isFullyZoomedOut = zoomLevel <= map.getMinZoom();
 
     const classNameParts = ["poi-marker"];
     if (showLabel) classNameParts.push("show-label");
     if (isCompleted) classNameParts.push("is-completed");
 
     const markerVisual = showDotOnly
-      ? `<span class="poi-dot" style="--poi-dot-color: ${getDotColor(poi.emoji, isFullyZoomedOut)}" aria-hidden="true"></span>`
+      ? `<span class="poi-dot" style="--poi-dot-color: ${getDotColor()}" aria-hidden="true"></span>`
       : poi.iconUrl
         ? `<img class="poi-image" src="${escapeHtml(poi.iconUrl)}" alt="" aria-hidden="true">`
         : `<span class="poi-emoji">${poi.emoji}</span>`;
