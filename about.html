@@ -4,6 +4,74 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/style.css">
+<style>
+    .about-avatar-frame {
+        max-width: 320px;
+        margin: 0 auto;
+    }
+
+    .about-avatar-stage {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 28px;
+        overflow: hidden;
+        cursor: crosshair;
+        background:
+            linear-gradient(135deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.06)),
+            rgba(169, 137, 91, 0.14);
+        box-shadow:
+            inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+            0 20px 40px rgba(85, 50, 24, 0.16);
+        isolation: isolate;
+        touch-action: none;
+    }
+
+    .about-avatar-stage::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        background:
+            radial-gradient(circle at 16% 16%, rgba(255, 255, 255, 0.6), transparent 24%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 28%);
+    }
+
+    .about-avatar-image,
+    .about-avatar-overlay {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .about-avatar-image {
+        object-fit: cover;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .about-avatar-base {
+        z-index: 0;
+        filter: saturate(1.02) contrast(1.02);
+    }
+
+    .about-avatar-overlay {
+        z-index: 2;
+        opacity: 0;
+        transform: scale(0.985);
+        transition:
+            opacity 220ms ease,
+            transform 320ms ease;
+        pointer-events: none;
+    }
+
+    .about-avatar-stage.is-active .about-avatar-overlay {
+        opacity: 0.96;
+        transform: scale(1);
+    }
+</style>
 <body>
     <div id="navbar"></div>
 
@@ -12,8 +80,51 @@
             <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">😎About</h3>
             <div class="w3-row-padding">
                 <div class="w3-col l3 m6 w3-margin-bottom">
-                    <div class="w3-display-container">
-                        <img src="/images/about/avatar2.png" alt="House" style="width:100%">
+                    <div class="w3-display-container about-avatar-frame">
+                        <div class="about-avatar-stage" id="about-avatar-stage" aria-label="Interactive portrait">
+                            <img
+                                class="about-avatar-image about-avatar-base"
+                                id="about-base-image"
+                                src="about-effect/images/me.jpg"
+                                alt="Portrait of Grigor Todorov"
+                                draggable="false">
+
+                            <svg
+                                class="about-avatar-overlay"
+                                id="about-avatar-overlay"
+                                viewBox="0 0 100 100"
+                                preserveAspectRatio="xMidYMid meet"
+                                aria-hidden="true">
+                                <defs>
+                                    <filter id="about-gooey-filter" x="-35%" y="-35%" width="170%" height="170%">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="5.1" result="blur"></feGaussianBlur>
+                                        <feColorMatrix
+                                            in="blur"
+                                            mode="matrix"
+                                            values="
+                                                1 0 0 0 0
+                                                0 1 0 0 0
+                                                0 0 1 0 0
+                                                0 0 0 28 -15"
+                                            result="goo"></feColorMatrix>
+                                        <feComposite in="SourceGraphic" in2="goo" operator="atop"></feComposite>
+                                    </filter>
+
+                                    <mask id="about-blob-mask">
+                                        <rect width="100" height="100" fill="black"></rect>
+                                        <g id="about-blob-shapes" filter="url(#about-gooey-filter)"></g>
+                                    </mask>
+                                </defs>
+
+                                <image
+                                    id="about-variant-image"
+                                    href="about-effect/images/actionFigure.jpg"
+                                    width="100"
+                                    height="100"
+                                    preserveAspectRatio="xMidYMid slice"
+                                    mask="url(#about-blob-mask)"></image>
+                            </svg>
+                        </div>
                     </div>
                 </div>
                 <div class="w3-col l6 m6 w3-margin-bottom">
@@ -30,4 +141,356 @@
 </body>
 <script type="text/javascript" src="code/jquery.min.js"></script>
 <script type="text/javascript" src="code/reuseElements.js"></script>
+<script>
+    (function () {
+        var baseImagePath = "about-effect/images/me.jpg";
+        var variantImages = [
+            "about-effect/images/actionFigure.jpg",
+            "about-effect/images/clay.jpg",
+            "about-effect/images/duck.jpg",
+            "about-effect/images/familyGuy.jpg",
+            "about-effect/images/funko.jpg",
+            "about-effect/images/lego.jpg",
+            "about-effect/images/littlePeople.jpg",
+            "about-effect/images/pixar.jpg",
+            "about-effect/images/pixelart.jpg",
+            "about-effect/images/potato.jpg",
+            "about-effect/images/puppet.jpg",
+            "about-effect/images/simpsons.jpg",
+            "about-effect/images/tintin.jpg",
+            "about-effect/images/winduprobot.jpg"
+        ];
+
+        var SVG_NS = "http://www.w3.org/2000/svg";
+        var XLINK_NS = "http://www.w3.org/1999/xlink";
+        var VIEWBOX_WIDTH = 100;
+        var VIEWBOX_HEIGHT = 100;
+        var BLOB_SCALE = 1.45;
+        var BLOB_ENERGY = 0.65;
+        var PARTICLE_COUNT = 16;
+
+        var stage = document.getElementById("about-avatar-stage");
+        var baseImage = document.getElementById("about-base-image");
+        var variantImage = document.getElementById("about-variant-image");
+        var blobShapes = document.getElementById("about-blob-shapes");
+
+        if (!stage || !baseImage || !variantImage || !blobShapes) {
+            return;
+        }
+
+        var pointer = { x: VIEWBOX_WIDTH / 2, y: VIEWBOX_HEIGHT / 2 };
+        var targetPointer = { x: VIEWBOX_WIDTH / 2, y: VIEWBOX_HEIGHT / 2 };
+        var recentVariantHistory = [];
+        var blobs = [];
+
+        var primaryBlobTemplates = [
+            { rx: 24, ry: 24, angle: 12, drift: 0.015, wobble: 2.4, orbit: 0 },
+            { rx: 19, ry: 18, angle: -18, drift: 0.021, wobble: 2.1, orbit: 10.5 },
+            { rx: 15, ry: 14, angle: 34, drift: 0.026, wobble: 1.8, orbit: 16 },
+            { rx: 11.5, ry: 10.8, angle: -30, drift: 0.031, wobble: 1.5, orbit: 20 },
+            { rx: 9, ry: 8.6, angle: 22, drift: 0.037, wobble: 1.25, orbit: 24 }
+        ];
+
+        var state = {
+            hover: false,
+            active: false,
+            frame: 0,
+            rafId: 0,
+            currentVariant: variantImages[0]
+        };
+
+        baseImage.src = baseImagePath;
+
+        variantImages.forEach(function (source) {
+            var preloadImage = new Image();
+            preloadImage.src = source;
+        });
+
+        function clamp(value, min, max) {
+            return Math.min(Math.max(value, min), max);
+        }
+
+        function randomBetween(min, max) {
+            return min + Math.random() * (max - min);
+        }
+
+        function createBlobElement() {
+            var ellipse = document.createElementNS(SVG_NS, "ellipse");
+            ellipse.setAttribute("fill", "white");
+            blobShapes.appendChild(ellipse);
+            return ellipse;
+        }
+
+        function createPrimaryBlob(config) {
+            return {
+                type: "primary",
+                x: VIEWBOX_WIDTH / 2,
+                y: VIEWBOX_HEIGHT / 2,
+                rx: 0,
+                ry: 0,
+                angle: config.angle,
+                baseRx: config.rx,
+                baseRy: config.ry,
+                drift: config.drift,
+                wobble: config.wobble,
+                orbit: config.orbit,
+                element: createBlobElement()
+            };
+        }
+
+        function resetParticle(particle, initial) {
+            var spread = BLOB_SCALE * (0.75 + BLOB_ENERGY * 0.35);
+            var direction = randomBetween(0, Math.PI * 2);
+            var distance = randomBetween(2.8 * spread, state.active ? 11.8 * spread : 5.8 * spread);
+            var speed = state.active ? randomBetween(0.1, 0.42) * spread : 0;
+
+            particle.x = pointer.x + Math.cos(direction) * distance;
+            particle.y = pointer.y + Math.sin(direction) * distance;
+            particle.vx = Math.cos(direction) * speed;
+            particle.vy = Math.sin(direction) * speed;
+            particle.life = initial ? randomBetween(0.2, 1) : 1;
+            particle.decay = randomBetween(0.01, 0.022);
+            particle.baseRadius = randomBetween(1.8, 4.8) * Math.max(0.9, spread * 0.88);
+            particle.stretch = randomBetween(0.82, 1.22);
+            particle.phase = randomBetween(0, Math.PI * 2);
+            particle.spin = randomBetween(-1.8, 1.8);
+            particle.angle = randomBetween(-180, 180);
+        }
+
+        function createParticleBlob() {
+            var particle = {
+                type: "particle",
+                x: VIEWBOX_WIDTH / 2,
+                y: VIEWBOX_HEIGHT / 2,
+                rx: 0,
+                ry: 0,
+                angle: 0,
+                vx: 0,
+                vy: 0,
+                life: 0,
+                decay: 0.02,
+                baseRadius: 2,
+                stretch: 1,
+                phase: 0,
+                spin: 0,
+                element: createBlobElement()
+            };
+
+            resetParticle(particle, true);
+            return particle;
+        }
+
+        function initializeBlobs() {
+            primaryBlobTemplates.forEach(function (config) {
+                blobs.push(createPrimaryBlob(config));
+            });
+
+            for (var index = 0; index < PARTICLE_COUNT; index += 1) {
+                blobs.push(createParticleBlob());
+            }
+        }
+
+        function setBlobAttributes(blobElement, blob) {
+            blobElement.setAttribute("cx", blob.x.toFixed(2));
+            blobElement.setAttribute("cy", blob.y.toFixed(2));
+            blobElement.setAttribute("rx", blob.rx.toFixed(2));
+            blobElement.setAttribute("ry", blob.ry.toFixed(2));
+            blobElement.setAttribute(
+                "transform",
+                "rotate(" + blob.angle.toFixed(2) + " " + blob.x.toFixed(2) + " " + blob.y.toFixed(2) + ")"
+            );
+        }
+
+        function updatePrimaryBlob(blob, index) {
+            var lag = index * 3.2;
+            var pulse = Math.sin(state.frame * blob.drift + lag);
+            var sway = Math.cos(state.frame * (blob.drift * 0.82) + lag);
+            var energy = 0.75 + BLOB_ENERGY * 0.4;
+            var orbitX = state.active ? sway * blob.orbit * BLOB_SCALE * energy : 0;
+            var orbitY = state.active ? pulse * blob.orbit * 0.72 * BLOB_SCALE * energy : 0;
+            var follow = state.active ? 0.22 - index * 0.022 : 0.11;
+
+            blob.x += (pointer.x + orbitX - blob.x) * follow;
+            blob.y += (pointer.y + orbitY - blob.y) * follow;
+
+            var visibility = state.active ? 1 : 0;
+            var sizeEase = state.active ? 0.18 : 0.1;
+            var targetRx =
+                (blob.baseRx * BLOB_SCALE + pulse * blob.wobble * BLOB_SCALE * energy) * visibility;
+            var targetRy =
+                (blob.baseRy * BLOB_SCALE + sway * blob.wobble * BLOB_SCALE * energy) * visibility;
+
+            blob.rx += (targetRx - blob.rx) * sizeEase;
+            blob.ry += (targetRy - blob.ry) * sizeEase;
+            blob.angle += (pulse * 26 * energy - blob.angle) * 0.12;
+        }
+
+        function updateParticleBlob(blob) {
+            if (state.active) {
+                blob.life -= blob.decay;
+                if (blob.life <= 0) {
+                    resetParticle(blob, false);
+                }
+
+                var energy = 0.7 + BLOB_ENERGY * 0.45;
+                var attractionX = (pointer.x - blob.x) * 0.0022 * energy;
+                var attractionY = (pointer.y - blob.y) * 0.0022 * energy;
+                var swirl = Math.sin(state.frame * 0.035 + blob.angle) * 0.018 * energy;
+
+                blob.vx = (blob.vx + attractionX + swirl) * 0.988;
+                blob.vy = (blob.vy + attractionY - swirl) * 0.988;
+                blob.x += blob.vx;
+                blob.y += blob.vy;
+
+                var targetRadius = blob.baseRadius * Math.max(blob.life, 0);
+                var pulse = Math.sin(state.frame * 0.07 + blob.phase);
+                var targetRx = targetRadius * (0.9 + pulse * 0.08);
+                var targetRy =
+                    targetRadius * (blob.stretch + Math.cos(state.frame * 0.06 + blob.phase) * 0.1);
+
+                blob.rx += (targetRx - blob.rx) * 0.22;
+                blob.ry += (targetRy - blob.ry) * 0.22;
+                blob.angle += (blob.vx + blob.vy) * 18 + blob.spin;
+            } else {
+                blob.x += (pointer.x - blob.x) * 0.08;
+                blob.y += (pointer.y - blob.y) * 0.08;
+                blob.rx += (0 - blob.rx) * 0.14;
+                blob.ry += (0 - blob.ry) * 0.14;
+            }
+        }
+
+        function pickRandomVariant(exclude) {
+            var extraExcluded = exclude || [];
+
+            if (variantImages.length === 0) {
+                return baseImagePath;
+            }
+
+            if (variantImages.length === 1) {
+                return variantImages[0];
+            }
+
+            var uniqueExcluded = new Set([state.currentVariant].concat(extraExcluded));
+            var historyWindow = Math.min(
+                variantImages.length - 1,
+                Math.max(3, Math.floor(variantImages.length * 0.35))
+            );
+            var blocked = new Set(recentVariantHistory.slice(-historyWindow));
+            var available = variantImages.filter(function (image) {
+                return !uniqueExcluded.has(image) && !blocked.has(image);
+            });
+
+            if (available.length === 0) {
+                available = variantImages.filter(function (image) {
+                    return !uniqueExcluded.has(image);
+                });
+            }
+
+            if (available.length === 0) {
+                available = variantImages.filter(function (image) {
+                    return image !== state.currentVariant;
+                });
+            }
+
+            return available[Math.floor(Math.random() * available.length)];
+        }
+
+        function syncVariantSource(source) {
+            state.currentVariant = source;
+            recentVariantHistory.push(source);
+            if (recentVariantHistory.length > variantImages.length * 2) {
+                recentVariantHistory.splice(0, recentVariantHistory.length - variantImages.length * 2);
+            }
+
+            variantImage.setAttribute("href", source);
+            variantImage.setAttributeNS(XLINK_NS, "href", source);
+        }
+
+        function activateBlob() {
+            state.active = true;
+            syncVariantSource(pickRandomVariant());
+            blobs.forEach(function (blob) {
+                if (blob.type === "particle") {
+                    resetParticle(blob, false);
+                }
+            });
+            stage.classList.add("is-active");
+        }
+
+        function deactivateBlob() {
+            state.active = false;
+            stage.classList.remove("is-active");
+        }
+
+        function updatePointer(clientX, clientY) {
+            var rect = stage.getBoundingClientRect();
+            targetPointer.x = clamp(
+                ((clientX - rect.left) / rect.width) * VIEWBOX_WIDTH,
+                0,
+                VIEWBOX_WIDTH
+            );
+            targetPointer.y = clamp(
+                ((clientY - rect.top) / rect.height) * VIEWBOX_HEIGHT,
+                0,
+                VIEWBOX_HEIGHT
+            );
+        }
+
+        function handlePointerEnter(event) {
+            state.hover = true;
+            updatePointer(event.clientX, event.clientY);
+            activateBlob();
+        }
+
+        function handlePointerMove(event) {
+            updatePointer(event.clientX, event.clientY);
+        }
+
+        function handlePointerLeave() {
+            state.hover = false;
+            targetPointer.x = pointer.x;
+            targetPointer.y = pointer.y;
+            deactivateBlob();
+        }
+
+        function handlePointerDown(event) {
+            updatePointer(event.clientX, event.clientY);
+            activateBlob();
+        }
+
+        function render() {
+            state.frame += 1;
+
+            pointer.x += (targetPointer.x - pointer.x) * (state.active ? 0.24 : 0.12);
+            pointer.y += (targetPointer.y - pointer.y) * (state.active ? 0.24 : 0.12);
+
+            blobs.forEach(function (blob, index) {
+                if (blob.type === "primary") {
+                    updatePrimaryBlob(blob, index);
+                } else {
+                    updateParticleBlob(blob);
+                }
+
+                setBlobAttributes(blob.element, blob);
+            });
+
+            state.rafId = window.requestAnimationFrame(render);
+        }
+
+        stage.addEventListener("pointerenter", handlePointerEnter);
+        stage.addEventListener("pointermove", handlePointerMove);
+        stage.addEventListener("pointerleave", handlePointerLeave);
+        stage.addEventListener("pointerdown", handlePointerDown);
+        stage.addEventListener("pointerup", handlePointerLeave);
+        stage.addEventListener("pointercancel", handlePointerLeave);
+
+        initializeBlobs();
+        syncVariantSource(state.currentVariant);
+        render();
+
+        window.addEventListener("beforeunload", function () {
+            window.cancelAnimationFrame(state.rafId);
+        });
+    }());
+</script>
 </html>
