@@ -182,6 +182,7 @@ h6 {
   position: absolute;
   left: 0;
   top: 0;
+  z-index: 2;
 }
 
 .w3-center {
@@ -281,10 +282,19 @@ h6 {
   opacity: 1;
   transition: 0.1s ease;
   backface-visibility: hidden;
+  background: linear-gradient(110deg, #ddd6ca 8%, #f4efe7 18%, #ddd6ca 33%);
+  background-size: 200% 100%;
+  animation: portfolio-image-shimmer 1.4s ease-in-out infinite;
 }
 
 .portfolio-image:hover {
   outline: 4px solid black;
+}
+
+@keyframes portfolio-image-shimmer {
+  to {
+    background-position-x: -200%;
+  }
 }
 
 .video-container {
