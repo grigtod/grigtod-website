@@ -208,7 +208,8 @@
             active: false,
             frame: 0,
             rafId: 0,
-            currentVariant: variantImages[0]
+            currentVariant: variantImages[0],
+            stageRect: null
         };
 
         baseImage.src = baseImagePath;
@@ -418,6 +419,10 @@
             variantImage.setAttributeNS(XLINK_NS, "href", source);
         }
 
+        function refreshStageRect() {
+            state.stageRect = stage.getBoundingClientRect();
+        }
+
         function activateBlob() {
             state.active = true;
             syncVariantSource(pickRandomVariant());
@@ -435,7 +440,13 @@
         }
 
         function updatePointer(clientX, clientY) {
-            var rect = stage.getBoundingClientRect();
+            var rect = state.stageRect;
+
+            if (!rect || !rect.width || !rect.height) {
+                refreshStageRect();
+                rect = state.stageRect;
+            }
+
             targetPointer.x = clamp(
                 ((clientX - rect.left) / rect.width) * VIEWBOX_WIDTH,
                 0,
@@ -450,6 +461,7 @@
 
         function handlePointerEnter(event) {
             state.hover = true;
+            refreshStageRect();
             updatePointer(event.clientX, event.clientY);
             activateBlob();
         }
@@ -495,8 +507,11 @@
         stage.addEventListener("pointerdown", handlePointerDown);
         stage.addEventListener("pointerup", handlePointerLeave);
         stage.addEventListener("pointercancel", handlePointerLeave);
+        window.addEventListener("resize", refreshStageRect);
+        window.addEventListener("scroll", refreshStageRect, { passive: true });
 
         initializeBlobs();
+        refreshStageRect();
         syncVariantSource(state.currentVariant);
         render();
 
