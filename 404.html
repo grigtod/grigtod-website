@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Not Found | Grigor Todorov</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The page you requested could not be found on Grigor Todorov's portfolio website. Browse the homepage and featured projects instead.">
+    <meta name="robots" content="noindex,follow">
+    <meta property="og:title" content="Page Not Found | Grigor Todorov">
+    <meta property="og:description" content="The page you requested could not be found. Visit the homepage to explore Grigor Todorov's portfolio projects.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://grigtod.com/404.html">
+    <meta name="twitter:card" content="summary">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .not-found-shell {
+            min-height: calc(100vh - 160px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .not-found-hero {
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 48px 16px 64px;
+        }
+
+        .not-found-code {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(16px, 4vw, 44px);
+            margin: 0;
+            color: #000;
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-weight: 300;
+            font-size: clamp(92px, 20vw, 180px);
+            line-height: 0.92;
+            letter-spacing: 0.08em;
+        }
+
+        .not-found-zero {
+            position: relative;
+            display: inline-block;
+            filter: blur(7px);
+            opacity: 0.72;
+            transform: translateY(-2px);
+        }
+
+        .not-found-subtitle {
+            margin: 28px 0 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.48em;
+            text-transform: uppercase;
+        }
+
+        .not-found-copy {
+            max-width: 520px;
+            margin: 26px auto 0;
+            color: #444;
+        }
+
+        .not-found-link {
+            display: inline-block;
+            margin-top: 26px;
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 14px;
+            letter-spacing: 0.34em;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .not-found-link:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .not-found-shell {
+                min-height: calc(100vh - 120px);
+            }
+
+            .not-found-hero {
+                padding-top: 24px;
+            }
+
+            .not-found-code {
+                gap: 10px;
+                letter-spacing: 0.04em;
+            }
+
+            .not-found-subtitle {
+                letter-spacing: 0.28em;
+                line-height: 1.8;
+            }
+
+            .not-found-copy {
+                font-size: 14px;
+            }
+
+            .not-found-link {
+                letter-spacing: 0.24em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <div class="w3-content w3-padding" style="max-width:1564px">
+        <div class="w3-container w3-padding-32 not-found-shell" id="not-found">
+            <div class="not-found-hero">
+                <h1 class="not-found-code" aria-label="404">
+                    <span>4</span>
+                    <span class="not-found-zero">0</span>
+                    <span>4</span>
+                </h1>
+                <p class="not-found-subtitle">Page Not Found</p>
+                <p class="not-found-copy">The page you were looking for does not exist, may have moved, or the link might be outdated.</p>
+                <a class="not-found-link w3-bar-item w3-button" href="/">🏠 Back Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+</body>
+<script type="text/javascript" src="code/jquery.min.js"></script>
+<script type="text/javascript" src="code/reuseElements.js"></script>
+</html>
