@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /secret
+Disallow: /secret.html
+Disallow: /404.html
+Disallow: /_templatePage.html
+Disallow: /mission-828.html
+
+Sitemap: https://grigtod.com/sitemap.xml
