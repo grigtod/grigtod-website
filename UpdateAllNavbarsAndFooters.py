@@ -24,7 +24,28 @@ YELLOW = "\033[93m"
 
 
 def read_text(path: Path) -> str:
-    return path.read_text(encoding="utf-8")
+    return repair_common_mojibake(path.read_text(encoding="utf-8-sig"))
+
+
+def repair_common_mojibake(text: str) -> str:
+    repaired = text
+    markers = ("Ã", "Â", "ðŸ", "â€")
+
+    for _ in range(2):
+        if not any(marker in repaired for marker in markers):
+            break
+
+        try:
+            candidate = repaired.encode("latin-1").decode("utf-8")
+        except UnicodeError:
+            break
+
+        if candidate == repaired:
+            break
+
+        repaired = candidate
+
+    return repaired
 
 
 def detect_newline(text: str) -> str:
