@@ -28,8 +28,30 @@
     <div class="w3-content w3-padding" style="max-width:1564px">
         <div class="w3-container w3-padding-32" id="about">
             <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Somnai</h3>
-            <p>- Sensory:<br>A wooden bridge, multiple props and different floor surfaces are used through the experience to provide a sense of presence to the users.</p>
-            <p>I'd like to share a few behind the scenes pictures:</p>
+            <p>This was a freelance project for dotdot.london.<br>I worked on the Unity application for the Fantasy VR experience, a location-based VR installation where groups of six participants wear VR backpacks and explore a series of fantasy scenes together.</p>
+            <div class="w3-display-container">
+                <div class="video-container">
+                    <iframe width="500" height="294" src="https://www.youtube.com/embed/qZ8tNYX_nuA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+            <p>Fantasy VR is a networked, multi-user experience. Participants can interact with each other and with the virtual world around them. It is also a multi-sensory installation, using scent, wind, heat, physical props, and changing floor surfaces to create a deeper sense of immersion.<br>
+            <p>
+            <strong>Hardware:</strong></p>
+            <ul>
+            We used more than 38 OptiTrack cameras, along with OptiTrack HMD trackers provided by <a href="https://target3d.co.uk/" target="_blank">Target3D</a>. For hand interaction, each headset had a Leap Motion sensor attached to the front. The avatars were driven by FinalIK, working together with Leap Motion and OptiTrack tracking data.</p>
+            </ul>
+            <p><strong>Somnai:</strong>
+            <ul>The six participants were guided through the experience by an actor. In the virtual world, the actor was represented by a glowing sphere called "Somnai", which was controlled using an OptiTrack active tracker.</p>   
+            </ul>        
+            <p><strong>Networking:</strong>
+            <ul>For networking, we used UNET. Working with six VR backpacks could be challenging, so I set up a remote connection system. Each backpack ran a client application that automatically discovered and connected to the server. The server ran on the same machine connected to the motion capture switch and OptiTrack software. </ul>     
+            <p><strong>Scents, Wind, and Heat:</strong>
+            <ul>These elements were created by the amazing Grace Boyle from <a href="https://www.thefeelies.io/" target="_blank">The Feelies</a>, adding another layer of immersion to the experience.</ul>     
+            <p><strong>Sensory Elements:</strong>
+            <ul>A wooden bridge, multiple props, and different floor surfaces were used throughout the experience to enhance the participants' sense of presence.</ul>     
+           
+
+            <p>I'd also like to share a few behind-the-scenes pictures.</p>
 
             <div class="gallery-container">
               <div class="gallery-numbertext" id="gallery-numbertext"></div>
@@ -62,26 +84,7 @@
           </div>
           <script type="text/javascript" src="code/gallery.js"></script>
           <br>
-          <div class="w3-row-padding">
-              <div class="w3-col l6 m6 w3-margin-bottom">
-                  <div class="w3-display-container">
-                      <div class="video-container">
-                          <img src="/images/work/somnai/theVoid.jpg" style="width:100%" alt="The Void">
-                      </div>
-                      <div class = "imageDescription">
-                          <p>First we visited The Void... </p>
-                      </div>
-                  </div>
-              </div>
-              <div class="w3-col l6 m6 w3-margin-bottom">
-                  <div class="video-container">
-                      <img src="/images/work/somnai/fantasy.jpg" style="width:100%" alt="Fantasy Forest">
-                  </div>
-                  <div class = "imageDescription">
-                      <p>...and then we created our own!</p>
-                  </div>
-              </div>
-          </div>
+           
           <div class="w3-display-container">
               <div class="video-container">
                   <iframe title="Somnai behind-the-scenes video" src="https://www.youtube.com/embed/cxkjLyGrfj4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
