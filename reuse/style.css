@@ -237,6 +237,7 @@ h6 {
   left: 0;
   top: 0;
   z-index: 2;
+  border-top-left-radius: 8px;
 }
 
 .project-title {
@@ -339,6 +340,7 @@ h6 {
   display: block;
   width: 100%;
   height: auto;
+  border-radius: 8px;
   opacity: 1;
   transition: 0.1s ease;
   backface-visibility: hidden;
