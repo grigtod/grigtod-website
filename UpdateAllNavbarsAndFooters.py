@@ -101,12 +101,12 @@ def main() -> None:
     updated_pages: list[str] = []
     failed_pages: list[tuple[str, list[str]]] = []
 
-    for html_file in sorted(ROOT.glob("*.html")):
+    for html_file in sorted(ROOT.rglob("*.html")):
         success, missing = update_page(html_file, navbar_html, footer_html)
         if success:
-            updated_pages.append(html_file.name)
+            updated_pages.append(str(html_file.relative_to(ROOT)))
         else:
-            failed_pages.append((html_file.name, missing))
+            failed_pages.append((str(html_file.relative_to(ROOT)), missing))
 
     print(f"{GREEN}Updated pages:{RESET}")
     if updated_pages:
