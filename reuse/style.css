@@ -371,6 +371,10 @@ h6 {
   padding-bottom: 56.25%;
 }
 
+.stacked-video {
+  margin-top: 16px;
+}
+
 .video-container iframe,
 .video-container object,
 .video-container embed {
