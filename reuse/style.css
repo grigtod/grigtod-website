@@ -238,11 +238,12 @@ h6 {
   top: 0;
   z-index: 2;
   border-top-left-radius: 8px;
+  font-size: 13px;
 }
 
 .project-title {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1.25;
 }
 
