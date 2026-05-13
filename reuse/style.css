@@ -371,12 +371,14 @@ h6 {
   display: block;
   height: 100%;
   opacity: 0;
+  filter: blur(12px);
   pointer-events: none;
-  transition: opacity 0.18s ease;
+  transition: opacity 0.18s ease, filter 0.24s ease;
 }
 
 .portfolio-preview-link.is-preview-active .portfolio-preview-video {
   opacity: 1;
+  filter: blur(0);
 }
 
 .portfolio-preview-link.is-preview-active .portfolio-image {
