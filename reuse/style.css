@@ -350,9 +350,44 @@ h6 {
   animation: portfolio-image-shimmer 1.4s ease-in-out infinite;
 }
 
+.portfolio-preview-link {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.portfolio-preview-link .portfolio-image,
+.portfolio-preview-link .portfolio-preview-video {
+  width: 100%;
+  aspect-ratio: 500 / 294;
+  object-fit: cover;
+}
+
+.portfolio-preview-link .portfolio-preview-video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.portfolio-preview-link.is-preview-active .portfolio-preview-video {
+  opacity: 1;
+}
+
+.portfolio-preview-link.is-preview-active .portfolio-image {
+  opacity: 0;
+}
+
 .w3-display-container > a:hover .portfolio-image,
 .w3-display-container > a:focus-visible .portfolio-image,
-.portfolio-image:hover {
+.portfolio-image:hover,
+.portfolio-preview-link:hover,
+.portfolio-preview-link:focus-visible {
   outline: 4px solid black;
   outline-offset: 2px;
 }
