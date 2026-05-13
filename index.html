@@ -232,9 +232,38 @@
     let isPreviewRequested = false;
     let readyHandlerBound = false;
     let resetTimeoutId = null;
+    let frameCallbackPending = false;
+
+    const revealPreview = () => {
+      if (!isPreviewRequested) {
+        return;
+      }
+
+      link.classList.add("is-preview-active");
+    };
+
+    const revealPreviewWhenFrameRenders = () => {
+      if (frameCallbackPending) {
+        return;
+      }
+
+      frameCallbackPending = true;
+
+      if (typeof video.requestVideoFrameCallback === "function") {
+        video.requestVideoFrameCallback(() => {
+          frameCallbackPending = false;
+          revealPreview();
+        });
+        return;
+      }
+
+      window.requestAnimationFrame(() => {
+        frameCallbackPending = false;
+        revealPreview();
+      });
+    };
 
     const activatePreview = () => {
-      link.classList.add("is-preview-active");
       const playPromise = video.play();
       if (playPromise && typeof playPromise.catch === "function") {
         playPromise.catch(() => {
@@ -244,7 +273,13 @@
 
           link.classList.remove("is-preview-active");
         });
+        playPromise.then(() => {
+          revealPreviewWhenFrameRenders();
+        });
+        return;
       }
+
+      revealPreviewWhenFrameRenders();
     };
 
     const ensureVideoSource = () => {
