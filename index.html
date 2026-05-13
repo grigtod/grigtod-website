@@ -231,6 +231,7 @@
     let sourceLoaded = false;
     let isPreviewRequested = false;
     let readyHandlerBound = false;
+    let resetTimeoutId = null;
 
     const activatePreview = () => {
       link.classList.add("is-preview-active");
@@ -275,6 +276,11 @@
     };
 
     const startPreview = () => {
+      if (resetTimeoutId !== null) {
+        clearTimeout(resetTimeoutId);
+        resetTimeoutId = null;
+      }
+
       isPreviewRequested = true;
       bindReadyHandler();
       ensureVideoSource();
@@ -288,7 +294,14 @@
       isPreviewRequested = false;
       link.classList.remove("is-preview-active");
       video.pause();
-      video.currentTime = 0;
+      resetTimeoutId = window.setTimeout(() => {
+        if (isPreviewRequested) {
+          return;
+        }
+
+        video.currentTime = 0;
+        resetTimeoutId = null;
+      }, 260);
     };
 
     link.addEventListener("mouseenter", startPreview);
